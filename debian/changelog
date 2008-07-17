@@ -3,6 +3,9 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
   * New Git checkout (7e21b9572202ae1da861864ce8760642e6d963b6), check
     the upstream NEWS file for user visible changes (Closes: #487168).
 
+  * debian/commit.id:
+    + new file containing the last upstream Git commit ID.
+
  --
 
 stumpwm (1:20070908-1) unstable; urgency=low

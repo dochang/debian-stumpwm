@@ -17,6 +17,7 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
     + link the team repository at git.debian.org in the Vcs-Git:
       field.
     + add Vcs-Browser: field.
+    + Depends: on cl-ppcre.
 
  --
 

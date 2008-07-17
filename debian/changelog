@@ -2,6 +2,7 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
 
   * Move to team maintenance: Debian Common Lisp Team at
     http://pkg-common-lisp.alioth.debian.org
+  * The Debian package is now maintained through Git.
 
   * New Git checkout (7e21b9572202ae1da861864ce8760642e6d963b6), check
     the upstream NEWS file for user visible changes (Closes: #487168).
@@ -12,6 +13,10 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
   * debian/control:
     + team maintenance.
     + move myself to Uploaders:.
+    + s/Vcs-Darcs/Vcs-Git/.
+    + link the team repository at git.debian.org in the Vcs-Git:
+      field.
+    + add Vcs-Browser: field.
 
  --
 

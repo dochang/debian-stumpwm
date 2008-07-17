@@ -7,7 +7,8 @@ Build-Depends-Indep: dh-lisp, texinfo
 Build-Depends: debhelper (>= 5.0.0), dpatch (>= 2.0.0)
 Standards-Version: 3.7.2
 Homepage: http://www.nongnu.org/stumpwm/
-Vcs-Darcs: http://cl-debian.alioth.debian.org/repository/lcapello/stumpwm/
+Vcs-Git: http://git.debian.org/git/pkg-common-lisp/stumpwm.git
+Vcs-Browser: http://git.debian.org/?p=pkg-common-lisp/stumpwm.git;a=summary
 
 Package: stumpwm
 Architecture: all

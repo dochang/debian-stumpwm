@@ -19,6 +19,9 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
     + add Vcs-Browser: field.
     + Depends: on cl-ppcre.
 
+  * debian/patches/03_correct-Stumpwm-StumpWM-in-stumpwm.texi.dpatch:
+    - physically remove the patch file.
+
  --
 
 stumpwm (1:20070908-1) unstable; urgency=low

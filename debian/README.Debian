@@ -1,0 +1,36 @@
+stumpwm for Debian
+------------------
+
+* HowTo start StumpWM
+
+StumpWM can be started using the /usr/bin/stumpwm executable. By default,
+the binary assumes that you want to use StumpWM with SBCL.  In case you
+prefer CMUCL or CLisp, please configure it via an environment variable:
+
+  LISP=$COMMON_LISP_IMPLEMENTATION_TO_BE_USED
+
+or in your ~/.stumpwmrc like:
+
+  ;debian=$COMMON_LISP_IMPLEMENTATION_TO_BE_USED
+
+where COMMON_LISP_IMPLEMENTATION_TO_BE_USED is sbcl, cmucl or clisp.
+
+At least one trailing semicolon is required since ~/.stumpwmrc
+is read by StumpWM as its configuration file, thus the debian
+declaration must be commented out.
+
+
+* Control a running StumpWM session
+
+Taking advantage of the swank module of the SLIME package, you can
+control a running StumpWM session from Emacs.  In order to do so,
+start the swank directly in your ~/.stumpwmrc with:
+
+  * (asdf:oos 'asdf:load-op 'swank)
+  * (swank:create-server :dont-close t)
+
+Please refer to the SLIME documentation for more information.
+
+
+ -- Luca Capello <luca@pca.it>, Tue, 25 Sep 2007 23:20:08 +0200
+

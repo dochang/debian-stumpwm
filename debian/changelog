@@ -1,0 +1,224 @@
+stumpwm (1:20070908-1) unstable; urgency=low
+
+  * New CVS checkout:
+    + from now on, upstream moved to git.
+
+  * debian/compat:
+    + new file to remove lintian warning debian-rules-sets-DH_COMPAT.
+    + switch to compatibility level 5.
+
+  * debian/control:
+    + depend on debhelper >= 5.0.0.
+    + suggest info-browser as an info file is installed.
+    + suggest menu since a menu file is installed.
+    + add alternative dependency on clisp.
+    + add Homepage header and remove it from the long description.
+    + correct s/XS-VCS-Darcs/Vcs-Darcs/ header since Vcs-* fields
+      are now supported in dpkg since 1.14.6.
+    - remove Martin Würtele <maxx@debian.org> from Uploaders.
+    - remove useless dependency on cl-port.
+
+  * debian/copyright:
+    + correct typo in GPL statement.
+    + correct s/(c)/Copyright/ statement.
+    + the Debian packaging is licensed under GPL version 2 or later.
+    + refer to /usr/share/common-licenses/GPL-2 rather than the
+      /usr/share/common-licenses/GPL symlink.
+
+  * debian/NEWS:
+    + notice the new /usr/bin/stumpwm command.
+
+  * debian/patches/00list: update.
+  * debian/patches/03_correct-Stumpwm-StumpWM-in-stumpwm.texi.dpatch:
+    - remove, similar patch applied upstream.
+  * debian/patches/04_default-to-x-terminal-emulator.dpatch:
+    + refresh.
+  * debian/patches/05_default-to-x-www-browser.dpatch:
+    + refresh.
+
+  * debian/README.Debian:
+    + better title.
+    + clarify how to start StumpWM (Closes: #356948).
+    + update instructions about how to control a running StumpWM
+      session through the cl-swank and slime packages.
+
+  * debian/rules:
+    - remove DH_COMPAT export.
+    + install /usr/bin/stumpwm and its manpage.
+    + register /usr/bin/stumpwm as window manager.
+    + install menu file.
+
+  * debian/stumpwm.1:
+    + new file.
+
+  * debian/stumpwm.bin:
+    + new file.
+
+  * debian/stumpwm.doc-base:
+    + new file to register the documentation via doc-base.
+
+  * debian/stumpwm.menu:
+    + new file.
+
+ -- Luca Capello <luca@pca.it>  Sun, 18 Nov 2007 22:24:00 +0100
+
+stumpwm (1:20060930-3) unstable; urgency=low
+
+  * debian/control:
+    + correct s/XS-X-VCS-Darcs/XS-VCS-Darcs/ header.
+
+  * debian/copyright:
+    + correct upstream copyright statement (GPL not BSD), which I
+      messed up with package version 1:20060513-1.
+    + update copyright to 2007.
+
+ -- Luca Capello <luca@pca.it>  Sun,  4 Feb 2007 16:15:02 +0100
+
+stumpwm (1:20060930-2) unstable; urgency=low
+
+  * The ChangeLog entry are perfect, but I forgot to apply all of them.
+
+  * debian/patches/00list: really update.
+  * debian/patches/01_add-set-prefix-key-to-samplestumpwmrc.dpatch:
+    - really remove.
+
+ -- Luca Capello <luca@pca.it>  Sun,  1 Oct 2006 03:50:27 +0200
+
+stumpwm (1:20060930-1) unstable; urgency=low
+
+  * New CVS checkout.
+
+  * debian/control:
+    + add XS-X-VCS-Darcs header.
+    + add x-terminal-emulator and www-browser to Suggests.
+
+  * debian/patches/00list: update.
+  * debian/patches/01_add-set-prefix-key-to-samplestumpwmrc.dpatch:
+    - remove, similar patch applied upstream.
+  * debian/patches/04_default-to-x-terminal-emulator.dpatch:
+    + default to x-terminal-emulator instead of xterm.
+  * debian/patches/05_default-to-x-www-browser.dpatch:
+    + default to x-www-browser instead of firefox and remove the
+      :class attribute.
+
+ -- Luca Capello <luca@pca.it>  Sat, 30 Sep 2006 22:30:13 +0200
+
+stumpwm (1:20060918-1) unstable; urgency=low
+
+  * New CVS checkout (Closes: #384071):
+    + handle meta alt syper and super modifiers
+    + various focus functions
+
+ -- Luca Capello <luca@pca.it>  Mon, 18 Sep 2006 15:17:19 +0200
+
+stumpwm (1:20060513-2) unstable; urgency=low
+
+  * Sponsored by Martin Würtele <maxx@debian.org>.
+
+  * debian/control:
+    + add Homepage line at the end of Description.
+
+  * debian/rules:
+    + create the stumpwm.info page at build target, not at install
+      target as previously done.
+    + add build call to install target.
+    + move dh_lisp call to binary-indep target.
+
+ -- Luca Capello <luca@pca.it>  Wed, 26 Jul 2006 02:21:00 +0200
+
+stumpwm (1:20060513-1) unstable; urgency=low
+
+  * New CVS checkout.
+
+  * debian/control:
+    + Standards-Version to 3.7.2.
+    + move debhelper to Build-Depends instead of Build-Depends-Indep
+      (Policy Manual section 7.6).
+    + add dpatch to Build-Depends.
+    + add slime to Suggests.
+    + start the short description with a lowercase 'a'.
+    + reduce the short description to essential, in order to not
+      repeat it in the long description.
+    + correct s/Stumpwm/StumpWM/ in the long description.
+    + explain why slime can be helpful in the long description.
+    + wrap the long description at 72 characters.
+
+  * debian/copyright:
+    + better layout.
+
+  * debian/NEWS:
+    + explain the new functions in ~/.stumpwmrc.
+
+  * debian/README.Debian:
+    + explain how to control a running StumpWM session.
+
+  * debian/patches/00list: update.
+  * debian/patches/01_add-set-prefix-key-to-samplestumpwmrc.dpatch:
+    + add `set-prefix-key' example to sample-stumpwmrc.lisp.
+  * debian/patches/02_correct-Stumpwm-StumpWM-in-README.dpatch:
+    + correct s/Stumpwm/StumpWM/ in README.
+  * debian/patches/03_correct-Stumpwm-StumpWM-in-stumpwm.texi.dpatch:
+    + correct s/Stumpwm/StumpWM/ in stumpwm.texi.
+
+  * debian/rules:
+    - remove build call from install and binary-indep targets.
+    + install the upstream NEWS file.
+    + add unpatch call to clean target.
+    + add patch call to install target.
+    + add empty binary-arch target (Policy Manual section 4.8).
+    + add patch and unpatch targets.
+    + update .PHONY target.
+
+ -- Luca Capello <luca@pca.it>  Fri, 19 May 2006 21:19:50 -0500
+
+stumpwm (1:20060228-1) unstable; urgency=low
+
+  * New CVS checkout.
+  * New maintainer.
+  * Sponsored by Peter Van Eynde <pvaneynd@debian.org>.
+
+  * Change the Debian version to reflect that this is the CVS
+    version.
+
+  * debian/control:
+    - remove useless Build-Depends: section, as the package-building
+      process is architecture-independent.
+    + Standards-Version to 3.6.2, no changes needed.
+    + add dh-lisp to Build-Depends-Indep:.
+    + add ${misc:Depends} in the binary Depends:, thus letting dh-lisp
+      fill in the dependency for the common-lisp-controller, so that
+      generated scripts always match the depended-on version.
+
+  * debian/compat: remove.
+  * debian/docs: remove.
+  * debian/postinst: remove.
+  * debian/preinst: remove.
+  * debian/prerm: remove.
+
+  * debian/rules:
+    - remove useless targets, as the package-building process is
+      architecture-independent.
+    - remove all the debhelper -i calls and duplicate dh_installdirs
+      call, there is only one binary package.
+    - install only README, the other upstream docs are useless.
+    + export DH_COMPAT level 4.
+    + add $(doc-dir) variable.
+    + install sample-stumpwmrc.lisp in usr/share/doc/stumpwm/examples/.
+    + convert to dh-lisp.
+
+ -- Luca Capello <luca@pca.it>  Tue, 28 Feb 2006 19:59:02 +0100
+
+stumpwm (0.0.4+cvs20050819-1) unstable; urgency=high
+
+  * Changed recommendation to dependency. (Closes: #323936).
+  * Added note in description that users should install compatible CL and
+    CLX implementations.
+  * Fresh upstream checkout from CVS, no new upstream changes.
+
+ -- Trent Buck <trentbuck@gmail.com>  Fri, 19 Aug 2005 21:22:27 +1000
+
+stumpwm (0.0.4+cvs20050802-1) unstable; urgency=low
+
+  * Initial package. (Closes: #320865).
+
+ -- Trent Buck <trentbuck@gmail.com>  Sat, 18 Jun 2005 11:23:44 +1000

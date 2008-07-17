@@ -1,0 +1,61 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 02_correct-Stumpwm-StumpWM-in-stumpwm.texi.patch.dpatch by  <luca@pca.it>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Correct s/Stumpwm/StumpWM/ in stumpwm.texi
+
+@DPATCH@
+
+diff -Naur stumpwm/stumpwm.texi stumpwm-debian-03/stumpwm.texi
+--- stumpwm/stumpwm.texi	2006-02-28 11:58:37.000000000 -0600
++++ stumpwm-debian-03/stumpwm.texi	2006-05-19 12:13:55.000000000 -0500
+@@ -72,31 +72,31 @@
+ translation approved by the Free Software Foundation.
+ @end titlepage
+ 
+-@node Top, Contact the Stumpwm developers, (dir), (dir)
++@node Top, Contact the StumpWM developers, (dir), (dir)
+ 
+ @ifinfo
+ This document explains how to use The Stump Window Manager.
+ @end ifinfo
+ 
+ @menu
+-* Contact the Stumpwm developers::  
++* Contact the StumpWM developers::  
+ * Usage::                       
+ * Hooks::                       
+ @end menu
+ 
+-@node Contact the Stumpwm developers, Usage, Top, Top
+-@chapter Contact the Stumpwm developers
+-The Stumpwm home page is @url{http://www.nongnu.org/stumpwm}.
++@node Contact the StumpWM developers, Usage, Top, Top
++@chapter Contact the StumpWM developers
++The StumpWM home page is @url{http://www.nongnu.org/stumpwm}.
+ 
+ You can reach Shawn Betts at @email{sabetts@@vcn.bc.ca}.
+ 
+-The Stumpwm mailing list is @email{stumpwm-devel@@nongnu.org} which
++The StumpWM mailing list is @email{stumpwm-devel@@nongnu.org} which
+ you can subscribe to at @url{http://mail.nongnu.org/mailman/listinfo/stumpwm-devel}.
+ 
+-@node Usage, Hooks, Contact the Stumpwm developers, Top
++@node Usage, Hooks, Contact the StumpWM developers, Top
+ @chapter Usage
+-Stumpwm is controlled entirely by keystrokes and lisp commands. It
+-mimics GNU Screen's keyboard handling. Stumpwm's prefix key is
++StumpWM is controlled entirely by keystrokes and lisp commands. It
++mimics GNU Screen's keyboard handling. StumpWM's prefix key is
+ @kbd{C-t}. The following commands are currently available:
+ 
+ @table @kbd
+@@ -138,7 +138,7 @@
+ 
+ @node Hooks,  , Usage, Top
+ @chapter Hooks
+-Stumpwm exports a number of hooks you can use to add
++StumpWM exports a number of hooks you can use to add
+ customizations. The following hooks are available:
+ 
+ @table @var

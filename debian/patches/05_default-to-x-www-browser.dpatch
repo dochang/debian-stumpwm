@@ -1,0 +1,21 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 05_default-to-x-www-browser.dpatch by  <luca@pca.it>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Default to x-www-browser instead of firefox in user.lisp and also
+##     remove the :class attribute because the browser could not be a
+##     mozilla-derived one
+
+@DPATCH@
+
+--- stumpwm/user.lisp	2007-11-18 22:12:18.000000000 +0100
++++ stumpwm-debian-05/user.lisp	2007-11-18 22:12:46.000000000 +0100
+@@ -1171,7 +1171,7 @@
+   (run-or-raise "xterm -title '*shell*'" :title "*shell*"))
+ 
+ (define-stumpwm-command "web" ()
+-  (run-or-raise "firefox" :class "Firefox-bin"))
++  (run-or-raise "x-www-browser"))
+ 
+ (define-stumpwm-command "escape" ((key :string "Key: "))
+   (set-prefix-key (kbd key)))

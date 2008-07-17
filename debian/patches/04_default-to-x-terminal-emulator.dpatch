@@ -1,0 +1,30 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 04_default-to-x-terminal-emulator.dpatch by  <luca@pca.it>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Default to x-terminal-emulator instead of xterm in user.lisp
+
+@DPATCH@
+
+--- stumpwm/user.lisp	2007-11-18 22:07:57.000000000 +0100
++++ stumpwm-debian-04/user.lisp	2007-11-18 22:08:21.000000000 +0100
+@@ -33,8 +33,8 @@
+ (when (null *root-map*)
+   (setf *root-map*
+ 	(let ((m (make-sparse-keymap)))
+-	  (define-key m (kbd "c") "exec xterm")
+-	  (define-key m (kbd "C-c") "exec xterm")
++	  (define-key m (kbd "c") "exec x-terminal-emulator")
++	  (define-key m (kbd "C-c") "exec x-terminal-emulator")
+ 	  (define-key m (kbd "e") "exec emacs")
+ 	  (define-key m (kbd "C-e") "exec emacs")
+ 	  (define-key m (kbd "n") "pull-hidden-next")
+@@ -1168,7 +1168,7 @@
+ 	  (run-shell-command cmd)))))
+ 
+ (define-stumpwm-command "shell" ()
+-  (run-or-raise "xterm -title '*shell*'" :title "*shell*"))
++  (run-or-raise "x-terminal-emulator -title '*shell*'" :title "*shell*"))
+ 
+ (define-stumpwm-command "web" ()
+   (run-or-raise "firefox" :class "Firefox-bin"))

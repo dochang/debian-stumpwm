@@ -1,0 +1,30 @@
+Source: stumpwm
+Section: devel
+Priority: optional
+Maintainer: Luca Capello <luca@pca.it>
+Uploaders: Peter Van Eynde <pvaneynd@debian.org>
+Build-Depends-Indep: dh-lisp, texinfo
+Build-Depends: debhelper (>= 5.0.0), dpatch (>= 2.0.0)
+Standards-Version: 3.7.2
+Homepage: http://www.nongnu.org/stumpwm/
+Vcs-Darcs: http://cl-debian.alioth.debian.org/repository/lcapello/stumpwm/
+
+Package: stumpwm
+Architecture: all
+Depends: ${misc:Depends}, cl-clx-sbcl | cmucl-source | clisp
+Suggests: slime, x-terminal-emulator, www-browser, info-browser, menu
+Description: a Common Lisp window manager
+ StumpWM is a window manager written entirely in Common Lisp. It
+ attempts to be highly customizable while relying entirely on the
+ keyboard for input. You will not find buttons, icons, title bars,
+ tool bars, or any of the other conventional GUI widgets.
+ .
+ These design decisions reflect the growing popularity of productive,
+ customizable lisp based systems.
+ .
+ Please ensure that you install compatible implementations of CL and
+ CLX.  That means either install sbcl and cl-clx-sbcl or cmucl and
+ cmucl-source or clisp only.
+ .
+ The suggested package, slime, lets you control a running StumpWM
+ session through Emacs.

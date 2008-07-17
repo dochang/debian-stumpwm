@@ -1,0 +1,63 @@
+#!/usr/bin/make -f
+
+
+pkg		:= stumpwm
+debpkg  	:= $(pkg)
+
+clc-source	:= usr/share/common-lisp/source
+clc-systems	:= usr/share/common-lisp/systems
+clc-files	:= $(clc-source)/$(pkg)
+doc-dir		:= usr/share/doc/$(debpkg)
+bin-dir		:= usr/bin
+
+
+build:
+	$(MAKE) stumpwm.info
+
+clean: unpatch
+	dh_testdir
+	dh_testroot
+	rm -f stumpwm.info
+	dh_clean
+
+install: patch build
+	dh_testdir
+	dh_testroot
+	dh_clean
+	dh_installdirs $(clc-files) $(doc-dir)/examples $(bin-dir)
+	dh_install $(pkg).asd $(clc-files)
+	dh_install *.lisp $(clc-files)
+	mv debian/$(debpkg)/$(clc-files)/sample-stumpwmrc.lisp debian/$(debpkg)/$(doc-dir)/examples/
+	cp debian/stumpwm.bin debian/$(debpkg)/$(bin-dir)/stumpwm
+
+binary-indep: install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs ChangeLog
+	dh_installdocs README NEWS
+	dh_installinfo stumpwm.info
+	dh_installman debian/stumpwm.1
+	dh_installmenu
+	dh_installwm /usr/bin/stumpwm
+	dh_lisp
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary-arch:
+
+binary: binary-indep
+
+# these are specific to dpatch >= 2.0.0
+patch:
+	dpatch apply-all
+
+unpatch:
+	dpatch deapply-all
+	rm -rf debian/patched
+
+
+.PHONY: build clean install binary-indep binary-arch binary patch unpatch

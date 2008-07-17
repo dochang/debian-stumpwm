@@ -3,6 +3,7 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
   * Move to team maintenance: Debian Common Lisp Team at
     http://pkg-common-lisp.alioth.debian.org
   * The Debian package is now maintained through Git.
+  * The Debian patches are now managed through quilt.
 
   * New Git checkout (7e21b9572202ae1da861864ce8760642e6d963b6), check
     the upstream NEWS file for user visible changes (Closes: #487168).
@@ -18,9 +19,20 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
       field.
     + add Vcs-Browser: field.
     + Depends: on cl-ppcre.
+    + Build-depends: on quilt.
 
+  * debian/patches/series: new file.
+  * debian/patches/02_correct-Stumpwm-StumpWM-in-README.diff:
+    + convert to quilt.
   * debian/patches/03_correct-Stumpwm-StumpWM-in-stumpwm.texi.dpatch:
     - physically remove the patch file.
+  * debian/patches/04_default-to-x-terminal-emulator.diff:
+    + convert to quilt and refresh.
+  * debian/patches/05_default-to-x-www-browser.diff:
+    + convert to quilt and refresh.
+
+  * debian/rules:
+    + adapt to quilt.
 
  --
 

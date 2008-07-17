@@ -1,0 +1,24 @@
+--- stumpwm.orig/bindings.lisp
++++ stumpwm/bindings.lisp
+@@ -49,8 +49,8 @@
+ (when (null *root-map*)
+   (setf *root-map*
+         (let ((m (make-sparse-keymap)))
+-          (define-key m (kbd "c") "exec xterm")
+-          (define-key m (kbd "C-c") "exec xterm")
++          (define-key m (kbd "c") "exec x-terminal-emulator")
++          (define-key m (kbd "C-c") "exec x-terminal-emulator")
+           (define-key m (kbd "e") "emacs")
+           (define-key m (kbd "C-e") "emacs")
+           (define-key m (kbd "n") "pull-hidden-next")
+--- stumpwm.orig/sample-stumpwmrc.lisp
++++ stumpwm/sample-stumpwmrc.lisp
+@@ -19,7 +19,7 @@
+ ;; Browse somewhere
+ (define-key *root-map* (kbd "b") "colon1 exec firefox http://www.")
+ ;; Ssh somewhere
+-(define-key *root-map* (kbd "C-s") "colon1 exec xterm -e ssh ")
++(define-key *root-map* (kbd "C-s") "colon1 exec x-terminal-emulator -e ssh ")
+ ;; Lock screen
+ (define-key *root-map* (kbd "C-l") "exec xlock")
+ 

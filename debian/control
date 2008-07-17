@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian Common Lisp Team <pkg-common-lisp-devel@lists.alioth.debian.org>
 Uploaders: Luca Capello <luca@pca.it>, Peter Van Eynde <pvaneynd@debian.org>
 Build-Depends-Indep: dh-lisp, texinfo
-Build-Depends: debhelper (>= 5.0.0), dpatch (>= 2.0.0)
+Build-Depends: debhelper (>= 5.0.0), quilt (>= 0.40)
 Standards-Version: 3.7.2
 Homepage: http://www.nongnu.org/stumpwm/
 Vcs-Git: http://git.debian.org/git/pkg-common-lisp/stumpwm.git

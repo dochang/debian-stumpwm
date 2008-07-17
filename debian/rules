@@ -1,6 +1,9 @@
 #!/usr/bin/make -f
 
 
+include /usr/share/quilt/quilt.make
+
+
 pkg		:= stumpwm
 debpkg  	:= $(pkg)
 
@@ -11,7 +14,7 @@ doc-dir		:= usr/share/doc/$(debpkg)
 bin-dir		:= usr/bin
 
 
-build:
+build: $(QUILT_STAMPFN)
 	$(MAKE) stumpwm.info
 
 clean: unpatch
@@ -51,13 +54,5 @@ binary-arch:
 
 binary: binary-indep
 
-# these are specific to dpatch >= 2.0.0
-patch:
-	dpatch apply-all
 
-unpatch:
-	dpatch deapply-all
-	rm -rf debian/patched
-
-
-.PHONY: build clean install binary-indep binary-arch binary patch unpatch
+.PHONY: build clean install binary-indep binary-arch binary

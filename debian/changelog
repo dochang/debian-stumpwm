@@ -21,6 +21,11 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
     + Depends: on cl-ppcre.
     + Build-Depends: on quilt.
 
+  * debian/copyright:
+    + update copyright assignment to 2008.
+    + convert to be machine-interpretable.
+    + list all Copyright holders based on single files contents.
+
   * debian/patches/series: new file.
   * debian/patches/02_correct-Stumpwm-StumpWM-in-README.diff:
     + convert to quilt.

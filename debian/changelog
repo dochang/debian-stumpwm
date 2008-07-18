@@ -19,7 +19,7 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
       field.
     + add Vcs-Browser: field.
     + Depends: on cl-ppcre.
-    + Build-depends: on quilt.
+    + Build-Depends: on quilt.
 
   * debian/patches/series: new file.
   * debian/patches/02_correct-Stumpwm-StumpWM-in-README.diff:

@@ -34,6 +34,9 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
   * debian/rules:
     + adapt to quilt.
 
+  * debian/stumpwm.doc-base:
+    + new section to 'Programming' (thanks to lintian).
+
  --
 
 stumpwm (1:20070908-1) unstable; urgency=low

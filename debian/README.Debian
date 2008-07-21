@@ -33,5 +33,16 @@ start the swank directly in your ~/.stumpwmrc with:
 Please refer to the SLIME documentation for more information.
 
 
- -- Luca Capello <luca@pca.it>, Tue, 22 Jul 2008 00:36:34 +0200
+* Load contrib files
+
+StumpWM comes with some user-contributed files to add extra features
+(e.g. CPU and battery status for the `mode-line').  You can load any
+of them by putting in your ~/.stumpwmrc:
+
+  * (load "/usr/share/common-lisp/source/stumpwm/contrib/FILE.lisp")
+
+Check the file sources to find out how to use the extra features.
+
+
+ -- Luca Capello <luca@pca.it>, Tue, 22 Jul 2008 00:41:51 +0200
 

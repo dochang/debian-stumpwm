@@ -44,12 +44,14 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
 
   * debian/README.Debian:
     + wrap at 70 columns.
+    + update instructions about how to load contrib files.
 
   * debian/rules:
     + adapt to quilt.
     + add 'configure' target, necessary for the Info manual.
     + replace upstream version in version.lisp.in with debian/commit.id
       and save it as version.lisp on 'build' target.
+    + install upstream contrib .lisp files.
     - use upstream `make clean` on 'clean' target.
     - remove the autoconf-generated files on 'clean' target.
     - do not install useless upstream asdf.lisp and make-image.lisp.

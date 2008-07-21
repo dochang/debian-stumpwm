@@ -37,12 +37,13 @@ install: patch build
 	dh_testdir
 	dh_testroot
 	dh_clean
-	dh_installdirs $(clc-files) $(doc-dir)/examples $(bin-dir)
+	dh_installdirs $(clc-files) $(clc-files)/contrib  $(doc-dir)/examples $(bin-dir)
 	dh_install $(pkg).asd $(clc-files)
 	dh_install *.lisp $(clc-files)
 	rm debian/$(debpkg)/$(clc-files)/asdf.lisp
 	rm debian/$(debpkg)/$(clc-files)/make-image.lisp
 	mv debian/$(debpkg)/$(clc-files)/sample-stumpwmrc.lisp debian/$(debpkg)/$(doc-dir)/examples/
+	dh_install contrib/*.lisp $(clc-files)/contrib
 	cp debian/stumpwm.bin debian/$(debpkg)/$(bin-dir)/stumpwm
 
 binary-indep: install

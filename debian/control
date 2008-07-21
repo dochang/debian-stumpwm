@@ -13,7 +13,7 @@ Vcs-Browser: http://git.debian.org/?p=pkg-common-lisp/stumpwm.git;a=summary
 Package: stumpwm
 Architecture: all
 Depends: ${misc:Depends}, cl-clx-sbcl | cmucl-source | clisp, cl-ppcre
-Suggests: slime, x-terminal-emulator, www-browser, info-browser, menu
+Suggests: slime, x-terminal-emulator, www-browser, info-browser, menu, x11-utils
 Description: a Common Lisp window manager
  StumpWM is a window manager written entirely in Common Lisp. It
  attempts to be highly customizable while relying entirely on the
@@ -29,3 +29,6 @@ Description: a Common Lisp window manager
  .
  The suggested package, slime, lets you control a running StumpWM
  session through Emacs.
+ .
+ If you need Xinerama support, you need the xdpyinfo utility from the
+ x11-utils package.

@@ -20,6 +20,8 @@ stumpwm (1:20080717-1) UNRELEASED; urgency=low
     + add Vcs-Browser: field.
     + Depends: on cl-ppcre.
     + Build-Depends: on quilt.
+    + Suggests: x11-utils for Xinerama support in screen.lisp and
+      explain it in the long Description:.
 
   * debian/copyright:
     + update copyright assignment to 2008.

@@ -49,6 +49,7 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
       and save it as version.lisp on 'build' target.
     - use upstream `make clean` on 'clean' target.
     - remove the autoconf-generated files on 'clean' target.
+    - do not install useless upstream asdf.lisp and make-image.lisp.
 
   * debian/stumpwm.doc-base:
     + new section to 'Programming' (thanks to lintian).

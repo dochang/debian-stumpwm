@@ -2,6 +2,9 @@
 
 This file documents user visible changes between versions of StumpWM
 
+* Changes since 0.9.4.1
+** added info command
+
 * Changes since 0.9.3
 ** new %interactivep% variable
 see defcommand in the manual.
@@ -22,7 +25,7 @@ pressing the number now selects the window by number in its frame.
 
 ** new commands modifiers and copy-last-message
 
-** new command grouplist and binding C-c g "
+** new command grouplist and binding C-t g "
 
 ** New keybinding C-t h c
 bound to describe-command

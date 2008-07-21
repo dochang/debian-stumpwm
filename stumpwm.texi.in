@@ -13,7 +13,7 @@
 @ifinfo
 This is the Stump Window Manager user manual.
 
-Copyright @copyright{} 2000, 2001 Shawn Betts
+Copyright @copyright{} 2000-2008 Shawn Betts
 
 Permission is granted to make and distribute verbatim
 copies of this manual provided the copyright notice and
@@ -50,7 +50,7 @@ translation approved by the Free Software Foundation.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2000, 2001 Shawn Betts
+Copyright @copyright{} 2000-2008 Shawn Betts
 
 Permission is granted to make and distribute verbatim
 copies of this manual provided the copyright notice and
@@ -361,6 +361,9 @@ List all the windows
 
 @item C-t 0-9
 Select a window by number
+
+@item C-t i
+Display information about the current window.
 
 @item C-t f
 Select a frame by number
@@ -695,6 +698,7 @@ An input function takes 2 arguments: the input structure and the key pressed.
 !!! title
 !!! windowlist
 !!! fullscreen
+!!! info
 
 ### *window-format*
 ### *window-name-source*
@@ -1130,7 +1134,7 @@ A caret followed by a single digit number changes the foreground color
 to the specified color. A @samp{*} can be used to specify the normal
 color. See the color listing below.
 
-@item^0-90-9
+@item ^0-90-9
 A caret followed by two digits sets the foreground and background
 color. The first digit refers to the foreground color and the second
 digit to the background color. A @samp{*} can be used in place of

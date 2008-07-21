@@ -47,21 +47,36 @@
 (defvar *max-command-alias-depth* 10
   "")
 
+;; XXX: I'd like to just use straight warn, but sbcl drops to the
+;; debugger when compiling so i've made a style warning instead
+;; -sabetts
+(define-condition command-docstring-warning (style-warning)
+  ((command :initarg :command))
+  (:report
+   (lambda (c s)
+     (format s "command ~a doesn't have a docstring" (slot-value c 'command)))))
+
 (defmacro defcommand (name (&rest args) (&rest interactive-args) &body body)
   "Create a command function and store its interactive hints in
 *command-hash*. The local variable %interactivep% can be used to check
 if the command was called interactively. If it is non-NIL then it was
 called from a keybinding or from the colon command."
   (check-type name symbol)
+  (let ((docstring (if (stringp (first body))
+                     (first body)
+                     (warn (make-condition 'command-docstring-warning :command name))))
+        (body (if (stringp (first body))
+                  (cdr body) body)))
   `(progn
      (defun ,name ,args
+       ,docstring
        (let ((%interactivep% *interactivep*)
 	     (*interactivep* nil))
 	 (declare (ignorable %interactivep%))
 	 ,@body))
      (setf (gethash ',name *command-hash*)
            (make-command :name ',name
-                         :args ',interactive-args))))
+                         :args ',interactive-args)))))
 
 (defmacro define-stumpwm-command (name (&rest args) &body body)
   "Deprecated. use `defcommand' instead."
@@ -92,7 +107,10 @@ alias name for the command that is only accessible interactively."
 
 (defun get-command-symbol (command)
   (if (stringp command)
-      (find-symbol (string-upcase command) :stumpwm)
+      (maphash (lambda (k v)
+                 (when (string-equal k command)
+                   (return-from get-command-symbol k)))
+               *command-hash*)
       command))
 
 (defun get-command-structure (command)
@@ -317,17 +335,18 @@ then describes the symbol."
 
 (defun select-group (screen query)
   "Attempt to match string QUERY against group number or partial name."
-  (let ((num (ignore-errors (parse-integer query)))
-        match)
-    (labels ((match (grp)
-               (let* ((name (group-name grp))
-                      (end (min (length name) (length query))))
-                 ;; try by name or number
-                 (or (string-equal name query :end1 end :end2 end)
-                     (eql (group-number grp) num)))))
-      (unless (null query)
-        (setf match (find-if #'match (screen-groups screen))))
-      match)))
+  (let ((num (ignore-errors (parse-integer query))))
+    (labels ((match-whole (grp)
+               (string-equal (group-name grp) query))
+             (match-partial (grp)
+               (let* ((end (min (length (group-name grp)) (length query))))
+                 (string-equal (group-name grp) query :end1 end :end2 end)))
+             (match-num (grp)
+               (eql (group-number grp) num)))
+      (when query
+        (or (find-if #'match-whole (screen-groups screen))
+            (find-if #'match-partial (screen-groups screen))
+            (find-if #'match-num (screen-groups screen)))))))
 
 (define-stumpwm-type :group (input prompt)
   (let ((match (select-group (current-screen)

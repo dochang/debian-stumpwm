@@ -24,6 +24,7 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
       explain it in the long Description:.
     + Build-Depends-Indep: on autoconf, clisp and cl-ppcre to build
       the Info manual (now generated from the .lisp files).
+    + Suggests: rlwrap for stumpish command completion.
 
   * debian/copyright:
     + update copyright assignment to 2008.
@@ -52,6 +53,7 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
     + replace upstream version in version.lisp.in with debian/commit.id
       and save it as version.lisp on 'build' target.
     + install upstream contrib .lisp files.
+    + install upstream contrib/stumpish binary.
     - use upstream `make clean` on 'clean' target.
     - remove the autoconf-generated files on 'clean' target.
     - do not install useless upstream asdf.lisp and make-image.lisp.

@@ -46,7 +46,7 @@ install: patch build
 binary-indep: install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs Changelogs
+	dh_installchangelogs ChangeLog
 	dh_installdocs README NEWS
 	dh_installinfo stumpwm.info
 	dh_installman debian/stumpwm.1

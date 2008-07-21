@@ -42,6 +42,9 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
   * debian/patches/06_add-upstream-changelog.diff:
     + add upstream ChangeLog generated from `git log`.
 
+  * debian/README.Debian:
+    + wrap at 70 columns.
+
   * debian/rules:
     + adapt to quilt.
     + add 'configure' target, necessary for the Info manual.

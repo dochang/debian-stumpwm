@@ -53,10 +53,13 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
     + replace upstream version in version.lisp.in with debian/commit.id
       and save it as version.lisp on 'build' target.
     + install upstream contrib .lisp files.
-    + install upstream contrib/stumpish binary.
+    + install upstream contrib/stumpish binary and its manpage.
     - use upstream `make clean` on 'clean' target.
     - remove the autoconf-generated files on 'clean' target.
     - do not install useless upstream asdf.lisp and make-image.lisp.
+
+  * debian/stumpish.1:
+    + new file.
 
   * debian/stumpwm.doc-base:
     + new section to 'Programming' (thanks to lintian).

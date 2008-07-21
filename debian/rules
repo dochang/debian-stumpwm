@@ -14,13 +14,23 @@ doc-dir		:= usr/share/doc/$(debpkg)
 bin-dir		:= usr/bin
 
 
-build: $(QUILT_STAMPFN)
+COMMIT_ID	:= $(shell cat debian/commit.id)
+DEBIAN_VERSION	:= Debian Git checkout $(COMMIT_ID)
+
+configure: $(QUILT_STAMPFN)
+	./autogen.sh
+	./configure --with-lisp=clisp \
+		--with-ppcre=/usr/share/common-lisp/source/cl-ppcre
+
+build: configure
+	sed -e 's/@PACKAGE_VERSION@/${DEBIAN_VERSION}/' version.lisp.in >version.lisp
 	$(MAKE) stumpwm.info
 
 clean: unpatch
 	dh_testdir
 	dh_testroot
-	rm -f stumpwm.info
+	[ ! -f Makefile ] || $(MAKE) clean
+	rm -rf autom4te.cache Makefile make-image.lisp version.lisp config.log config.status configure
 	dh_clean
 
 install: patch build
@@ -36,7 +46,7 @@ install: patch build
 binary-indep: install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs ChangeLog
+	dh_installchangelogs
 	dh_installdocs README NEWS
 	dh_installinfo stumpwm.info
 	dh_installman debian/stumpwm.1
@@ -55,4 +65,4 @@ binary-arch:
 binary: binary-indep
 
 
-.PHONY: build clean install binary-indep binary-arch binary
+.PHONY: configure build clean install binary-indep binary-arch binary

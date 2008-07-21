@@ -22,6 +22,8 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
     + Build-Depends: on quilt.
     + Suggests: x11-utils for Xinerama support in screen.lisp and
       explain it in the long Description:.
+    + Build-Depends-Indep: on autoconf, clisp and cl-ppcre to build
+      the Info manual (now generated from the .lisp files).
 
   * debian/copyright:
     + update copyright assignment to 2008.
@@ -40,6 +42,11 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
 
   * debian/rules:
     + adapt to quilt.
+    + add 'configure' target, necessary for the Info manual.
+    + replace upstream version in version.lisp.in with debian/commit.id
+      and save it as version.lisp on 'build' target.
+    - use upstream `make clean` on 'clean' target.
+    - remove the autoconf-generated files on 'clean' target.
 
   * debian/stumpwm.doc-base:
     + new section to 'Programming' (thanks to lintian).

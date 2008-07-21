@@ -39,6 +39,8 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
     + convert to quilt and refresh.
   * debian/patches/05_default-to-x-www-browser.diff:
     + convert to quilt and refresh.
+  * debian/patches/06_add-upstream-changelog.diff:
+    + add upstream ChangeLog generated from `git log`.
 
   * debian/rules:
     + adapt to quilt.

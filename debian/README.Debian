@@ -44,5 +44,17 @@ of them by putting in your ~/.stumpwmrc:
 Check the file sources to find out how to use the extra features.
 
 
- -- Luca Capello <luca@pca.it>, Tue, 22 Jul 2008 00:41:51 +0200
+* Emacs `stumpwm-mode'
+
+To directly eval code from Emacs buffers into a running StumpWM using
+StumpISH, please do the following from Emacs:
+
+  * M-x load-file RET /usr/share/doc/stumpwm/stumpwm-mode.el RET
+  * M-x stumpwm-mode
+
+Now you can call `stumpwm-eval-defun', `stumpwm-eval-last-sexp' and
+`stumpwm-eval-region', the first two mapped to the regular bindings.
+
+
+ -- Luca Capello <luca@pca.it>, Tue, 22 Jul 2008 01:53:46 +0200
 

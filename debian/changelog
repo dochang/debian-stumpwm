@@ -46,6 +46,7 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
   * debian/README.Debian:
     + wrap at 70 columns.
     + update instructions about how to load contrib files.
+    + update instructions about how to use stumpwm-mode.el.
 
   * debian/rules:
     + adapt to quilt.
@@ -54,6 +55,7 @@ stumpwm (1:20080721-1) UNRELEASED; urgency=low
       and save it as version.lisp on 'build' target.
     + install upstream contrib .lisp files.
     + install upstream contrib/stumpish binary and its manpage.
+    + install upstream contrib/stumpwm-mode.el in usr/share/doc/stumpwm/.
     - use upstream `make clean` on 'clean' target.
     - remove the autoconf-generated files on 'clean' target.
     - do not install useless upstream asdf.lisp and make-image.lisp.

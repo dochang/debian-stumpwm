@@ -46,6 +46,7 @@ install: patch build
 	dh_install contrib/*.lisp $(clc-files)/contrib
 	cp debian/stumpwm.bin debian/$(debpkg)/$(bin-dir)/stumpwm
 	dh_install contrib/stumpish $(bin-dir)
+	dh_install contrib/stumpwm-mode.el $(doc-dir)
 
 binary-indep: install
 	dh_testdir

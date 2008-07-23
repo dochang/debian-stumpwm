@@ -9,6 +9,7 @@ stumpwm (1:20080721-2) UNRELEASED; urgency=low
 
   * debian/stumpwm.1:
     + default CL implementation is CLISP.
+    + update copyright assignment to 2008.
 
   * debian/stumpwm.bin:
     + default CL implementation is CLISP.

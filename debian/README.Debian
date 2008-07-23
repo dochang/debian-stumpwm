@@ -20,6 +20,19 @@ At least one trailing semicolon is required since ~/.stumpwmrc
 is read by StumpWM as its configuration file, thus the debian
 declaration must be commented out.
 
+Note for SBCL users: unfortunately, the first time CLX-0.7.3 is
+loaded it requires manual intervention:
+
+  http://bugs.debian.org/492046
+
+Thus, if you want to start StumpWM you need to be sure to have loaded
+CLX at least once, like, in a new terminal:
+
+  $ sbcl
+  * (asdf:oos 'asdf:load-op 'clx)
+    ACCEPT (i.e. press 2 and then RET)
+  * (quit)
+
 
 * Control a running StumpWM session
 
@@ -56,5 +69,5 @@ Now you can call `stumpwm-eval-defun', `stumpwm-eval-last-sexp' and
 `stumpwm-eval-region', the first two mapped to the regular bindings.
 
 
- -- Luca Capello <luca@pca.it>, Wed, 23 Jul 2008 20:09:07 +0200
+ -- Luca Capello <luca@pca.it>, Wed, 23 Jul 2008 21:46:04 +0200
 

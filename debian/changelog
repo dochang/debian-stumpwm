@@ -5,6 +5,7 @@ stumpwm (1:20080721-2) UNRELEASED; urgency=low
 
   * debian/README.Debian:
     + default CL implementation is CLISP.
+    + add a note for SBCL users about CLX bug #492046.
 
   * debian/stumpwm.bin:
     + default CL implementation is CLISP.

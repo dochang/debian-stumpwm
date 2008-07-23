@@ -8,6 +8,7 @@ stumpwm (1:20080721-2) UNRELEASED; urgency=low
 
   * debian/stumpwm.bin:
     + default CL implementation is CLISP.
+    + abort if $LISP is not in user's $PATH.
 
  --
 

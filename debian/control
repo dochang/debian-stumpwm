@@ -12,7 +12,7 @@ Vcs-Browser: http://git.debian.org/?p=pkg-common-lisp/stumpwm.git;a=summary
 
 Package: stumpwm
 Architecture: all
-Depends: ${misc:Depends}, cl-clx-sbcl | cmucl-source | clisp, cl-ppcre
+Depends: ${misc:Depends}, clisp | cl-clx-sbcl | cmucl-source, cl-ppcre
 Suggests: slime, x-terminal-emulator, www-browser, info-browser, menu, x11-utils, rlwrap
 Description: a Common Lisp window manager
  StumpWM is a window manager written entirely in Common Lisp. It

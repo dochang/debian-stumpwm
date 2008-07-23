@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Time-stamp: <2007/09/25 19:50:23 CEST luca@gismo.pca.it>
+# Time-stamp: <2008/07/23 20:07:36 CEST luca@gismo.pca.it>
 #
 # Copyright 2007 Luca Capello <luca@pca.it>
 # This file is part of the Debian StumpWM package and is licensed
@@ -36,7 +36,7 @@ load_lisp() {
 if [ -z "$LISP" ]; then
     LISP_STUMPWMRC_TMP="`grep debian= $HOME/.stumpwmrc`"
     LISP_STUMPWMRC=${LISP_STUMPWMRC_TMP##*=}
-    LISP=${LISP_STUMPWMRC:-sbcl}
+    LISP=${LISP_STUMPWMRC:-clisp}
 fi
 
 load_lisp $LISP

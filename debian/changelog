@@ -1,3 +1,16 @@
+stumpwm (1:20080721-2) UNRELEASED; urgency=low
+
+  * debian/control:
+    + default CL implementation is CLISP, it shows less memory usage.
+
+  * debian/README.Debian:
+    + default CL implementation is CLISP.
+
+  * debian/stumpwm.bin:
+    + default CL implementation is CLISP.
+
+ --
+
 stumpwm (1:20080721-1) unstable; urgency=low
 
   * Move to team maintenance: Debian Common Lisp Team at

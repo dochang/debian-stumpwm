@@ -1,3 +1,10 @@
+stumpwm (1:20080721-3) UNRELEASED; urgency=low
+
+  * debian/watch:
+    + new file, thanks to lintian.
+
+ --
+
 stumpwm (1:20080721-2) unstable; urgency=low
 
   * debian/control:

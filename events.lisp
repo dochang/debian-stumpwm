@@ -80,47 +80,35 @@
                                   (xlib:drawable-y (window-parent win))
                                   (window-width win) (window-height win) 0))
 
-(defun handle-managed-window (window width height stack-mode value-mask)
-  "This is a managed window so deal with it appropriately."
-  ;; Grant the stack-mode change (if it's mapped)
-  (set-window-geometry window :width width :height height)
-  (maximize-window window)
-  (when (window-urgent-p window)
-    (window-clear-urgency window))
-  (when (and (window-in-current-group-p window)
-             ;; stack-mode change?
-             (= 64 (logand value-mask 64)))
-    (case stack-mode
-      (:above
-       (maybe-raise-window window))))
-  (update-configuration window))
-
-(defun handle-window-move (win x y relative-to &optional (value-mask -1))
-  (when *honor-window-moves*
-    (dformat 3 "Window requested new position ~D,~D relative to ~S~%" x y relative-to)
-    (labels ((has-x (mask) (= 1 (logand mask 1)))
-             (has-y (mask) (= 2 (logand mask 2))))
-      (when (or (eq relative-to :root) (has-x value-mask) (has-y value-mask))
-        (let* ((group (window-group win))
-               (pos  (if (eq relative-to :parent)
-                         (list
-                          (+ (xlib:drawable-x (window-parent win)) x)
-                          (+ (xlib:drawable-y (window-parent win)) y))
-                         (list x y)))
-               (frame (apply #'find-frame group pos)))
-          (when frame
-            (pull-window win frame)))))))
-
 (define-stump-event-handler :configure-request (stack-mode #|parent|# window #|above-sibling|# x y width height border-width value-mask)
-  ;; Grant the configure request but then maximize the window after the granting.
-  (dformat 3 "CONFIGURE REQUEST ~@{~S ~}~%" stack-mode window x y width height border-width value-mask)
-  (let ((win (find-window window)))
-    (cond
-      (win
-       (handle-window-move win x y :parent value-mask)
-       (handle-managed-window win width height stack-mode value-mask))
-      ((handle-mode-line-window window x y width height))
-      (t (handle-unmanaged-window window x y width height border-width value-mask)))))
+  (labels ((has-x () (= 1 (logand value-mask 1)))
+           (has-y () (= 2 (logand value-mask 2)))
+           (has-w () (= 4 (logand value-mask 4)))
+           (has-h () (= 8 (logand value-mask 8)))
+           (has-stackmode () (= 64 (logand value-mask 64))))
+    ;; Grant the configure request but then maximize the window after the granting.
+    (dformat 3 "CONFIGURE REQUEST ~@{~S ~}~%" stack-mode window x y width height border-width value-mask)
+    (let ((win (find-window window)))
+      (cond
+        (win
+         (when (or (has-w) (has-h) (has-stackmode))
+           ;; FIXME: I don't know why we need to clear the urgency bit
+           ;; here, but the old code would anytime a resize or raise
+           ;; request came in, so keep doing it. -sabetts
+           (when (window-urgent-p win)
+             (window-clear-urgency win)))
+         (when (or (has-x) (has-y))
+           (group-move-request (window-group win) win x y :parent))
+         (when (or (has-w) (has-h))
+           (group-resize-request (window-group win) win width height))
+         (when (has-stackmode)
+           (group-raise-request (window-group win) win stack-mode))
+         ;; Just to be on the safe side, hit the client with a fake
+         ;; configure event. The ICCCM says we have to do this at
+         ;; certain times; exactly when, I've sorta forgotten.
+         (update-configuration win))
+        ((handle-mode-line-window win x y width height))
+        (t (handle-unmanaged-window window x y width height border-width value-mask))))))
 
 (define-stump-event-handler :configure-notify (stack-mode #|parent|# window #|above-sibling|# x y width height border-width value-mask)
   (dformat 4 "CONFIGURE NOTIFY ~@{~S ~}~%" stack-mode window x y width height border-width value-mask)
@@ -138,7 +126,7 @@
              (if new-heads
                  (progn
                    (scale-screen screen new-heads)
-                   (mapc 'sync-all-frame-windows (screen-groups screen))
+                   (mapc 'group-add-head (screen-groups screen))
                    (update-mode-lines screen))
                  (dformat 1 "Invalid configuration! ~S~%" new-heads)))))))))
 
@@ -170,16 +158,7 @@
          t)
         (t
          (let ((window (process-mapped-window screen window)))
-           ;; Give it focus
-           (if (deny-request-p window *deny-map-request*)
-               (unless *suppress-deny-messages*
-                 (if (eq (window-group window) (current-group))
-                     (echo-string (window-screen window) (format nil "'~a' denied map request" (window-name window)))
-                     (echo-string (window-screen window) (format nil "'~a' denied map request in group ~a" (window-name window) (group-name (window-group window))))))
-               (frame-raise-window (window-group window) (window-frame window) window
-                                   (if (eq (window-frame window)
-                                           (tile-group-current-frame (window-group window)))
-                                       t nil)))))))))
+           (group-raise-request (window-group window) window :map)))))))
 
 (define-stump-event-handler :unmap-notify (send-event-p event-window window #|configure-p|#)
   ;; There are two kinds of unmap notify events: the straight up
@@ -219,60 +198,70 @@
             (let ((ml (find-mode-line-window window)))
               (when ml (destroy-mode-line-window ml))))))))
 
-(defun read-from-keymap (kmap &optional update-fn)
-  "Read a sequence of keys from the user, guided by the keymap,
-KMAP and return the binding or nil if the user hit an unbound sequence.
+(defun read-from-keymap (kmaps &optional update-fn)
+  "Read a sequence of keys from the user, guided by the keymaps,
+KMAPS and return the binding or nil if the user hit an unbound sequence.
 
 The Caller is responsible for setting up the input focus."
   (let* ((code-state (read-key-no-modifiers))
          (code (car code-state))
          (state (cdr code-state)))
-    (handle-keymap kmap code state nil nil update-fn)))
+    (handle-keymap kmaps code state nil nil update-fn)))
 
-(defun handle-keymap (kmap code state key-seq grab update-fn)
+(defun handle-keymap (kmaps code state key-seq grab update-fn)
   "Find the command mapped to the (code state) and return it."
-  ;; a symbol is assumed to have a hashtable as a value.
-  (dformat 1 "Awaiting key ~a~%" kmap)
-  (let ((keymap '()))
-    (when (and (symbolp kmap)
-               (boundp kmap)
-               (hash-table-p (symbol-value kmap)))
-      (setf
-       keymap kmap
-       kmap (symbol-value kmap)))
-    (check-type kmap hash-table)
-    (let* ((key (code-state->key code state))
-           (cmd (lookup-key kmap key))
-           (key-seq (cons key key-seq)))
-      (dformat 1 "key-press: ~S ~S ~S~%" key state cmd)
-      (run-hook-with-args *key-press-hook* key key-seq cmd)
-      (when update-fn
-        (funcall update-fn key-seq))
-      (if cmd
-          (cond
-            ((or (hash-table-p cmd)
-                 (and (symbolp cmd)
-                      (boundp cmd)
-                      (hash-table-p (symbol-value cmd))))
-             (when grab
-               (grab-pointer (current-screen)))
-             (let* ((code-state (read-key-no-modifiers))
-                    (code (car code-state))
-                    (state (cdr code-state)))
-               (unwind-protect
-                    (handle-keymap cmd code state key-seq nil update-fn)
-                 (when grab (ungrab-pointer)))))
-            (t (values cmd key-seq)))
-          (if (find key (list (kbd "?")
-                              (kbd "C-h"))
-                    :test 'equalp)
-              (progn (display-keybinding keymap) (values t key-seq))
-              (values nil key-seq))))))
+  ;; KMAPS is a list of keymaps that may match the user's key sequence.
+  (dformat 1 "Awaiting key ~a~%" kmaps)
+  (let* ((key (code-state->key code state))
+         (key-seq (cons key key-seq))
+         (bindings (mapcar (lambda (m)
+                             (lookup-key m key))
+                           (dereference-kmaps kmaps)))
+         ;; if the first non-nil thing is another keymap, then grab
+         ;; all the keymaps and recurse on them. If the first one is a
+         ;; command, then we're done.
+         (match (find-if-not 'null bindings)))
+    (dformat 1 "key-press: ~S ~S ~S~%" key state match)
+    (run-hook-with-args *key-press-hook* key key-seq match)
+    (when update-fn
+      (funcall update-fn key-seq))
+    (cond ((kmap-or-kmap-symbol-p match)
+           (when grab
+             (grab-pointer (current-screen)))
+           (let* ((code-state (read-key-no-modifiers))
+                  (code (car code-state))
+                  (state (cdr code-state)))
+             (unwind-protect
+                  (handle-keymap (remove-if-not 'kmap-or-kmap-symbol-p bindings) code state key-seq nil update-fn)
+               (when grab (ungrab-pointer)))))
+          (match
+           (values match key-seq))
+          ((and (find key (list (kbd "?")
+                                (kbd "C-h"))
+                      :test 'equalp))
+           (apply 'display-bindings-for-keymaps (reverse (cdr key-seq)) (dereference-kmaps kmaps))
+           (values t key-seq))
+          (t
+           (values nil key-seq)))))
+
+(defun top-maps (&optional (group (current-group)))
+  "Return all top level keymaps that are active."
+  (append
+   ;; The plain jane top map is first because that's where users are
+   ;; going to throw in their universally accessible customizations
+   ;; which we don't want groups or minor modes shadowing them.
+   (list '*top-map*)
+   ;; TODO: Minor Mode maps go here
+   ;; lastly, group maps. Last because minor modes should be able to
+   ;; shadow a group's default bindings.
+   (loop for i in *group-top-maps*
+      when (typep group (first i))
+      collect (second i))))
 
 (define-stump-event-handler :key-press (code state #|window|#)
   (labels ((get-cmd (code state)
              (with-focus (screen-key-window (current-screen))
-               (handle-keymap *top-map* code state nil t nil))))
+               (handle-keymap (top-maps) code state nil t nil))))
     (unwind-protect
          ;; modifiers can sneak in with a race condition. so avoid that.
          (unless (is-modifier code)
@@ -356,10 +345,10 @@ converted to an atom is removed."
      ;; Let the mode line know about the new name.
      (update-all-mode-lines))
     (:wm_normal_hints
-     (setf (window-normal-hints window) (xlib:wm-normal-hints (window-xwin window))
+     (setf (window-normal-hints window) (get-normalized-normal-hints (window-xwin window))
            (window-type window) (xwin-type (window-xwin window)))
      (dformat 4 "new hints: ~s~%" (window-normal-hints window))
-     (maximize-window window))
+     (window-sync window :normal-hints))
     (:wm_hints
      (maybe-set-urgency window))
     (:wm_class
@@ -369,7 +358,7 @@ converted to an atom is removed."
      (setf (window-role window) (xwin-role (window-xwin window))))
     (:wm_transient_for
      (setf (window-type window) (xwin-type (window-xwin window)))
-     (maximize-window window))
+     (window-sync window :type))
     (:_NET_WM_STATE
      ;; Some clients put really big numbers in the list causing
      ;; atom-name to fail, so filter out anything that can't be
@@ -440,7 +429,7 @@ converted to an atom is removed."
       (cond
         ((setf screen (find-screen window))
          ;; root exposed
-         (show-frame-outline (screen-current-group screen) nil))
+         (group-root-exposure (screen-current-group screen)))
         ((setf screen (find-message-window-screen window))
          ;; message window exposed
          (if (plusp (screen-ignore-msg-expose screen))
@@ -468,16 +457,13 @@ converted to an atom is removed."
   (dformat 2 "client requests to go fullscreen~%")
   (add-wm-state (window-xwin window) :_NET_WM_STATE_FULLSCREEN)
   (setf (window-fullscreen window) t)
-  (maximize-window window)
   (focus-window window))
 
 (defun deactivate-fullscreen (window)
   (setf (window-fullscreen window) nil)
   (dformat 2 "client requests to leave fullscreen~%")
   (remove-wm-state (window-xwin window) :_NET_WM_STATE_FULLSCREEN)
-  (setf (xlib:drawable-border-width (window-parent window)) (default-border-width-for-type window))
-  (maximize-window window)
-  (update-window-border window)
+  (update-decoration window)
   (update-mode-lines (current-screen)))
 
 (defun update-fullscreen (window action)
@@ -494,11 +480,22 @@ converted to an atom is removed."
            (deactivate-fullscreen window)
            (activate-fullscreen window))))))
 
+(defun maybe-map-window (window)
+  (if (deny-request-p window *deny-map-request*)
+      (unless *suppress-deny-messages*
+        (if (eq (window-group window) (current-group))
+            (echo-string (window-screen window) (format nil "'~a' denied map request" (window-name window)))
+            (echo-string (window-screen window) (format nil "'~a' denied map request in group ~a" (window-name window) (group-name (window-group window))))))
+      (frame-raise-window (window-group window) (window-frame window) window
+                          (if (eq (window-frame window)
+                                  (tile-group-current-frame (window-group window)))
+                              t nil))))
+
 (defun maybe-raise-window (window)
   (if (deny-request-p window *deny-raise-request*)
       (unless (or *suppress-deny-messages*
                   ;; don't mention windows that are already visible
-                  (eq (frame-window (window-frame window)) window))
+                  (group-window-visible-p (window-group window) window))
         (if (eq (window-group window) (current-group))
             (echo-string (window-screen window) (format nil "'~a' denied raise request" (window-name window)))
             (echo-string (window-screen window) (format nil "'~a' denied raise request in group ~a" (window-name window) (group-name (window-group window))))))
@@ -563,7 +560,7 @@ converted to an atom is removed."
        (let ((x (elt data 1))
              (y (elt data 2)))
          (dformat 3 "!!! Data: ~S~%" data)
-         (handle-window-move our-window x y :relative :root)))))
+         (group-move-request (window-group our-window) our-window x y :root)))))
   (t
    (dformat 2 "ignored message~%"))))
 
@@ -575,19 +572,19 @@ converted to an atom is removed."
 (defun focus-all (win)
   "Focus the window, frame, group and screen belonging to WIN. Raise
 the window in it's frame."
-  (when (and win (window-frame win))
+  (when win
     (unmap-message-window (window-screen win))
     (switch-to-screen (window-screen win))
-    (let ((frame (window-frame win))
-          (group (window-group win)))
+    (let ((group (window-group win)))
       (switch-to-group group)
-      (frame-raise-window group frame win))))
+      (group-focus-window (window-group win) win))))
 
 (define-stump-event-handler :enter-notify (window mode)
   (when (and window (eq mode :normal) (eq *mouse-focus-policy* :sloppy))
     (let ((win (find-window window)))
       (when (and win (find win (top-windows)))
-        (focus-all win)))))
+        (focus-all win)
+        (update-all-mode-lines)))))
 
 (define-stump-event-handler :button-press (window code x y child time)
   ;; Pass click to client
@@ -595,18 +592,11 @@ the window in it's frame."
   (let (screen ml win)
     (cond
       ((and (setf screen (find-screen window)) (not child))
-       (when (and (eq *mouse-focus-policy* :click)
-                  *root-click-focuses-frame*)
-         (let* ((group (screen-current-group screen))
-                (frame (find-frame group x y)))
-           (when frame
-             (focus-frame group frame))))
-       (run-hook-with-args *root-click-hook* screen code x y))
+       (group-button-press (screen-current-group screen) x y :root))
       ((setf ml (find-mode-line-window window))
        (run-hook-with-args *mode-line-click-hook* ml code x y))
-      ((setf win (find-window-by-parent window (visible-windows)))
-       (when (eq *mouse-focus-policy* :click)
-         (focus-all win))))))
+      ((setf win (find-window-by-parent window (top-windows)))
+       (group-button-press (window-group win) x y win)))))
 
 ;; Handling event :KEY-PRESS
 ;; (:DISPLAY #<XLIB:DISPLAY :0 (The X.Org Foundation R60700000)> :EVENT-KEY :KEY-PRESS :EVENT-CODE 2 :SEND-EVENT-P NIL :CODE 45 :SEQUENCE 1419 :TIME 98761213 :ROOT #<XLIB:WINDOW :0 96> :WINDOW #<XLIB:WINDOW :0 6291484> :EVENT-WINDOW #<XLIB:WINDOW :0 6291484> :CHILD

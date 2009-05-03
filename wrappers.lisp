@@ -28,6 +28,9 @@
 
 (export '(getenv))
 
+(define-condition not-implemented (stumpwm-error)
+  () (:documentation "Describes a non implemented functionnality."))
+
 ;;; XXX: DISPLAY env var isn't set for cmucl
 (defun run-prog (prog &rest opts &key args (wait t) &allow-other-keys)
   "Common interface to shell. Does not return anything useful."
@@ -63,9 +66,12 @@
                                                 (string= "DISPLAY=" str :end2 (min 8 (length str))))
                                               (sb-ext:posix-environ)))
                 opts)
-  #+openmcl (apply #'ccl:run-program prog args :wait wait :output t :error t)
-  #-(or allegro clisp cmu gcl liquid lispworks lucid sbcl openmcl)
-  (error 'not-implemented :proc (list 'run-prog prog opts)))
+  #+ccl (ccl:run-program prog (mapcar (lambda (s)
+                                        (if (simple-string-p s) s (coerce s 'simple-string)))
+                                      args)
+                         :wait wait :output t :error t)
+  #-(or allegro clisp cmu gcl liquid lispworks lucid sbcl ccl)
+  (error 'not-implemented))
 
 ;;; XXX: DISPLAY isn't set for cmucl
 (defun run-prog-collect-output (prog &rest args)
@@ -94,10 +100,13 @@
                                                   (remove-if (lambda (str)
                                                                (string= "DISPLAY=" str :end2 (min 8 (length str))))
                                                              (sb-ext:posix-environ)))))
-  #+openmcl (with-output-to-string (s)
-              (ccl:run-program prog args :wait t :output s :error t))
-  #-(or allegro clisp cmu sbcl openmcl)
-  (error 'not-implemented :proc (list 'pipe-input prog args)))
+  #+ccl (with-output-to-string (s)
+          (ccl:run-program prog (mapcar (lambda (s)
+                                          (if (simple-string-p s) s (coerce s 'simple-string)))
+                                        args)
+                           :wait t :output s :error t))
+  #-(or allegro clisp cmu sbcl ccl)
+  (error 'not-implemented))
 
 (defun getenv (var)
   "Return the value of the environment variable."
@@ -113,7 +122,7 @@
   #+sbcl (sb-posix:getenv (string var))
   #+openmcl (ccl:getenv (string var))
   #-(or allegro clisp cmu gcl lispworks lucid mcl sbcl scl openmcl)
-  (error 'not-implemented :proc (list 'getenv var)))
+  (error 'not-implemented))
 
 (defun (setf getenv) (val var)
   "Set the value of the environment variable, @var{var} to @var{val}."
@@ -132,7 +141,7 @@
   #+sbcl (sb-posix:putenv (format nil "~A=~A" (string var) (string val)))
   #+openmcl (ccl:setenv (string var) (string val))
   #-(or allegro clisp cmu gcl lispworks lucid sbcl scl openmcl)
-  (error 'not-implemented :proc (list '(setf getenv) var)))
+  (error 'not-implemented))
 
 (defun pathname-is-executable-p (pathname)
   "Return T if the pathname describes an executable file."
@@ -172,15 +181,16 @@
   "print a backtrace of FRAMES number of frames to standard-output"
   #+sbcl (sb-debug:backtrace frames *standard-output*)
   #+clisp (ext:show-stack 1 frames (sys::the-frame))
-  #+openmcl (ccl:print-call-history :count frames)
+  #+ccl (ccl:print-call-history :count frames :stream *standard-output* :detailed-p nil)
 
-  #-(or sbcl clisp openmcl) (write-line "Sorry, no backtrace for you."))
+  #-(or sbcl clisp ccl) (write-line "Sorry, no backtrace for you."))
 
 (defun bytes-to-string (data)
   "Convert a list of bytes into a string."
-  #+sbcl
-  (sb-ext:octets-to-string
-   (make-array (length data) :element-type '(unsigned-byte 8) :initial-contents data))
+  #+sbcl (handler-bind
+             ((sb-impl::octet-decoding-error #'(lambda (c) (invoke-restart 'use-value "?"))))
+          (sb-ext:octets-to-string
+           (make-array (length data) :element-type '(unsigned-byte 8) :initial-contents data)))
   #+clisp
   (ext:convert-string-from-bytes 
    (make-array (length data) :element-type '(unsigned-byte 8) :initial-contents data)
@@ -224,64 +234,79 @@ they should be windows. So use this function to make a window out of them."
   #+clisp (make-instance 'xlib:window :id (slot-value xobject 'xlib::id) :display *display*)
   #+sbcl (xlib::make-window :id (slot-value xobject 'xlib::id) :display *display*)
   #-(or sbcl clisp)
-  (error 'not-implemented :proc (list 'make-xlib-window xobject)))
+  (error 'not-implemented))
 
 ;; Right now clisp and sbcl both work the same way
 (defun lookup-error-recoverable-p ()
-  #+(or clisp sbcl) (find :one (compute-restarts))
+  #+(or clisp sbcl) (find :one (compute-restarts) :key 'restart-name)
   #-(or clisp sbcl) nil)
 
 (defun recover-from-lookup-error ()
   #+(or clisp sbcl) (invoke-restart :one)
-  #-(or clisp sbcl) (error "unimplemented"))
+  #-(or clisp sbcl) (error 'not-implemented))
 
-;;; SBCL workaround for a clx caching bug. This is taken from portable-clx's display.lisp
+;;; CLISP does not include features to distinguish different Unix
+;;; flavours (at least until version 2.46). Until this is fixed, use a
+;;; hack to determine them.
 
-;; Define functions to find the CLX data types given a display and resource-id
-;; If the data type is being cached, look there first.
-#+sbcl (in-package #:xlib)
-#+sbcl
-(macrolet ((generate-lookup-functions (useless-name &body types)
-	    `(within-definition (,useless-name generate-lookup-functions)
-	       ,@(mapcar
-		   #'(lambda (type)
-		       `(defun ,(xintern 'lookup- type)
-			       (display id)
-			  (declare (type display display)
-				   (type resource-id id))
-			  (declare (clx-values ,type))
-			  ,(if (member type +clx-cached-types+)
-			       `(let ((,type (lookup-resource-id display id)))
-				  (cond ((null ,type) ;; Not found, create and save it.
-					 (setq ,type (,(xintern 'make- type)
-						      :display display :id id))
-					 (save-id display id ,type))
-					;; Found.  Check the type
-                                        ((type? ,type ',type) ,type)
-                                        (t 
-                                         (restart-case
-                                             (x-error 'lookup-error
-                                                      :id id
-                                                      :display display
-                                                      :type ',type
-                                                      :object ,type)
-                                           (:one ()
-                                             :report "Invalidate this cache entry"
-                                             (save-id display id (,(xintern 'make- type) :display display :id id)))
-                                           (:all ()
-                                             :report "Invalidate all display cache"
-                                             (clrhash (display-resource-id-map display))
-                                             (save-id display id (,(xintern 'make- type) :display display :id id)))))))
-			       ;; Not being cached.  Create a new one each time.
-			       `(,(xintern 'make- type)
-				 :display display :id id))))
-		   types))))
-  (generate-lookup-functions ignore
-    drawable
-    window
-    pixmap
-    gcontext
-    cursor
-    colormap
-    font))
-#+sbcl (in-package #:stumpwm)
+#+ (and clisp (not (or linux freebsd)))
+(eval-when (eval load compile)
+  (let ((osname (posix:uname-sysname (posix:uname))))
+    (cond
+      ((string= osname "Linux") (pushnew :linux *features*))
+      ((string= osname "FreeBSD") (pushnew :freebsd *features*))
+      (t (warn "Your operating system is not recognized.")))))
+
+;;; On GNU/Linux some contribs use sysfs to figure out useful info for
+;;; the user. SBCL upto at least 1.0.16 (but probably much later) has
+;;; a problem handling files in sysfs caused by SBCL's slightly
+;;; unusual handling of files in general and Linux' sysfs violating
+;;; POSIX. When this situation is resolved, this function may be removed.
+#+ linux
+(export '(read-line-from-sysfs))
+
+#+ linux
+(defun read-line-from-sysfs (stream &optional (blocksize 80))
+  "READ-LINE, but with a workaround for a known SBCL/Linux bug
+regarding files in sysfs. Data is read in chunks of BLOCKSIZE bytes."
+  #- sbcl
+  (declare (ignore blocksize))
+  #- sbcl
+  (read-line stream)
+  #+ sbcl
+  (let ((buf (make-array blocksize
+			 :element-type '(unsigned-byte 8)
+			 :initial-element 0))
+	(fd (sb-sys:fd-stream-fd stream))
+	(string-filled 0)
+	(string (make-string blocksize))
+	bytes-read
+	pos
+	(stringlen blocksize))
+
+    (loop
+       ; Read in the raw bytes
+       (setf bytes-read
+	     (sb-unix:unix-read fd (sb-sys:vector-sap buf) blocksize))
+
+       ; This is # bytes both read and in the correct line.
+       (setf pos (or (position (char-code #\Newline) buf) bytes-read))
+
+       ; Resize the string if necessary.
+       (when (> (+ pos string-filled) stringlen)
+	 (setf stringlen (max (+ pos string-filled)
+			      (* 2 stringlen)))
+	 (let ((new (make-string stringlen)))
+	   (replace new string)
+	   (setq string new)))
+
+       ; Translate read bytes to string
+       (setf (subseq string string-filled)
+	     (sb-ext:octets-to-string (subseq buf 0 pos)))
+
+       (incf string-filled pos)
+
+       (if (< pos blocksize)
+	   (return (subseq string 0 string-filled))))))
+
+;;; EOF

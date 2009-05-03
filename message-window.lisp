@@ -76,8 +76,6 @@ function expects to be wrapped in a with-state for win."
             (xlib:window-priority win) :above)
       (setup-win-gravity screen win *message-window-gravity*))
     (xlib:map-window win)
-    ;; Clear the window
-    (xlib:clear-area win)
     (incf (screen-ignore-msg-expose screen))
     ;; Have to flush this or the window might get cleared
     ;; after we've already started drawing it.
@@ -184,7 +182,7 @@ function expects to be wrapped in a with-state for win."
             (xlib:drawable-width win) width))
     (xlib:clear-area win)
     (xlib:display-finish-output *display*)
-    (xlib:draw-image-glyphs win gcontext 0 (xlib:font-ascent font) string)))
+    (xlib:draw-image-glyphs win gcontext 0 (xlib:font-ascent font) string :translate #'translate-id :size 16)))
 
 (defun push-last-message (screen strings highlights)
   ;; only push unique messages
@@ -227,6 +225,7 @@ function expects to be wrapped in a with-state for win."
           (cancel-timer *message-window-timer*)
           (setf *message-window-timer* nil))
         (reset-message-window-timer))
+    (dformat 5 "Outputting a message:~%~{        ~a~%~}" strings)
     (apply 'run-hook-with-args *message-hook* strings)))
 
 (defun echo-string (screen msg)
@@ -257,7 +256,8 @@ message does not time out."
 (defvar *lastmsg-nth* nil)
 
 (defcommand lastmsg () ()
-  ;; Allow the user to go back through the message history
+  "Display the last message. If the previous command was lastmsg, then
+continue cycling back through the message history."
   (if (string= *last-command* "lastmsg")
       (progn
         (incf *lastmsg-nth*)

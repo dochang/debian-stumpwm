@@ -7,7 +7,7 @@
 
 @dircategory X11
 @direntry
-* StumpWM: (StumpWM).       A Common Lisp window manager
+* StumpWM: (stumpwm).       A Common Lisp window manager
 @end direntry
 
 @ifinfo
@@ -81,6 +81,7 @@ This document explains how to use The Stump Window Manager.
 @menu
 * Introduction::                
 * Key Bindings::                
+* Commands::                    
 * Message and Input Bar::       
 * Windows::                     
 * Frames::                      
@@ -92,6 +93,7 @@ This document explains how to use The Stump Window Manager.
 * Miscellaneous Commands::      
 * Colors::                      
 * Hooks::                       
+* Modules::                     
 * Hacking::                     
 * Command and Function Index::  
 * Variable Index::              
@@ -110,6 +112,7 @@ Key Bindings
 
 * List of Default Keybindings::  
 * Binding Keys::                
+* Modifiers::                   
 
 Message and Input Bar
 
@@ -143,6 +146,7 @@ Screens
 Miscellaneous Commands
 
 * Menus::                       
+* StumpWM's Data Directory::    
 * Debugging StumpWM::           
 * Timers::                      
 * Getting Help::                
@@ -261,7 +265,7 @@ For a full list of key bindings, @xref{List of Default Keybindings}.
 @node Interacting with the Lisp process, Contact the StumpWM developers, Basic Usage, Introduction
 @section Interacting with the Lisp process
 
-Since StumpWM is a Lisp program, there is a way for youto evaluate
+Since StumpWM is a Lisp program, there is a way for you to evaluate
 Lisp code directly, on the same Lisp process that StumpWM is running on.
 Type @kbd{C-t :} and an input box will appear. Then type some Lisp
 expression.
@@ -295,18 +299,16 @@ is restricted to subscribers to keep spam out of the archives.
 
 The StumpWM IRC channel can be found on Freenode at #stumpwm.
 
-@node Key Bindings, Message and Input Bar, Introduction, Top
+@node Key Bindings, Commands, Introduction, Top
 @chapter Key Bindings
 StumpWM is controlled entirely by keystrokes and Lisp commands. It
 mimics GNU Screen's keyboard handling. StumpWM's default prefix key is
 @kbd{C-t}.
 
-!!! escape
-
-
 @menu
 * List of Default Keybindings::  
 * Binding Keys::                
+* Modifiers::                   
 @end menu
 
 @node List of Default Keybindings, Binding Keys, Key Bindings, Key Bindings
@@ -462,6 +464,10 @@ Toggle the mark on the current window
 Display the last message. Hitting this keybinding again displays the
 message before that, and so on.
 
+@item C-t l
+@itemx C-t C-l
+redisplay the current window and force it to take up the entire frame.
+
 @item C-t G
 Display all groups and windows in each group. For more information @xref{Groups}.
 
@@ -488,6 +494,16 @@ Create a new group.
 @itemx C-t g SPC
 @itemx C-t g C-SPC
 Go to the next group in the list.
+
+@item C-t g N
+Go to the next group in the list and bring the current window along.
+
+@item C-t g p
+@itemx C-t g C-p
+Go to the previous group in the list.
+
+@item C-t g P
+Go to the previous group in the list and bring the current window along.
 
 @item C-t g '
 Select a group by name or by number.
@@ -536,13 +552,13 @@ List all key sequences that are bound to the specified command
 Describe the specified command.
 @end table
 
-@node Binding Keys,  , List of Default Keybindings, Key Bindings
+@node Binding Keys, Modifiers, List of Default Keybindings, Key Bindings
 @section Binding Keys
 
 @@@ define-key
 @@@ undefine-key
 @@@ kbd
-@@@ set-prefix-key
+!!! set-prefix-key
 
 @@@ make-sparse-keymap
 
@@ -551,8 +567,152 @@ Describe the specified command.
 ### *groups-map*
 
 !!! bind
- 
-@node Message and Input Bar, Windows, Key Bindings, Top
+
+@node Modifiers,  , Binding Keys, Key Bindings
+@section Modifiers
+
+Many users have had some difficulty with setting up modifiers for
+StumpWM keybindings. This is caused by a combination of how StumpWM
+handles modifiers and the default modifiers list for many users' X
+servers.
+
+@itemize
+
+@item
+My ``Super'' key doesn't work!
+
+This is most likely caused by having the Hyper and Super keys listed
+as the same modifier in the modifier list.
+
+@example
+$ xmodmap
+xmodmap:  up to 3 keys per modifier, (keycodes in parentheses):
+
+shift       Shift_L (0x32),  Shift_R (0x3e)
+lock        Caps_Lock (0x42)
+control     Control_L (0x25),  Control_R (0x6d)
+mod1        Alt_L (0x40),  Alt_R (0x71),  Meta_L (0x9c)
+mod2        Num_Lock (0x4d)
+mod3
+mod4        Super_L (0x7f),  Hyper_L (0x80)
+mod5        Mode_switch (0x5d),  ISO_Level3_Shift (0x7c)
+@end example
+
+The problem is in the line beginning with ``mod4''. The way to set up
+the modifier list correctly is to have just the Super key as the mod4
+modifier. The following xmodmap commands will do just that.
+
+@example
+# clear out the mod4 modifier
+$ xmodmap -e 'clear mod4'
+$ xmodmap
+xmodmap:  up to 3 keys per modifier, (keycodes in parentheses):
+
+shift       Shift_L (0x32),  Shift_R (0x3e)
+lock        Caps_Lock (0x42)
+control     Control_L (0x25),  Control_R (0x6d)
+mod1        Alt_L (0x40),  Alt_R (0x71),  Meta_L (0x9c)
+mod2        Num_Lock (0x4d)
+mod3
+mod4
+mod5        Mode_switch (0x5d),  ISO_Level3_Shift (0x7c)
+
+# add Super as a mod4 modifier
+$ xmodmap -e 'add mod4 = Super_L'
+$ xmodmap
+xmodmap:  up to 3 keys per modifier, (keycodes in parentheses):
+
+shift       Shift_L (0x32),  Shift_R (0x3e)
+lock        Caps_Lock (0x42)
+control     Control_L (0x25),  Control_R (0x6d)
+mod1        Alt_L (0x40),  Alt_R (0x71),  Meta_L (0x9c)
+mod2        Num_Lock (0x4d)
+mod3
+mod4        Super_L (0x73),  Super_L (0x7f)
+mod5        Mode_switch (0x5d),  ISO_Level3_Shift (0x7c)
+@end example
+
+You can automate this by storing the commands in a file and calling
+xmodmap when you start your X session.
+
+@example
+$ cat ~/.Xmodmap
+clear mod4
+add mod4 = Super_L
+@end example
+
+If you use "startx", modify your ~/.xsession or ~/.xinitrc file.
+
+@example
+$ cat ~/.xsession
+#!/bin/sh
+
+xmodmap ~/.Xmodmap
+exec /usr/bin/stumpwm
+@end example
+
+If you use a graphical login manager (GDM, KDM, etc.), your ~/.Xmodmap
+file should fed to xmodmap when you log in. FIXME: verify this.
+
+@item
+Handling Meta and Alt: when do I use ``M-'' and ``A-''?
+
+If you have no Meta keys defined (see the output of the ``xmodmap''
+command), then StumpWM will treat the ``M-'' prefix in keybindings to
+mean Alt. However, if there are Meta keys defined, then the ``M-''
+prefix refers to them, and the ``A-'' prefix refers to Alt.
+
+Most users will simply use ``M-'' to refer to their Alt keys. However,
+users that define separate Meta and Alt keys will use ``M-'' to refer
+to the former, and ``A-'' to refer to the latter.
+
+@item
+How can I set up a Hyper key and use it with StumpWM?
+
+To set up a Hyper key, you need to do two things: bind a physical key
+to be a Hyper key, and add that key to the modifiers list.
+
+The following example shows how to bind the control key at the
+bottom-left of most keyboards to be Hyper. This is useful if you've
+made Caps Lock into a control key, and have no use for the bottom-left
+key.
+
+@example
+$ xmodmap -e 'keycode 37 = Hyper_L'
+$ xmodmap -e 'clear mod5'
+$ xmodmap -e 'add mod5 = Hyper_L'
+@end example
+
+To use a different key for Hyper, replace the keycode ``37'' above.
+Use the ``xev'' program to see the keycode that any physical key has.
+Refer to the section above on setting up the Super key to see how to
+automate setting the Hyper key when you start X.
+
+Now you can use ``H-'' as a prefix in StumpWM bindings.
+
+@example
+(define-key *top-map* (kbd "H-RET") "fullscreen")
+(define-key *top-map* (kbd "H-Left") "gprev")
+(define-key *top-map* (kbd "H-Right") "gnext")
+(define-key *top-map* (kbd "H-TAB") "other")
+@end example
+
+Since essentially no programs have Hyper bindings, you can safely bind
+commands to the top-map.
+
+@end itemize
+
+@node Commands, Message and Input Bar, Key Bindings, Top
+@chapter Commands
+If you've used emacs before you'll find commands and functions
+familiar. Commands are functions that can be bound to keys and
+executed interactively from StumpWM's input bar. A command expects a
+certain number of arguments and any that are not supplied will be
+prompted for.
+
+FIXME: actually write some docs here
+
+@node Message and Input Bar, Windows, Commands, Top
 @chapter Message and Input Bar
 
 !!! echo
@@ -686,19 +846,21 @@ An input function takes 2 arguments: the input structure and the key pressed.
 !!! pull-hidden-next
 !!! prev
 !!! pull-hidden-previous
-!!! delete-current-window
-!!! kill-current-window
-!!! windows
-!!! other
+!!! delete-window
+!!! kill-window
+!!! echo-windows
+!!! other-window
 !!! pull-hidden-other
 !!! renumber
 !!! meta
-!!! select
+!!! select-window
 !!! select-window-by-number
 !!! title
 !!! windowlist
 !!! fullscreen
 !!! info
+!!! refresh
+!!! redisplay
 
 ### *window-format*
 ### *window-name-source*
@@ -718,7 +880,7 @@ Windows can be marked. A marked window has a # beside it in the window
 list. Some commands operate only on marked windows.
 
 !!! mark
-!!! clear-marks
+!!! clear-window-marks
 !!! pull-marked
 
 @node Customizing Window Appearance, Controlling Raise And Map Requests, Window Marks, Windows
@@ -772,9 +934,10 @@ Some examples follow.
 @node Programming With Windows, Rule Based Window Placement, Controlling Raise And Map Requests, Windows
 @section Programming With Windows
 
-%%% def-window-attr
+%%% define-window-slot
 
 @@@ window-send-string
+### *default-window-name*
 
 @node Rule Based Window Placement,  , Programming With Windows, Windows
 @section Rule Based Window Placement
@@ -872,11 +1035,8 @@ Select the highlighted option.
 The configuration of frames and groups can be saved and restored using
 the following commands.
 
-!!! dump-desktop
 !!! dump-desktop-to-file
-!!! dump-group
 !!! dump-group-to-file
-!!! dump-screen
 !!! dump-screen-to-file
 !!! restore-from-file
 !!! place-existing-windows
@@ -945,6 +1105,8 @@ Groups in StumpWM are more commonly known as @dfn{virtual desktops} or
 !!! gnewbg
 !!! gnext
 !!! gprev
+!!! gnext-with-window
+!!! gprev-with-window
 !!! gother
 !!! gmerge
 !!! groups
@@ -1031,10 +1193,9 @@ section.
 !!! ratclick
 !!! echo-date
 !!! eval-line
-!!! insert
+!!! window-send-string
 !!! reload
 !!! loadrc
-!!! help
 !!! keyboard-quit
 !!! quit
 !!! soft-restart
@@ -1044,6 +1205,7 @@ section.
 !!! copy-unhandled-error
 !!! commands
 !!! lastmsg
+!!! list-window-properties
 
 @@@ run-commands
 
@@ -1065,14 +1227,17 @@ section.
 
 %%% defprogram-shortcut
 
+### *initializing*
+
 @menu
 * Menus::                       
+* StumpWM's Data Directory::    
 * Debugging StumpWM::           
 * Timers::                      
 * Getting Help::                
 @end menu
 
-@node Menus, Debugging StumpWM, Miscellaneous Commands, Miscellaneous Commands
+@node Menus, StumpWM's Data Directory, Miscellaneous Commands, Miscellaneous Commands
 @section Menus
 Some commands present the options in a menu. The following are the menu key bindings:
 
@@ -1096,11 +1261,22 @@ Select the highlighted option.
 
 @end table
 
-@node Debugging StumpWM, Timers, Menus, Miscellaneous Commands
+@node StumpWM's Data Directory, Debugging StumpWM, Menus, Miscellaneous Commands
+@section StumpWM's Data Directory
+If you want to store StumpWM data between sessions, the recommended
+method is to store them in @file{~/.stumpwm.d/}. StumpWM supplies
+some functions to make doing this easier.
+
+### *data-dir*
+@@@ data-dir-file
+%%% with-data-file
+
+@node Debugging StumpWM, Timers, StumpWM's Data Directory, Miscellaneous Commands
 @section Debugging StumpWM
 
 ### *debug-level*
 ### *debug-stream*
+@@@ redirect-all-output
 
 @node Timers, Getting Help, Debugging StumpWM, Miscellaneous Commands
 @section Timers
@@ -1140,20 +1316,20 @@ color. The first digit refers to the foreground color and the second
 digit to the background color. A @samp{*} can be used in place of
 either digit to specify the normal color. See the color listing below.
 
-@item ^b
-turn on bright colors
-
 @item ^B
-turn off bright colors
+Turn on bright colors.
+
+@item ^b
+Turn off bright colors.
 
 @item ^n
 Use the normal background and foreground color.
 
 @item ^R
-reverse the foreground and background colors
+Reverse the foreground and background colors.
 
 @item ^r
-turn off reverse colors
+Turn off reverse colors.
 
 @item ^[
 Push the current colors onto the color stack. The current colors remain unchanged.
@@ -1162,7 +1338,7 @@ Push the current colors onto the color stack. The current colors remain unchange
 Pop the colors off the color stack.
 
 @item ^^
-Print a regular caret. 
+Print a regular caret.
 @end table
 
 The default colors are made to resemble the 16 VGA colors and are:
@@ -1197,7 +1373,7 @@ following:
 (setf *colors* (append *colors*
                        (list "PapayaWhip"
                              "DarkGoldenRod3")))
-(update-color-map)
+(update-color-map (current-screen))
 @end example
 
 Of course, you can change all the colors if you like.
@@ -1207,7 +1383,7 @@ Of course, you can change all the colors if you like.
 ### *colors*
 @@@ update-color-map
 
-@node Hooks, Hacking, Colors, Top
+@node Hooks, Modules, Colors, Top
 @chapter Hooks
 StumpWM exports a number of hooks you can use to add customizations;
 like hooks in Emacs, you add to a hook with the @code{add-hook}
@@ -1239,8 +1415,16 @@ $$$ *focus-group-hook*
 $$$ *key-press-hook*
 $$$ *root-click-hook*
 $$$ *mode-line-click-hook*
+$$$ *urgent-window-hook*
 
-@node Hacking, Command and Function Index, Hooks, Top
+@node Modules, Hacking, Hooks, Top
+@chapter Modules
+StumpWM has a growing number of modules not loaded by default. All
+modules exist in the @file{contrib/} directory of StumpWM's archive.
+
+!!! load-module
+
+@node Hacking, Command and Function Index, Modules, Top
 @chapter Hacking
 
 For those of you who have worked on Free Software projects before,

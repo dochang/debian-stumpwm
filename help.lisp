@@ -51,19 +51,17 @@
                                (:left (format nil "~a~a~a" (if (= c 0) "" padstr) s len))
                                (:right (format nil "~a~a~a" (if (= c 0) "" padstr) len s))))))))
 
-(defun display-keybinding (kmap-var)
+(defun display-bindings-for-keymaps (key-seq &rest keymaps)
   (let* ((screen (current-screen))
-         (data (mapcar-hash (lambda (k v) (format nil "^5*~5a^n ~a" (print-key k) v)) (symbol-value kmap-var)))
+         (data (mapcan (lambda (map)
+                         (mapcar (lambda (b) (format nil "^5*~5a^n ~a" (print-key (binding-key b)) (binding-command b))) (kmap-bindings map)))
+                       keymaps))
          (cols (ceiling (1+ (length data))
                         (truncate (- (head-height (current-head)) (* 2 (screen-msg-border-width screen)))
                                   (font-height (screen-font screen))))))
-    (message-no-timeout "Prefix: ~{~a~^ | ~}~%~{~a~^~%~}"
-                        (mapcar 'print-key-seq (search-kmap kmap-var *top-map*))
+    (message-no-timeout "Prefix: ~a~%~{~a~^~%~}"
+                        (print-key-seq key-seq)
                         (columnize data cols))))
-
-(defcommand help () ()
-"Display all the bindings in @var{*root-map*}."
-  (display-keybinding '*root-map*))
 
 (defcommand commands () ()
   (let* ((screen (current-screen))
@@ -96,17 +94,26 @@ command prints the command bound to the specified key sequence."
 
 (defcommand describe-command (com) ((:command "Describe Command: "))
   "Print the online help associated with the specified command."
-  ; Is it really a command, not just a function?
-  (if (get-command-structure com)
-      (message-no-timeout "Command \"~a\":~%~a" com
-                          (documentation (get-command-symbol com) 'function))
-      (message-no-timeout "Error: Command \"~a\" not found." com)))
+  (let* ((deref (dereference-command-symbol com))
+         (struct (get-command-structure com nil)))
+    (cond ((null struct)
+           (message "Error: Command \"~a\" not found." com))
+          ((eq deref struct)
+           (message-no-timeout "Command \"~a\":~%~a" (command-name struct)
+                               (documentation (command-name struct) 'function)))
+          (t
+           (message-no-timeout "\"~a\" is an alias for the command \"~a\":~%~a" (command-alias-from deref) (command-name struct)
+                               (documentation (command-name struct) 'function))))))
 
 (defcommand where-is (cmd) ((:rest "Where is command: "))
 "Print the key sequences bound to the specified command."
-  (message-no-timeout "\"~a\" is on ~{~a~^, ~}"
+(let ((bindings (search-kmap cmd *top-map*)))
+  (if bindings
+      (message-no-timeout "\"~a\" is on ~{~a~^, ~}"
                       cmd
-                      (mapcar 'print-key-seq (search-kmap cmd *top-map*))))
+                      (mapcar 'print-key-seq bindings))
+      (message-no-timeout "Command \"~a\" is not currently bound"
+                      cmd))))
 
 (defcommand modifiers () ()
   "List the modifiers stumpwm recognizes and what MOD-X it thinks they're on."
@@ -114,4 +121,5 @@ command prints the command bound to the specified key sequence."
            "Meta" (modifiers-meta *modifiers*)
            "Alt" (modifiers-alt *modifiers*)
            "Super" (modifiers-super *modifiers*)
-           "Hyper" (modifiers-hyper *modifiers*)))
+           "Hyper" (modifiers-hyper *modifiers*)
+           "AltGr" (modifiers-altgr *modifiers*)))

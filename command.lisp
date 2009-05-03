@@ -39,7 +39,7 @@
   from to)
 
 (defstruct command
-  name args)
+  name class args)
 
 (defvar *command-hash* (make-hash-table :test 'eq)
   "A list of interactive stumpwm commands.")
@@ -60,13 +60,74 @@
   "Create a command function and store its interactive hints in
 *command-hash*. The local variable %interactivep% can be used to check
 if the command was called interactively. If it is non-NIL then it was
-called from a keybinding or from the colon command."
-  (check-type name symbol)
+called from a keybinding or from the colon command.
+
+INTERACTIVE-ARGS is a list of the following form: ((TYPE PROMPT) (TYPE PROMPT) ...)
+
+each element in INTERACTIVE-ARGS declares the type and prompt for the
+command's arguments.
+
+TYPE can be one of the following:
+
+@table @var
+@item :y-or-n
+A yes or no question returning T or NIL.
+@item :variable
+A lisp variable
+@item :function
+A lisp function
+@item :command
+A stumpwm command as a string.
+@item :key-seq
+A key sequence starting from *TOP-MAP*
+@item :window-number
+An existing window number
+@item :number
+An integer number
+@item :string
+A string
+@item :key
+A single key chord
+@item :window-name
+An existing window's name
+@item :direction
+A direction symbol. One of :UP :DOWN :LEFT :RIGHT
+@item :gravity
+A gravity symbol. One of :center :top :right :bottom :left :top-right :top-left :bottom-right :bottom-left
+@item :group
+An existing group
+@item :frame
+A frame
+@item :shell
+A shell command
+@item :rest
+The rest of the input yes to be parsed.
+@item :module
+An existing stumpwm module
+@end table
+
+Note that new argument types can be created with DEFINE-STUMPWM-TYPE.
+
+PROMPT can be string. In this case, if the corresponding argument is
+missing from an interactive call, stumpwm will use prompt for its
+value using PROMPT. If PROMPT is missing or nil, then the argument is
+considered an optional interactive argument and is not prompted for
+when missing.
+
+Alternatively, instead of specifying nil for PROMPT or leaving it
+out, an element can just be the argument type."
+  (check-type name (or symbol list))
   (let ((docstring (if (stringp (first body))
                      (first body)
                      (warn (make-condition 'command-docstring-warning :command name))))
         (body (if (stringp (first body))
-                  (cdr body) body)))
+                  (cdr body) body))
+        (name (if (atom name)
+                  name
+                  (first name)))
+        (group (if (atom name)
+                   t
+                   (second name))))
   `(progn
      (defun ,name ,args
        ,docstring
@@ -76,12 +137,13 @@ called from a keybinding or from the colon command."
 	 ,@body))
      (setf (gethash ',name *command-hash*)
            (make-command :name ',name
+                         :class ',group
                          :args ',interactive-args)))))
 
 (defmacro define-stumpwm-command (name (&rest args) &body body)
   "Deprecated. use `defcommand' instead."
   (check-type name string)
-  (setf name (intern (string-upcase name)))
+  (setf name (intern1 name))
   `(progn
      (defun ,name ,(mapcar 'car args) ,@body)
      (setf (gethash ',name *command-hash*)
@@ -96,37 +158,50 @@ alias name for the command that is only accessible interactively."
          (make-command-alias :from ',alias
                              :to ',original)))
 
-(defun all-commands ()
-  "Return a list of all interactive commands as strings."
+(defun dereference-command-symbol (command)
+  "Given a string or symbol look it up in the command database and return
+whatever it finds: a command, an alias, or nil."
+  (maphash (lambda (k v)
+             (when (string-equal k command)
+               (return-from dereference-command-symbol v)))
+           *command-hash*))
+
+(defun command-active-p (command)
+  (typep (current-group) (command-class command))
+  ;; TODO: minor modes
+  )
+
+(defun get-command-structure (command &optional (only-active t))
+  "Return the command structure for COMMAND. COMMAND can be a string,
+symbol, command, or command-alias. By default only search active
+commands."
+  (declare (type (or string symbol command command-alias) command))
+  (when (or (stringp command) (symbolp command))
+    (setf command (dereference-command-symbol command)))
+  (when (command-alias-p command)
+    (setf command (loop for c = (gethash (command-alias-to command) *command-hash*)
+                     then (gethash (command-alias-to c) *command-hash*)
+                     for depth from 1
+                     until (or (null c)
+                               (command-p c))
+                     when (> depth *max-command-alias-depth*)
+                     do (error "Maximum command alias depth exceded")
+                     finally (return c))))
+  (when (and command
+             (or (not only-active)
+                 (command-active-p command)))
+    command))
+
+(defun all-commands (&optional (only-active t))
+  "Return a list of all interactive commands as strings. By default
+only return active commands."
   (let (acc)
     (maphash (lambda (k v)
-               (declare (ignore v))
-               (push (string-downcase k) acc))
+               ;; make sure its an active command
+               (when (get-command-structure v only-active)
+                 (push (string-downcase k) acc)))
              *command-hash*)
     (sort acc 'string<)))
-
-(defun get-command-symbol (command)
-  (if (stringp command)
-      (maphash (lambda (k v)
-                 (when (string-equal k command)
-                   (return-from get-command-symbol k)))
-               *command-hash*)
-      command))
-
-(defun get-command-structure (command)
-  "Return the command structure for COMMAND."
-  (declare (type (or string symbol) command))
-  (setf command (get-command-symbol command))
-  (and command
-       (loop for c = (gethash command *command-hash*)
-            for depth from 1
-          until (or (null c)
-                    (command-p c))
-          ;; the only other possibility is an alias
-          do (setf command (command-alias-to c))
-            (when (> depth *max-command-alias-depth*)
-              (error "Maximum command alias depth exceded"))
-          finally (return c))))
 
 ;;; command arguments
 
@@ -265,7 +340,7 @@ then describes the symbol."
           (with-focus (screen-key-window (current-screen))
             (message "~a" prompt)
             (nreverse (second (multiple-value-list
-                               (read-from-keymap *top-map* #'update)))))))))
+                               (read-from-keymap (top-maps) #'update)))))))))
 
 (define-stumpwm-type :window-number (input prompt)
   (let ((n (or (argument-pop input)

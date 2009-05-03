@@ -27,9 +27,13 @@
 	  *mode-line-pad-y*
 	  *mode-line-position*
 	  *mode-line-timeout*
+          *hidden-window-color*
 	  *screen-mode-line-format*
+	  *screen-mode-line-formatters*
+          add-screen-mode-line-formatter
 	  enable-mode-line
-	  toggle-mode-line))
+	  toggle-mode-line
+	  bar-zone-color))
 
 (defstruct mode-line
   screen
@@ -67,6 +71,11 @@
 (defvar *mode-line-border-color* "Gray30"
   "The mode line border color.")
 
+(defvar *hidden-window-color* "^5*"
+  "Color command for hidden windows when using the
+fmt-head-window-list-hidden-windows formatter. To disable coloring
+hidden windows, set this to an empty string.")
+
 (defvar *screen-mode-line-format* "[^B%n^b] %W"
   "This variable describes what will be displayed on the modeline for each screen.
 Turn it on with the function TOGGLE-MODE-LINE or the mode-line command.
@@ -101,7 +110,9 @@ List the groups using @var{*group-format*}
                                         (#\h fmt-head)
                                         (#\n fmt-group)
                                         (#\W fmt-head-window-list)
-                                        (#\u fmt-urgent-window-list))
+                                        (#\u fmt-urgent-window-list)
+                                        (#\v fmt-head-window-list-hidden-windows)
+                                        (#\d fmt-modeline-time))
   "An alist containing format character format function pairs for
 formatting screen mode-lines. functions are passed the screen's
 current group.")
@@ -123,6 +134,12 @@ timer.")
   "The timer that updates the modeline")
 
 ;;; Formatters
+
+(defun add-screen-mode-line-formatter (character fmt-fun)
+  "Add a format function to a format character (or overwrite an existing one)."
+  (setf *screen-mode-line-formatters*
+        (cons (list character fmt-fun)
+              (remove character *screen-mode-line-formatters* :key #'first))))
 
 ;; All mode-line formatters take the mode-line they are being invoked from
 ;; as the first argument. Additional arguments (everything between the first
@@ -174,20 +191,43 @@ timer.")
                   (sort1 (head-windows (mode-line-current-group ml) (mode-line-head ml))
                          #'< :key #'window-number))))
 
+(defun fmt-hidden (s)
+  (format nil (concat "^[" *hidden-window-color* "~A^]") s))
+
+(defun fmt-head-window-list-hidden-windows (ml)
+  "Using *window-format*, return a 1 line list of the windows, space
+separated. The currently focused window is highlighted with
+fmt-highlight. Any non-visible windows are colored the
+*hidden-window-color*."
+  (let* ((all (head-windows (mode-line-current-group ml) (mode-line-head ml)))
+         (non-top (set-difference all (top-windows))))
+    (format nil "~{~a~^ ~}"
+            (mapcar (lambda (w)
+                      (let ((str (format-expand *window-formatters*
+                                                *window-format* w)))
+                        (cond ((eq w (current-window)) (fmt-highlight str))
+                              ((find w non-top) (fmt-hidden str))
+                              (t str))))
+                    (sort1 all #'< :key #'window-number)))))
+
+(defun fmt-modeline-time (ml)
+  (declare (ignore ml))
+  (format-expand *time-format-string-alist* *time-modeline-string*))
+
 (defvar *bar-med-color* "^B")
 (defvar *bar-hi-color* "^B^3*")
 (defvar *bar-crit-color* "^B^1*")
 
-(defun bar-zone-color (percent)
-  (concatenate 'string
-               (cond
-                 ((>= percent 90)
-                  *bar-crit-color*)
-                 ((>= percent 50)
-                  *bar-hi-color*)
-                 ((>= percent 20)
-                  *bar-med-color*)
-                 (t ""))))
+(defun bar-zone-color (amount &optional (med 20) (hi 50) (crit 90) reverse)
+  "Return a color command based on the magnitude of the argument. If
+the limits for the levels aren't specified, they default to sensible
+values for a percentage. With reverse, lower numbers are more
+critical."
+  (labels ((past (n) (funcall (if reverse #'<= #'>=) amount n)))
+    (cond ((past crit) *bar-crit-color*)
+          ((past hi) *bar-hi-color*)
+          ((past med) *bar-med-color*)
+          (t ""))))
 
 (defun repeat (n char)
  (make-string n :initial-element char))
@@ -264,30 +304,6 @@ timer.")
                                                     (head-y (mode-line-head ml))
                                                     (- (+ (head-y (mode-line-head ml)) (head-height (mode-line-head ml))) (mode-line-height ml)))))
 
-(defun frame-display-y (group frame)
-  "Return a Y for frame that doesn't overlap the mode-line."
-  (let* ((head (frame-head group frame))
-         (ml (head-mode-line head))
-	 (head-y (frame-y head))
-	 (rel-frame-y (- (frame-y frame) head-y)))
-    (if (and ml (not (eq (mode-line-mode ml) :hidden)))
-        (case (mode-line-position ml)
-          (:top
-           (+ head-y
-	      (+ (mode-line-height ml) (round (* rel-frame-y (mode-line-factor ml))))))
-          (:bottom
-           (+ head-y
-	      (round (* rel-frame-y (mode-line-factor ml))))))
-        (frame-y frame))))
-
-(defun frame-display-height (group frame)
-  "Return a HEIGHT for frame that doesn't overlap the mode-line."
-  (let* ((head (frame-head group frame))
-         (ml (head-mode-line head)))
-    (if (and ml (not (eq (mode-line-mode ml) :hidden)))
-        (round (* (frame-height frame) (mode-line-factor ml)))
-        (frame-height frame))))
-
 (defgeneric mode-line-format-elt (elt))
 
 (defmethod mode-line-format-elt ((elt string))
@@ -361,7 +377,6 @@ timer.")
       (when (or force (not (string= (mode-line-contents ml) string)))
         (setf (mode-line-contents ml) string)
         (resize-mode-line ml)
-        (xlib:clear-area (mode-line-window ml))
         (render-strings (mode-line-screen ml) (mode-line-cc ml)
                         *mode-line-pad-x*     *mode-line-pad-y*
                         (split-string string (string #\Newline)) '())))))
@@ -375,7 +390,7 @@ timer.")
 
 (defun sync-mode-line (ml)
   (dolist (group (screen-groups (mode-line-screen ml)))
-    (sync-head-frame-windows group (mode-line-head ml))))
+    (group-sync-head group (mode-line-head ml))))
 
 (defun set-mode-line-window (ml xwin)
   "Use an external window as mode-line."
@@ -492,7 +507,7 @@ timer.")
           ;; setup the timer
           (turn-on-mode-line-timer)))
     (dolist (group (screen-groups screen))
-      (sync-head-frame-windows group head))))
+      (group-sync-head group head))))
 
 (defun enable-mode-line (screen head state &optional format)
   "Set the state of SCREEN's HEAD's mode-line. If STATE is T and FORMAT is

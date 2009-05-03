@@ -138,8 +138,7 @@ identity with a range check."
         (cadr matches))))
 
 (defun move-screen-to-head (screen)
-  (setf *screen-list* (remove screen *screen-list*))
-  (push screen *screen-list*))
+  (move-to-head *screen-list* screen))
 
 (defun switch-to-screen (screen)
   (when (and screen
@@ -203,7 +202,8 @@ identity with a range check."
           (ccontext-default-fg (screen-message-cc screen)) fg
           (ccontext-default-bg (screen-message-cc screen)) bg))
   (dolist (i (list (screen-message-window screen)
-                   (screen-input-window screen)))
+                   (screen-input-window screen)
+                   (screen-frame-window screen)))
     (setf (xlib:window-border i) (screen-border-color screen)
           (xlib:window-background i) (screen-bg-color screen)))
   ;; update the backgrounds of all the managed windows
@@ -423,8 +423,11 @@ FOCUS-WINDOW is an extra window used for _NET_SUPPORTING_WM_CHECK."
                                              :colormap (xlib:screen-default-colormap
                                                         screen-number)
                                              :event-mask '(:exposure)))
-           (font (xlib:open-font *display* +default-font-name+))
-           (group (make-tile-group
+           (font (xlib:open-font *display*
+                                 (if (font-exists-p +default-font-name+)
+                                     +default-font-name+
+                                     "*")))
+           (group (make-instance 'tile-group
                    :screen screen
                    :number 1
                    :name *default-group-name*)))
@@ -432,7 +435,6 @@ FOCUS-WINDOW is an extra window used for _NET_SUPPORTING_WM_CHECK."
       ;; The focus window is mapped at all times
       (xlib:map-window focus-window)
       (xlib:map-window key-window)
-      (xwin-grab-keys focus-window)
       (setf (screen-number screen) screen-number
             (screen-id screen) id
             (screen-host screen) host
@@ -470,6 +472,7 @@ FOCUS-WINDOW is an extra window used for _NET_SUPPORTING_WM_CHECK."
       (netwm-set-properties screen focus-window)
       (update-colors-for-screen screen)
       (update-color-map screen)
+      (xwin-grab-keys focus-window screen)
       screen)))
 
 
@@ -540,13 +543,13 @@ FOCUS-WINDOW is an extra window used for _NET_SUPPORTING_WM_CHECK."
   (setf (elt (tile-group-frame-tree group) (position head (group-heads group))) frame))
 
 (defun current-head (&optional (group (current-group)))
-  (frame-head group (tile-group-current-frame group)))
+  (group-current-head group))
 
 (defun head-windows (group head)
   "Returns a list of windows on HEAD of GROUP"
   (remove-if-not
    (lambda (w)
-     (eq head (frame-head group (window-frame w))))
+     (eq head (window-head w)))
    (group-windows group)))
 
 (defun frame-is-head (group frame)
@@ -556,18 +559,22 @@ FOCUS-WINDOW is an extra window used for _NET_SUPPORTING_WM_CHECK."
   (dformat 1 "Adding head #~D~%" (head-number head))
   (setf (screen-heads screen) (sort (push head (screen-heads screen)) #'< :key 'head-number))
   (dolist (group (screen-groups screen))
-    (setf (tile-group-frame-tree group)
-          (insert-before (tile-group-frame-tree group)
-                         (copy-frame head)
-                         (head-number head)))
-    ;; Try to put something in the new frame
-    (let ((frame (tile-group-frame-head group head)))
-      (choose-new-frame-window frame group)
-      (when (frame-window frame)
-        (unhide-window (frame-window frame))))))
+    (let ((new-frame-num (find-free-frame-number group)))
+      (setf (tile-group-frame-tree group)
+            (insert-before (tile-group-frame-tree group)
+                           (copy-frame head)
+                           (head-number head)))
+      ;; Try to put something in the new frame and give it an unused number
+      (let ((frame (tile-group-frame-head group head)))
+        (setf (frame-number frame) new-frame-num)
+        (choose-new-frame-window frame group)
+        (when (frame-window frame)
+          (unhide-window (frame-window frame)))))))
 
 (defun remove-head (screen head)
   (dformat 1 "Removing head #~D~%" (head-number head))
+  (when (head-mode-line head)
+    (toggle-mode-line screen head))
   (dolist (group (screen-groups screen))
     ;; Hide its windows.
     (let ((windows (head-windows group head)))
@@ -582,8 +589,6 @@ FOCUS-WINDOW is an extra window used for _NET_SUPPORTING_WM_CHECK."
           (setf (window-frame window) frame))))
     ;; Try to do something with the orphaned windows
     (populate-frames group))
-  (when (head-mode-line head)
-    (toggle-mode-line screen head))
   ;; Remove it from SCREEN's head list.
   (setf (screen-heads screen) (delete head (screen-heads screen))))
 
@@ -622,14 +627,14 @@ FOCUS-WINDOW is an extra window used for _NET_SUPPORTING_WM_CHECK."
 (defcommand snext () ()
 "Go to the next screen."
   (switch-to-screen (next-screen))
-  (show-frame-indicator (current-group)))
+  (group-wake-up (current-group)))
 
 (defcommand sprev () ()
 "Go to the previous screen."
   (switch-to-screen (next-screen (reverse (sort-screens))))
-  (show-frame-indicator (current-group)))
+  (group-wake-up (current-group)))
 
 (defcommand sother () ()
 "Go to the last screen."
   (switch-to-screen (cadr *screen-list*))
-  (show-frame-indicator (current-group)))
+  (group-wake-up (current-group)))

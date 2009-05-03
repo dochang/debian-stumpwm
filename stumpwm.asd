@@ -10,10 +10,6 @@
 #+cmu (progn
 	  (ignore-errors (require :cmucl-clx))
 	  (ignore-errors (require :clx)))
-;; Otherwise just load clx
-#+sbcl(require :clx)
-
-#+sbcl (require :sb-posix)
 
 (defsystem :stumpwm
   :name "StumpWM"
@@ -23,9 +19,10 @@
   ;; :license "GNU General Public License"
   :description "A tiling, keyboard driven window manager" 
   :serial t
-  :depends-on (:cl-ppcre)
+  :depends-on (:cl-ppcre #-(or cmu clisp) :clx #+sbcl :sb-posix)
   :components ((:file "package")
 	       (:file "primitives")
+               (:file "workarounds")
 	       (:file "wrappers")
 	       (:file "keysyms")
 	       (:file "keytrans")
@@ -36,18 +33,23 @@
                (:file "menu")
                (:file "screen")
                (:file "group")
-               (:file "frame")
                (:file "window")
+               (:file "floating-group")
+               (:file "tile-group")
+               (:file "tile-window")
+               (:file "window-placement")
                (:file "message-window")
-               (:file "events")
                (:file "selection")
 	       (:file "user")
                (:file "iresize")
                (:file "bindings")
+               (:file "events")
                (:file "help")
                (:file "fdump")
+	       (:file "time")
 	       (:file "mode-line")
 	       (:file "color")
+               (:file "module")
 	       (:file "stumpwm")
 	       ;; keep this last so it always gets recompiled if
 	       ;; anything changes

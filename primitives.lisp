@@ -107,14 +107,17 @@
           *data-dir*
           add-hook
           clear-window-placement-rules
+          data-dir-file
           dformat
           define-frame-preference
+          redirect-all-output
           remove-hook
           run-hook
           run-hook-with-args
           split-string
 	  with-restarts-menu
-          with-data-file))
+          with-data-file
+	  move-to-head))
 
 
 ;;; Message Timer
@@ -357,28 +360,6 @@ Use the window's resource class.
 Use the window's resource name.
 @end table")
 
-(defstruct window
-  xwin
-  width height
-  x y        ; these are only used to hold the requested map location.
-  gravity
-  group
-  frame
-  number
-  parent
-  title
-  user-title
-  class
-  type
-  res
-  role
-  unmap-ignores
-  state
-  normal-hints
-  marked
-  plist
-  fullscreen)
-
 (defstruct frame
   (number nil :type integer)
   x
@@ -392,20 +373,6 @@ Use the window's resource name.
   screen
   ;; a bar along the top or bottom that displays anything you want.
   mode-line)
-
-(defstruct group
-  ;; A list of all windows in this group. They are of the window
-  ;; struct variety.
-  screen
-  windows
-  number
-  name)
-
-(defstruct (tile-group (:include group))
-  ;; From this frame tree a list of frames can be gathered
-  frame-tree
-  last-frame
-  current-frame)
 
 (defstruct screen
   id
@@ -462,6 +429,7 @@ Use the window's resource name.
 
 (defstruct ccontext
   win
+  px
   gc
   default-fg
   default-bright
@@ -470,6 +438,9 @@ Use the window's resource name.
 (defun screen-message-window (screen)
   (ccontext-win (screen-message-cc screen)))
 
+(defun screen-message-pixmap (screen)
+  (ccontext-px (screen-message-cc screen)))
+
 (defun screen-message-gc (screen)
   (ccontext-gc (screen-message-cc screen)))
 
@@ -477,18 +448,16 @@ Use the window's resource name.
   (format stream "#S(frame ~d ~a ~d ~d ~d ~d)"
           (frame-number object) (frame-window object) (frame-x object) (frame-y object) (frame-width object) (frame-height object)))
 
-(defmethod print-object ((object window) stream)
-  (format stream "#S(window ~s #x~x)" (window-name object) (window-id object)))
-
-(defvar *frame-number-map* nil
-  "Set this to a string to remap the regular frame numbers to more convenient keys.
+(defvar *frame-number-map* "0123456789abcdefghijklmnopqrstuvxwyz"
+  "Set this to a string to remap the frame numbers to more convenient keys.
 For instance,
 
 \"hutenosa\"
 
-would map frame 0 to 7 to be selectable by hitting the
-appropriate homerow key on a dvorak keyboard. Currently only
-single char keys are supported.")
+would map frame 0 to 7 to be selectable by hitting the appropriate
+homerow key on a dvorak keyboard. Currently, only single char keys are
+supported. By default, the frame labels are the 36 (lower-case)
+alphanumeric characters, starting with numbers 0-9.")
 
 (defun get-frame-number-translation (frame)
   "Given a frame return its number translation using *frame-number-map* as a char."
@@ -503,6 +472,7 @@ single char keys are supported.")
   (alt nil)
   (hyper nil)
   (super nil)
+  (altgr nil)
   (numlock nil))
 
 (defvar *all-modifiers* nil
@@ -518,7 +488,9 @@ single char keys are supported.")
   "The list of screens managed by stumpwm.")
 
 (defvar *initializing* nil
-  "True when starting stumpwm.")
+  "True when starting stumpwm. Use this variable in your rc file to
+run code that should only be executed once, when stumpwm starts up and
+loads the rc file.")
 
 (defvar *processing-existing-windows* nil
   "True when processing pre-existing windows at startup.")
@@ -537,11 +509,12 @@ restart from a menu of possible restarts. If a restart is not
 chosen, resignal the error."
   (let ((c (gensym)))
     `(handler-bind
-      ((error
-        (lambda (,c)
-          (restarts-menu ,c)
-          (signal ,c))))
-      ,@body)))
+         ((warning #'muffle-warning)
+          ((or serious-condition error)
+           (lambda (,c)
+             (restarts-menu ,c)
+             (signal ,c))))
+       ,@body)))
 
 ;;; Hook functionality
 
@@ -553,7 +526,7 @@ chosen, resignal the error."
             (dolist (fn hook)
               (with-simple-restart (continue-hooks "Continue running the remaining hooks.")
                 (apply fn args)))))
-    (error (c) (message "^B^1*Error on hook ^b~S^B!~% ^n~A" hook c) (values nil c))))
+    (t (c) (message "^B^1*Error on hook ^b~S^B!~% ^n~A" hook c) (values nil c))))
 
 (defun run-hook (hook)
   "Call each function in HOOK."
@@ -634,6 +607,21 @@ Useful for re-using the &REST arg after removing some options."
           (xlib:display-display *display*)
           (screen-id screen)))
 
+(defun split-seq (seq separators &key test default-value)
+  "split a sequence into sub sequences given the list of seperators."
+  (let ((seps separators))
+    (labels ((sep (c)
+               (find c seps :test test)))
+      (or (loop for i = (position-if (complement #'sep) seq)
+                then (position-if (complement #'sep) seq :start j)
+                as j = (position-if #'sep seq :start (or i 0))
+                while i
+                collect (subseq seq i j)
+                while j)
+          ;; the empty seq causes the above to return NIL, so help
+          ;; it out a little.
+          default-value))))
+
 (defun split-string (string &optional (separators "
 "))
   "Splits STRING into substrings where there are matches for SEPARATORS.
@@ -647,19 +635,8 @@ include a null substring for that.  Likewise, if there is a match
 at the end of STRING, we don't include a null substring for that.
 
 Modifies the match data; use `save-match-data' if necessary."
-  ;; FIXME: This let is here because movitz doesn't 'lend optional'
-  (let ((seps separators))
-    (labels ((sep (c)
-               (find c seps :test #'char=)))
-      (or (loop for i = (position-if (complement #'sep) string)
-                then (position-if (complement #'sep) string :start j)
-                as j = (position-if #'sep string :start (or i 0))
-                while i
-                collect (subseq string i j)
-                while j)
-          ;; the empty string causes the above to return NIL, so help
-          ;; it out a little.
-          '("")))))
+  (split-seq string separators :test #'char= :default-value '("")))
+
 
 (defun insert-before (list item nth)
   "Insert ITEM before the NTH element of LIST."
@@ -683,13 +660,35 @@ output directly to a file.")
 (defun dformat (level fmt &rest args)
   (when (>= *debug-level* level)
     (multiple-value-bind (sec m h) (decode-universal-time (get-universal-time))
-      (format *debug-stream* "~d:~d:~d " h m sec))
+      (format *debug-stream* "~2,'0d:~2,'0d:~2,'0d " h m sec))
     ;; strip out non base-char chars quick-n-dirty like
     (write-string (map 'string (lambda (ch)
-                                 (if (typep ch 'base-char)
+                                 (if (typep ch 'standard-char)
                                      ch #\?))
                        (apply 'format nil fmt args))
                   *debug-stream*)))
+
+(defvar *redirect-stream* nil
+  "This variable Keeps track of the stream all output is sent to when
+`redirect-all-output' is called so if it changes we can close it
+before reopening.")
+
+(defun redirect-all-output (file)
+  "Elect to redirect all output to the specified file. For instance,
+if you want everything to go to ~/stumpwm.d/debug-output.txt you would
+do:
+
+@example
+(redirect-all-output (data-dir-file \"debug-output\" \"txt\"))
+@end example
+"
+  (when (typep *redirect-stream* 'file-stream)
+    (close *redirect-stream*))
+  (setf *redirect-stream* (open file :direction :output :if-exists :append :if-does-not-exist :create)
+        *error-output*    *redirect-stream*
+        *standard-output* *redirect-stream*
+        *trace-output*    *redirect-stream*
+        *debug-stream*    *redirect-stream*))
 
 ;;; 
 ;;; formatting routines
@@ -764,7 +763,7 @@ Note, a prefix number can be used to crop the argument to a specified
 size. For instance, @samp{%20t} crops the window's title to 20
 characters.")
 
-(defvar *window-info-format* "%hx%w %n (%t)"
+(defvar *window-info-format* "%wx%h %n (%t)"
   "The format used in the info command. @xref{*window-format*} for formatting details.")
 
 (defvar *group-formatters* '((#\n group-number)
@@ -914,7 +913,8 @@ window, and returns the preferred frame or a list of the above preferences.")
   (with-output-to-string (*standard-output*)
     (print-backtrace)))
 
-(defvar *startup-message* "^2*Welcome to The ^BStump^b ^BW^bindow ^BM^banager!"
+(defvar *startup-message* "^2*Welcome to The ^BStump^b ^BW^bindow ^BM^banager!
+Press ^5*~a ?^2* for help."
   "This is the message StumpWM displays when it starts. Set it to NIL to
 suppress.")
 
@@ -931,12 +931,11 @@ will have no effect.")
   "List of rules governing window placement. Use define-frame-preference to
 add rules")
 
-
 (defmacro define-frame-preference (target-group &rest frame-rules)
   "Create a rule that matches windows and automatically places them in
 a specified group and frame. Each frame rule is a lambda list:
 @example
-\(frame-number raise lock &key class instance type role title)
+\(frame-number raise lock &key create restore dump-name class instance type role title)
 @end example
 
 @table @var
@@ -952,6 +951,14 @@ matches @var{target-group}. When non-nil, this rule matches regardless
 of the group and the window is sent to @var{target-group}. If
 @var{lock} and @var{raise} are both non-nil, then stumpwm will jump to
 the specified group and focus the matched window.
+
+@item create
+When non-NIL the group is created and eventually restored when the value of
+create is a group dump filename in *DATA-DIR*. Defaults to NIL.
+
+@item restore
+When non-NIL the group is restored even if it already exists. This arg should
+be set to the dump filename to use for forced restore. Defaults to NIL
 
 @item class
 The window's class must match @var{class}.
@@ -971,8 +978,12 @@ The window's title must match @var{title}.
   (let ((x (gensym "X")))
     `(dolist (,x ',frame-rules)
        ;; verify the correct structure
-       (destructuring-bind (frame-number raise lock &rest keys &key class instance type role title) ,x
-         (push (list* ,target-group frame-number raise lock keys) *window-placement-rules*)))))
+       (destructuring-bind (frame-number raise lock
+                                         &rest keys
+                                         &key create restore class instance type role title) ,x
+         (declare (ignore create restore class instance type role title))
+         (push (list* ,target-group frame-number raise lock keys)
+               *window-placement-rules*)))))
 
 (defun clear-window-placement-rules ()
   "Clear all window placement rules."
@@ -1004,13 +1015,11 @@ input focus is transfered to the window you click on.")
 
 (defmacro with-focus (xwin &body body)
   "Set the focus to xwin, do body, then restore focus"
-  (let ((focus (gensym "FOCUS"))
-        (revert (gensym "REVERT")))
-    `(multiple-value-bind (,focus ,revert) (xlib:input-focus *display*)
-       (xlib:set-input-focus *display* ,xwin :pointer-root)
-       (unwind-protect
-            (progn ,@body)
-         (xlib:set-input-focus *display* ,focus ,revert)))))
+  `(progn
+     (grab-keyboard ,xwin)
+     (unwind-protect
+          (progn ,@body)
+       (ungrab-keyboard))))
 
 (defvar *last-unhandled-error* nil
   "If an unrecoverable error occurs, this variable will contain the
@@ -1048,12 +1057,39 @@ sync-all-frame-windows to see the change.")
                                                      (list ".stumpwm.d")))
   "The directory used by stumpwm to store data between sessions.")
 
+(defun data-dir-file (name &optional type)
+  "Return a pathname inside stumpwm's data dir with the specified name and type"
+  (ensure-directories-exist *data-dir*)
+  (make-pathname :name name :type type :defaults *data-dir*))
+
 (defmacro with-data-file ((s file &rest keys &key (if-exists :supersede) &allow-other-keys) &body body)
   "Open a file in StumpWM's data directory. keyword arguments are sent
 directly to OPEN. Note that IF-EXISTS defaults to :supersede, instead
 of :error."
+  (declare (ignorable if-exists))
   `(progn
      (ensure-directories-exist *data-dir*)
      (with-open-file (,s ,(merge-pathnames *data-dir* file)
                          ,@keys)
        ,@body)))
+
+(defmacro move-to-head (list elt)
+   "Move the specified element in in LIST to the head of the list."
+ `(progn
+    (setf ,list (remove ,elt ,list))
+    (push ,elt ,list)))
+
+(define-condition stumpwm-error (error)
+  () (:documentation "Any stumpwm specific error should inherit this."))
+
+(defun intern1 (thing &optional (package *package*) (rt *readtable*))
+  "A DWIM intern."
+  (intern
+   (ecase (readtable-case rt)
+     (:upcase (string-upcase thing))
+     (:downcase (string-downcase thing))
+     ;; Prooobably this is what they want? It could make sense to
+     ;; upcase them as well.
+     (:preserve thing)
+     (:invert (string-downcase thing)))
+   package))

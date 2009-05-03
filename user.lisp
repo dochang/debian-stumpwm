@@ -88,7 +88,7 @@ menu, the error is re-signalled."
 (defcommand banish (&optional where) (:rest)
   "Warp the mouse the lower right corner of the current head."
   (if where
-      (banish-pointer (intern (string-upcase where) :keyword))
+      (banish-pointer (intern1 where :keyword))
       (banish-pointer)))
 
 (defcommand ratwarp (x y) ((:number "X: ") (:number "Y: "))
@@ -99,139 +99,11 @@ menu, the error is re-signalled."
   "Warp the mouse by the specified amount from its current position."
   (warp-pointer-relative dx dy))
 
-;; FIXME: This function doesn't work.
 (defcommand ratclick (&optional (button 1)) (:number)
+  "Simulate a pointer button event at the current pointer
+location. Note: this function rarely works."
   (when (current-window)
     (send-fake-click (current-window) button)))
-
-;;; (format-time-stringc ...) section
-(defmacro time-lambda (used-var &body body)
-  `(lambda (sec min hour dom mon year dow dstp tz)
-    (declare (ignore ,@(set-difference '(sec min hour dom mon year dow dstp tz) used-var)))
-    ,@body))
-
-(defvar *month-names*
-  #("January" "February" "March" "April" "May" "June" "July" "August" "September" "October" "November" "December"))
-
-(defvar *day-names*
-  #("Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" "Sunday"))
-
-;; `date --help` with date_5.97
-;; `date --help` with date_5.97
-(defvar *format-time-string-alist*
-  `((#\% . ,(time-lambda () "%"))
-    (#\a . ,(time-lambda (dow) (subseq (aref *day-names* dow) 0 3)))
-    (#\A . ,(time-lambda (dow) (aref *day-names* dow)))
-    (#\b . ,(time-lambda (mon) (subseq (aref *month-names* (- mon 1)) 0 3)))
-    (#\B . ,(time-lambda (mon) (aref *month-names* (- mon 1))))
-    (#\c . ,(time-lambda (dow mon dom hour min sec year)
-                         (format nil "~A ~A ~2,'0D ~2,'0D:~2,'0D:~2,'0D ~D"
-                                 (subseq (aref *day-names* dow) 0 3)
-                                 (subseq (aref *month-names* (- mon 1)) 0 3)
-                                 dom hour min sec year)))
-    (#\C . ,(time-lambda (year) (subseq (format nil "~D" year) 0 2)))
-    (#\d . ,(time-lambda (dom) (format nil "~2,'0D" dom)))
-    (#\D . ,(time-lambda (mon dom year)
-                         (format nil "~2,'0D/~2,'0D/~A"
-                                 mon dom (subseq (format nil "~D" year) 2 4))))
-    (#\e . ,(time-lambda (dom) (format nil "~2,' D" dom)))
-    (#\F . ,(time-lambda (year mon dom) (format nil "~D-~2,'0D-~2,'0D" year mon dom)))
-    ;; %g   last two digits of year of ISO week number (see %G)
-    ;; %G   year of ISO week  number (see %V); normally useful only with %V
-    (#\h . ,(time-lambda (mon) (subseq (aref *month-names* (- mon 1)) 0 3)))
-    (#\H . ,(time-lambda (hour) (format nil "~2,'0D" hour)))
-    (#\I . ,(time-lambda (hour)
-                         (format nil "~2,'0D" (if (> hour 12) (- hour 12) (if (zerop hour) 12 hour)))))
-    ;; %j   day of year (001..366)
-    (#\k . ,(time-lambda (hour) (format nil "~2,D" hour)))
-    (#\l . ,(time-lambda (hour)
-                         (format nil "~2,D" (if (> hour 12) (- hour 12) (if (zerop hour) 12 hour)))))
-    (#\m . ,(time-lambda (mon) (format nil "~2,'0D" mon)))
-    (#\M . ,(time-lambda (min) (format nil "~2,'0D" min)))
-    (#\n . ,(time-lambda () "~%%")) ;; two % to avoid parsing errors
-    ;; %N   nanoseconds (000000000..999999999)
-    (#\p . ,(time-lambda (hour) (if (>= hour 12) "PM" "AM")))
-    (#\P . ,(time-lambda (hour) (if (>= hour 12) "pm" "am")))
-    (#\r . ,(time-lambda (hour min sec)
-                         (let (hour-local am-pm)
-                           (cond
-                             ((> hour 12)
-                              (setf hour-local (- hour 12) am-pm "PM"))
-                             ((= hour 12)
-                              (setf hour-local hour am-pm "PM"))
-                             (t
-                              (setf hour-local (if (zerop hour) 12 hour) am-pm "AM")))
-                           (format nil "~2,'0D:~2,'0D:~2,'0D ~A"
-                                   hour-local min sec am-pm))))
-    (#\R . ,(time-lambda (hour min) (format nil "~2,'0D:~2,'0D" hour min)))
-    (#\s . ,(time-lambda ( sec min hour dom mon year)
-                         (format nil "~D"
-                                 (- (encode-universal-time
-                                     sec min hour dom mon year)
-                                    (encode-universal-time 0 0 0 1 1 1970 0)))))
-    (#\S . ,(time-lambda (sec) (format nil "~2,'0D" sec)))
-    (#\t . ,(time-lambda () "~T"))
-    (#\T . ,(time-lambda (hour min sec)
-                         (format nil "~2,'0D:~2,'0D:~2,'0D" hour min sec)))
-    (#\u . ,(time-lambda (dow) (format nil "~D" (+ dow 1))))
-    ;; %U   week number of  year, with Sunday as first  day of week (00..53)
-    ;; %V   ISO  week number,  with  Monday as  first  day of  week (01..53)
-    (#\w . ,(time-lambda (dow) (format nil "~D" (- dow 1))))
-    ;; %W   week number of  year, with Monday as first  day of week (00..53)
-    ;; %x   locale's date representation (e.g., 12/31/99)
-    ;; %X   locale's time representation (e.g., 23:13:48)
-    (#\y . ,(time-lambda (year) (subseq (format nil "~D" year) 2 4)))
-    (#\Y . ,(time-lambda (year) (format nil "~D" year)))
-    (#\z . ,(time-lambda (tz dstp)
-                         (multiple-value-bind (hour-local decimal-local)
-                             (truncate (+ (* (float tz) -1) (if dstp 1 0)))
-                           (format nil "~A~2,'0D~2,'0D"
-                                   (if (> hour-local 0) '+ '-) (abs hour-local)
-                                   (truncate (if (/= decimal-local 0)
-                                                 (* 60 decimal-local) 0))))))
-    ;; %:z  +hh:mm numeric timezone (e.g., -04:00)
-    ;; %::z +hh:mm:ss numeric time zone (e.g., -04:00:00)
-    ;; %:::z numeric time zone with  : to necessary precision (e.g., -04, +05:30)
-    ;; %Z   alphabetic time zone abbreviation (e.g., EDT)
-    )
-  "An alist for the substitution in `format-time-string'.")
-
-(defvar *format-time-string-default* "%a %b %e %k:%M:%S %Y"
-  "The default value for `format-time-string', (e.g, Thu Mar  3 23:05:25 2005).")
-
-(defun format-time-string (&optional format-string time)
-  "Return a formatted date-time string of TIME or `get-decoded-time'.
-
-FORMAT-STRING defaults to `*format-time-string-default*' and accepts
-the 'date' command options except the following ones: %g, %G, %j, %N,
-%U, %V, %W, %x, %X, %:z, %::z, %:::z and %Z."
-  (let* ((time-string (or format-string
-                          *format-time-string-default*)))
-    (when (> 2 (length time-string))
-      (error "FORMAT-STRING should contains at least two characters."))
-    (multiple-value-bind (sec min hour dom mon year dow dstp tz)
-        (or time (get-decoded-time))
-      (loop
-       for format-position = (position #\% time-string :start (or format-position 0))
-       while format-position do
-       (let* ((format-character (aref time-string (+ format-position 1)))
-              (action (or (cdr (assoc format-character
-                                      *format-time-string-alist*))
-                          (error "Invalid format option %~C"
-                                 format-character))))
-         (setf time-string (concatenate 'string
-                                        (subseq time-string 0 format-position)
-                                        (funcall action sec min hour dom mon year dow dstp tz)
-                                        (subseq time-string (+ format-position 2))))
-         (when (char-equal #\% format-character) ; escape character
-           (incf format-position)))))
-    (format nil time-string)))
-
-(defcommand echo-date () ()
-  "Display the date and time."
-  (message "~a" (format-time-string)))
-
-(defcommand-alias time echo-date)
 
 (defun programs-in-path (&optional full-path (path (split-string (getenv "PATH") ":")))
   "Return a list of programs in the path that start with @var{base}. if
@@ -293,6 +165,7 @@ such a case, kill the shell command to resume StumpWM."
 (defcommand-alias exec run-shell-command)
 
 (defcommand eval-line (cmd) ((:rest "Eval: "))
+  "Evaluate the s-expression and display the result(s)."
   (handler-case
       (message "^20~{~a~^~%~}"
                (mapcar 'prin1-to-string
@@ -309,7 +182,7 @@ such a case, kill the shell command to resume StumpWM."
     (message "~a" string)))
 
 (defun send-meta-key (screen key)
-  "Send the prefix key"
+  "Send the key to the current window on the specified screen."
   (when (screen-current-window screen)
     (send-fake-key (screen-current-window screen) key)))
 
@@ -348,6 +221,23 @@ differs from a theoretical hard restart, which would restart the unix
 process."
   (throw :top-level :restart))
 
+(defun find-matching-windows (props all-groups all-screens)
+  "Returns list of windows matching @var{props} (see run-or-raise
+documentation for details). @var{all-groups} will find windows on all
+groups. Same for @{all-screens}. Result is sorted by group and window
+number, with group being more significant (think radix sort)."
+  (let* ((screens (if all-screens
+                      *screen-list*
+                      (list (current-screen))))
+         (winlist (if all-groups
+                      (mapcan (lambda (s) (screen-windows s)) screens)
+                      (group-windows (current-group))))
+         (matches (remove-if-not (lambda (w)
+                                   (apply 'window-matches-properties-p w props))
+                                 winlist)))
+    (stable-sort (sort matches #'< :key #'window-number)
+                 #'< :key (lambda (w) (group-number (window-group w))))))
+
 (defun run-or-raise (cmd props &optional (all-groups *run-or-raise-all-groups*) (all-screens *run-or-raise-all-screens*))
   "Run the shell command, @var{cmd}, unless an existing window
 matches @var{props}. @var{props} is a property list with the following keys:
@@ -377,30 +267,34 @@ instance. @var{all-groups} overrides this default. Similarily for
            (frame-raise-window group frame win)
            (focus-all win)
            (unless (eq frame old-frame)
-             (show-frame-indicator group))))
-       (find-window (group)
-         (find-if (lambda (w)
-                    (apply 'window-matches-properties-p w props))
-                  (group-windows group))))
-    (let*
-        ((screens (if all-screens
-                      *screen-list*
-                      (list (current-screen))))
-         (win
-          ;; If no qualifiers are set don't bother looking for a match.
-          ;; search all groups
-          (if all-groups
-              (loop named outer
-                    for s in screens
-                    do (loop
-                        for g in (screen-groups s)
-                        for win = (find-window g)
-                        when win
-                        do (return-from outer win)))
-              (find-window (current-group)))))
+             (show-frame-indicator group)))))
+    (let* ((matches (find-matching-windows props all-groups all-screens))
+           ;; other-matches is list of matches "after" the current
+           ;; win, if current win matches. getting 2nd element means
+           ;; skipping over the current win, to cycle through matches
+           (other-matches (member (current-window) matches))
+           (win (if (> (length other-matches) 1)
+                    (second other-matches)
+                    (first matches))))
       (if win
           (goto-win win)
           (run-shell-command cmd)))))
+
+(defun run-or-pull (cmd props &optional (all-groups *run-or-raise-all-groups*)
+                    (all-screens *run-or-raise-all-screens*))
+  "Similar to run-or-raise, but move the matching window to the
+current frame instead of switching to the window."
+  (let* ((matches (find-matching-windows props all-groups all-screens))
+         ;; other-matches is for cycling through matches
+         (other-matches (member (current-window) matches))
+         (win (if (> (length other-matches) 1)
+                  (second other-matches)
+                  (first matches))))
+    (if win
+        (progn
+          (move-window-to-group win (current-group))
+          (pull-window win))
+        (run-shell-command cmd))))
 
 (defcommand reload () ()
 "Reload StumpWM using @code{asdf}."
@@ -429,9 +323,61 @@ submitting the bug report."
 (defmacro defprogram-shortcut (name &key (command (string-downcase (string name)))
                                          (props `'(:class ,(string-capitalize command)))
                                          (map *top-map*)
-                                         (key (kbd (concat "H-" (subseq command 0 1)))))
-  "define a command and key binding to run or raise a program."
+                                         (key (kbd (concat "H-" (subseq command 0 1))))
+                                         (pullp nil)
+                                         (pull-name (intern1 (concat (string name) "-PULL")))
+                                         (pull-key (kbd (concat "H-M-" (subseq command 0 1)))))
+  "Define a command and key binding to run or raise a program. If
+@var{pullp} is set, also define a command and key binding to run or
+pull the program."
   `(progn
      (defcommand ,name () ()
        (run-or-raise ,command ,props))
-     (define-key ,map ,key ,(string-downcase (string name)))))
+     (define-key ,map ,key ,(string-downcase (string name)))
+     (when ,pullp
+       (defcommand (,pull-name tile-group) () ()
+          (run-or-pull ,command ,props))
+       (define-key ,map ,pull-key ,(string-downcase (string pull-name))))))
+
+(defcommand show-window-properties () ()
+  "Shows the properties of the current window. These properties can be
+used for matching windows with run-or-raise or window placement
+rules."
+  (let ((w (current-window)))
+    (message-no-timeout "class: ~A~%instance: ~A~%type: :~A~%role: ~A~%title: ~A"
+                        (window-class w)
+                        (window-res w)
+                        (string (window-type w))
+                        (window-role w)
+                        (window-title w))))
+
+(defcommand list-window-properties () ()
+  "List all the properties of the current window and their values,
+like xprop."
+  (message-no-timeout
+   "~{~30a: ~a~^~%~}"
+   (let ((win (if (current-window)
+                  (window-xwin (current-window))
+                  (screen-root (current-screen)))))
+     (loop for i in (xlib:list-properties win)
+        collect i
+        collect (multiple-value-bind (values type)
+                    (xlib:get-property win i)
+                  (case type
+                    (:wm_state (format nil "~{~a~^, ~}"
+                                       (loop for v in values
+                                          collect (case v (0 "Iconic") (1 "Normal") (2 "Withdrawn") (t "Unknown")))))
+                    (:window i)
+                    ;; _NET_WM_ICON is huuuuuge
+                    (:cardinal (if (> (length values) 20)
+                                   (format nil "~{~d~^, ~}..." (subseq values 0 15))
+                                   (format nil "~{~d~^, ~}" values)))
+                    (:atom (format nil "~{~a~^, ~}"
+                                   (mapcar (lambda (v) (xlib:atom-name *display* v)) values)))
+                    (:string (format nil "~{~s~^, ~}"
+                                     (mapcar (lambda (x) (coerce (mapcar 'xlib:card8->char x) 'string))
+                                             (split-seq values '(0)))))
+                    (:utf8_string (format nil "~{~s~^, ~}"
+                                          (mapcar 'utf8-to-string
+                                                  (split-seq values '(0)))))
+                    (t values)))))))

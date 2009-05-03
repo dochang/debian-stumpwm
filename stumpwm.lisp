@@ -24,6 +24,7 @@
 (in-package :stumpwm)
 
 (export '(cancel-timer
+	  load-contrib
 	  run-with-timer
 	  stumpwm
 	  timer-p))
@@ -127,6 +128,17 @@ of those expired."
             internal-time-units-per-second)
          0)))
 
+(defun perform-top-level-error-action (c)
+  (ecase *top-level-error-action*
+    (:message
+     (let ((s (format nil "~&Caught '~a' at the top level. Please report this." c)))
+       (write-line s)
+       (print-backtrace)
+       (message "^1*^B~a" s)))
+    (:break (invoke-debugger c))
+    (:abort
+     (throw :top-level (list c (backtrace-string))))))
+
 (defun stumpwm-internal-loop ()
   "The internal loop that waits for events and handles them."
   (loop
@@ -136,17 +148,21 @@ of those expired."
                                (if (lookup-error-recoverable-p)
                                    (recover-from-lookup-error)
                                    (error c))))
-          (error (lambda (c)
-                   (run-hook *top-level-error-hook*)
-                   (ecase *top-level-error-action*
-                     (:message
-                      (let ((s (format nil "~&Caught '~a' at the top level. Please report this." c)))
-                        (write-line s)
-                        (print-backtrace)
-                        (message "^1*^B~a" s)))
-                     (:break (invoke-debugger c))
-                     (:abort
-                      (throw :top-level (list c (backtrace-string))))))))
+          (warning #'muffle-warning)
+          ((or serious-condition error)
+           (lambda (c)
+             (run-hook *top-level-error-hook*)
+             (perform-top-level-error-action c)))
+          (t
+           (lambda (c)
+             ;; some other wacko condition was raised so first try
+             ;; what we can to keep going.
+             (cond ((find-restart 'muffle-warning)
+                    (muffle-warning))
+                   ((find-restart 'continue)
+                    (continue)))
+             ;; and if that fails treat it like a top level error.
+             (perform-top-level-error-action c))))
        ;; Note: process-event appears to hang for an unknown
        ;; reason. This is why it is passed a timeout in hopes that
        ;; this will keep it from hanging.
@@ -175,7 +191,7 @@ of those expired."
 	     '(simple-array character (*)))
      display screen
      (cond (protocol
-	    (intern (string-upcase protocol) :keyword))
+	    (intern1 protocol :keyword))
 	   ((or (string= host "")
 		(string-equal host "unix"))
 	    :local)
@@ -202,7 +218,7 @@ of those expired."
                (let ((*package* (find-package *default-package*)))
                  (multiple-value-bind (success err rc) (load-rc-file)
                    (if success
-                       (and *startup-message* (message "~a" *startup-message*))
+                       (and *startup-message* (message *startup-message* (print-key *escape-key*)))
                        (message "^B^1*Error loading ^b~A^B: ^n~A" rc err))))
                (when *last-unhandled-error*
                  (message-no-timeout "^B^1*StumpWM Crashed With An Unhandled Error!~%Copy the error to the clipboard with the 'copy-unhandled-error' command.~%^b~a^B^n~%~%~a"

@@ -1,5 +1,8 @@
 stumpwm (1:20080721-3) UNRELEASED; urgency=low
 
+  * debian/control:
+    + Standards-Version to 3.8.1, no changes needed.
+
   * debian/watch:
     + new file, thanks to lintian.
 

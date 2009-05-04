@@ -1,16 +1,16 @@
 --- stumpwm.orig/bindings.lisp
 +++ stumpwm/bindings.lisp
-@@ -49,8 +49,8 @@
- (when (null *root-map*)
-   (setf *root-map*
-         (let ((m (make-sparse-keymap)))
--          (define-key m (kbd "c") "exec xterm")
--          (define-key m (kbd "C-c") "exec xterm")
-+          (define-key m (kbd "c") "exec x-terminal-emulator")
-+          (define-key m (kbd "C-c") "exec x-terminal-emulator")
-           (define-key m (kbd "e") "emacs")
-           (define-key m (kbd "C-e") "emacs")
-           (define-key m (kbd "n") "pull-hidden-next")
+@@ -79,8 +79,8 @@
+   *escape-key* '*root-map*)
+ 
+ (fill-keymap *root-map*
+-  (kbd "c")   "exec xterm"
+-  (kbd "C-c") "exec xterm"
++  (kbd "c")   "exec x-terminal-emulator"
++  (kbd "C-c") "exec x-terminal-emulator"
+   (kbd "e")   "emacs"
+   (kbd "C-e") "emacs"
+   (kbd "b")   "banish"
 --- stumpwm.orig/sample-stumpwmrc.lisp
 +++ stumpwm/sample-stumpwmrc.lisp
 @@ -19,7 +19,7 @@

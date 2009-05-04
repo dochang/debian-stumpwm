@@ -1,7 +1,22 @@
-stumpwm (1:20080721-3) UNRELEASED; urgency=low
+stumpwm (1:20090502.git482df740-1) UNRELEASED; urgency=low
+
+  * New Git checkout (482df740882c2e9db6b58e89743d7f968fe34fa8):
+    + this include upstream version 0.9.5 and more.
+    + check the upstream NEWS file for user visible changes.
+    + add the first 8 digits to the Debian package version.
+
+  * debian/commit.id:
+    - remove, now uses the full Debian package version instead.
 
   * debian/control:
     + Standards-Version to 3.8.1, no changes needed.
+
+  * debian/patches/02_correct-Stumpwm-StumpWM-in-README.diff: refresh.
+  * debian/patches/04_default-to-x-terminal-emulator.diff: refresh.
+  * debian/patches/06_add-upstream-changelog.diff: refresh.
+
+  * debian/rules:
+    + use the full Debian package version for PACKAGE_VERSION.
 
   * debian/watch:
     + new file, thanks to lintian.

@@ -1,6 +1,1625 @@
 --- /dev/null
 +++ stumpwm/ChangeLog
-@@ -0,0 +1,8182 @@
+@@ -0,0 +1,9801 @@
++commit 482df740882c2e9db6b58e89743d7f968fe34fa8
++Author: Antti Nykanen <aon@iki.fi>
++Date:   Sat May 2 19:45:57 2009 +0300
++
++    Don't draw frame outlines if outline width is 0
++    
++    This allows you to call (set-frame-outline-width 0) to get rid of the
++    outlines.
++
++commit 88dae82c11addae3cffb3930205716cd502852f4
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Thu Apr 30 14:44:17 2009 -0700
++
++    fix documentation typo
++
++commit 46dafe15e869004d2e0556fc860c49eec02ac59d
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Tue Apr 28 22:06:02 2009 -0700
++
++    fix with-gcontext in wrappers.lisp for clisp 1.47
++
++commit e6d6062bd665f014e935a7f2e5b3b395858dd18f
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Mon Apr 27 10:34:49 2009 +0100
++
++    Added frame-windowlist command.
++
++commit f820eb41245cc06a709a078abbe132886123794a
++Author: Friedrich Delgado Friedrichs <friedel@nomaden.org>
++Date:   Sat Apr 25 01:17:05 2009 +0200
++
++    ensure that name argument to defprogram-shortcut can be a symbol
++
++commit ea4524a0139997b5e392407b7fb768c2d4a8f7c0
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Fri Apr 24 17:34:06 2009 -0700
++
++    in dformat, restrict debugging output to standard-char's
++
++commit 7a745e2c97de7c82561cd62d3a6d8988aea78fd3
++Author: Egon Hyszczak <gone404@gmail.com>
++Date:   Wed Apr 15 19:10:12 2009 -0400
++
++    in wrappers.lisp use the posix instead of os package
++    
++    os is a nickname of the posix package but it was breaking with -K full on gentoo.
++
++commit 3834c21fbd5c0ad0bce56124198e719e25e8a20f
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Sat Mar 14 19:25:47 2009 +0100
++
++    Handle convert errors in bytes-to-string
++    
++    StumpWM crashes in bytes-to-string when it takes non-convertable
++    sequence for current locale. The same error handler exists in
++    utf8-to-string, apply it to bytes-to-string also.
++
++commit 2aed028cb90bc37f53bf484d1c3e977de92daf88
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Fri Apr 24 14:53:24 2009 -0700
++
++    implement intern1 and use it instead of intern
++
++commit 890b86396d0383ca652437c4d0905d476629be0e
++Author: John Li <jli@circularly.org>
++Date:   Tue Feb 17 20:34:57 2009 -0500
++
++    Fix crash when using fmt-head-window-list-hidden-windows on float group.
++    
++    Gotta love fixes that involve throwing away (my) bad code :). Also
++    update the docstring for *hidden-window-color*.
++
++commit 89ca5e98637a280bb47f9d2358b83f90f9eed25d
++Author: John Li <jli@circularly.org>
++Date:   Tue Feb 17 20:33:53 2009 -0500
++
++    Modify defprogram-shortcut to define a run-or-pull command/binding.
++    
++    This is an optional argument. Use the "pullp" keyword to enable. Defaults to old
++    behavior (no run-or-pull command defined).
++
++commit 2fa9853a2608d2619e74f40a43e1b4103da2afdd
++Author: John Li <jli@circularly.org>
++Date:   Tue Feb 17 20:35:17 2009 -0500
++
++    Clean up run-or-raise, add run-or-pull.
++    
++    This splits the labeled "find-windows" and "sort-windows-by-group" fns
++    from run-or-raise out into a real fn: "find-matching-windows". Much
++    cleaner, yay. The newly defined "run-or-pull" uses it.
++
++commit 512936e20e627019e26780995f7b0ecfae01a858
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Wed Apr 22 02:42:30 2009 -0700
++
++    add a workaround for clisp's with-gcontext
++    
++    the version in 1.44 is broken
++
++commit a332f8ab59ec4bb7df8a7ef91732e191da07a985
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Mon Feb 23 15:57:33 2009 +0100
++
++    double buffer the mode-line and message windows
++    
++    fixed the darn flickering mode-line and message windows,
++
++commit 532737a290c54a4f6172a05400daa6f5986e0ddb
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Mon Feb 23 09:47:04 2009 +0100
++
++    contrib/mpd.lisp sort artists and genres during browsing
++    
++    This patch applies on recent Morgan's patches for database browsing
++    and sorts artists and genres lists.
++
++commit ee3ed285ae238d5c40ed154badd12a24b5c7e8f1
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Mon Feb 23 19:18:31 2009 +0100
++
++    Changed default key for :mpd-browse-add from SPC to S-SPC.
++    
++    The space key may be usefull for regex search when browsing the database
++    so using it as a default menu key is probably not a good idea.
++
++commit f339d974fde54a932ade26e82c01eedac8f7eac5
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sat Feb 21 10:41:04 2009 +0100
++
++    Fixed mpd-play-track command.
++    
++    1- call isn't required here. mpd playlists seems to start at 1
++
++commit d857910cb62271522fa6d8982885466e6b56f5b9
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sat Feb 21 00:15:26 2009 +0100
++
++    Added playlist edition through mpd-browse-playlist menu.
++    
++    Also:
++     - cleaned mpd-menu code
++     - added mpd-remove-track, mpd-swap-tracks commands
++     - added the possibility to add things to the playlist while browsing
++       without exiting the menu
++
++commit dc5faaa22c34d742dd2914e67d2aa90a16d0d39b
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Wed Apr 22 02:06:19 2009 -0700
++
++    Revert "Added playlist edition through mpd-browse-playlist menu."
++    
++    This reverts commit 2a36c53eff022d74c9e2bdba0bef9de1c3918c48.
++
++commit 2a36c53eff022d74c9e2bdba0bef9de1c3918c48
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sat Feb 21 00:15:26 2009 +0100
++
++    Added playlist edition through mpd-browse-playlist menu.
++    
++    Also:
++     - cleaned mpd-menu code
++     - added mpd-remove-track, mpd-swap-tracks commands
++     - added the possibility to add things to the playlist while browsing
++       without exiting the menu
++
++commit daa93a8ba3c803bffeda39144ab46410d899dcb9
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Thu Feb 19 13:21:31 2009 +0100
++
++    Implemented proper database browsing through menu.
++    
++    It adds two keybinding when using one of the mpd-browse-* command
++    (except mpd-browse-playlist):
++     - Left: go back to previous browsing level
++     - Right: go to the next browsing level
++    
++    Levels are organised as follow:
++     Genre -> Artist -> Album -> Tracks
++
++commit c45482464aca797152c21cf04e9e5249bfa11bfd
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Tue Feb 17 13:55:37 2009 +0100
++
++    Added maildir modeline formatters in contrib/.
++    
++    This module allows to display number of e-mails (new,total,tmp)
++    of maildir mailboxes in the mode-line. See contrib/maildir.lisp
++    for details.
++
++commit 2a9c0ab4a73b383bb4c5db3d9c97b547470f1c08
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Tue Feb 17 13:52:01 2009 +0100
++
++    Defined not-implemented condition.
++
++commit b2e244e380c5abfed17e49abad6e9a9eb29a7527
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Wed Apr 22 01:44:05 2009 -0700
++
++    add Vitaly Mayatskikh's contrib module, mem.lisp
++    
++    For keeping track of memory usage on the modeline
++
++commit 2d7098b12b0e9ba6f252ea5d68dec10cfa16c447
++Author: Julian Stecklina <js@alien8.de>
++Date:   Wed Jan 28 21:09:10 2009 +0100
++
++    Fixed Linux procfs version of battery-portable.
++
++commit 9044653a7470a828313e2bf58f60a3d028c1eb92
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Wed Apr 22 01:31:36 2009 -0700
++
++    add Vitaly Mayatskikh's net.lisp contrib module
++    
++    A Network activity formatter for the mode-line
++
++commit 8e743ba180f9666a328f65c6cacecac53f4059e9
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Feb 23 15:06:12 2009 -0800
++
++    clean up asdf dependencies.
++
++commit c4c1feaf3db6d3744b872f80b071734c342708d4
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Jan 21 15:04:47 2009 -0800
++
++    build the binary before the documentation
++
++commit f94a5cbebd47b53f20c3571b34c4fa658491a4da
++Author: John Li <jli@cirularly.org>
++Date:   Sat Jan 17 19:30:52 2009 -0500
++
++    Set a default *frame-number-map* to be 36 alphanum chars.
++    
++    If there are >10 frames, there is no way to select frames with number
++    >9. Now users are covered til frame 37. Behavior is indistinguishable
++    from current default until there are >10 frames.
++
++commit f5d75ac6fc14f92749d2c06dd2aa456e38d391ee
++Author: John Li <jli@cirularly.org>
++Date:   Sat Jan 17 19:30:40 2009 -0500
++
++    Fix scary exchange-direction error messages.
++    
++    Trying to exchange-direction (1) when no window is in the focused
++    frame, (2) in a direction with no windows, or (3) off the edge of the
++    screen causes an ugly error message.
++    
++    So, with this frame setup:
++    ┌────────┬─────────┐
++    │(empty) │ (window)│
++    │        │         │
++    │        │ :)      │
++    │        │     =D  │
++    │        │         │
++    │        │ bobf<3  │
++    │        │         │
++    └────────┴─────────┘
++    
++    Trying to exchange-direction in any direction with either frame
++    selected causes an error message (3 different ones depending on the
++    action, too!), for a total of 8 ways to get yelled at :).
++    
++    PROOF OF FEROCIOUS WILL
++
++commit fb264a75e6bd9d4f884942b19498ff40caef3782
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Jan 20 00:03:44 2009 -0800
++
++    add refresh and redisplay commands
++    
++    Thanks to Michael Raskin for the original patch (and to his patience).
++
++commit d137b5951c89229fd7f1655dbc9631b4be5b2fe9
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Jan 19 01:35:42 2009 -0800
++
++    handle i18n characters in the frame indicator
++
++commit 4444af8db992ba3ab77788eac20bd3163c35c9c9
++Author: TC-Rucho <tc.rucho@gmail.com>
++Date:   Fri Jan 16 15:46:43 2009 -0800
++
++    Add more Logitech G15 keyboard keysyms
++
++commit 072961ea242b914aa14b0d8a17ec533779081baa
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Sun Nov 16 16:34:19 2008 +0100
++
++    Some more explanations in contrib/sbclfix.lisp (and some cleanup).
++
++commit b706be6ce7efee994ed37e3d8bd24a049b38dfe3
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Jan 16 15:22:23 2009 -0800
++
++    fix find-module for sbcl
++
++commit a8ddb80ef9a68cda7e497d8d7d70f529e9b0dbe2
++Author: Rupert Swarbrick <rswarbrick@googlemail.com>
++Date:   Wed Dec 31 23:38:13 2008 +0000
++
++    call netwm-set-group-properties in kill-group
++    
++    This is useful if you use gnome-panel and workspace switcher
++    applet (otherwise the applet doesn't know about the deletion).
++
++commit 34619089cb52249d269a00de48541b159e59d6d5
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Thu Dec 18 11:33:01 2008 +0100
++
++    declare mpd maps before using them
++    
++    SBCL complains on undeclared variables while loading mpd.lisp
++
++commit 5758f530b438d269ba1fc2466a8a9369d76f867d
++Author: James Wright <james@chumsley.org>
++Date:   Thu Dec 11 18:19:36 2008 -0800
++
++    Make gnome-panel recognize closed windows
++    
++    My version of gnome-panel ignores _NET_CLIENT_LIST updates when they
++    are not consistent with the _NET_CLIENT_LIST_STACKING state.  However,
++    when a window was unmapped, stumpwm was previously doing the following:
++    
++    1. update _NET_CLIENT_LIST property based on `screen-mapped-windows', which
++       does not include the newly-unmapped window.
++    2. update _NET_CLIENT_LIST_STACKING property based on `all-windows', which is
++       created by concatenating all the windows in the group.
++    
++    Problem: `withdraw-window' was calling `remove-mapped-window' (which sends the
++    updates) BEFORE it removed the unmapped window from its tile-group.  So the
++    unmapped window was removed from _NET_CLIENT_LIST, but not from
++    _NET_CLIENT_LIST_STACKING.  But gnome-panel ignores client list updates
++    whenever _NET_CLIENT_LIST and_NET_CLIENT_LIST_STACKING are inconsistent.
++    
++    So the fix, which is much shorter than this comment, changes `withdraw-window'
++    to remove the withdrawn window from its tile-group and then call
++    `remove-mapped-window'.
++
++commit b38d74ae928d814c96a290e2d1d545b69a92a760
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Jan 14 15:38:09 2009 -0800
++
++    downgrade asdf.lisp to 1.109
++
++commit 975de5086b92a30d44bebab42f4d0277234e5e07
++Author: Ivy Foster <ivy.foster@gmail.com>
++Date:   Mon Dec 8 15:34:47 2008 -0600
++
++    Added crossfade controls to contrib/mpd.lisp
++    
++        - `mpd-toggle-xfade' toggle crossfade but doesn't change the
++          default crossfade value
++        - `mpd-xfade-default' is the default number of seconds of
++          crossfade (set for this stumpwm session with `mpd-set-xfade').
++        - Keymaps now use `fill-keymap'
++
++commit 584d225f40a8736025238e064fbab6a6d3a11c94
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Dec 9 16:38:27 2008 -0800
++
++    fix some of the time-* functions to return the minute instead of the month.
++
++commit efa504d7f02b3f03be2f6399542e2dbdd0c4f837
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Dec 9 16:28:35 2008 -0800
++
++    update asdf.lisp
++
++commit e4d5fe80edc9215c915d9407c261b4afa92569a1
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Dec 9 16:19:21 2008 -0800
++
++    use install to copy files in makefile's install rule
++    
++    Thanks to an unknown someone on #stumpwm for the original patch.
++
++commit b288db4e939e2b873fedcd7490859904cd0a0dba
++Author: Ivy Foster <ivy.foster@gmail.com>
++Date:   Thu Nov 27 03:17:53 2008 -0600
++
++    fix make install/uninstall and make modules work when stumpwm is installed
++    
++        - Makefile.in: Fixed install-info error on `make uninstall'.
++        - Makefile.in: Added optional `destdir' option for `make install'.
++          This is useful for packaging.
++        - module.lisp: contrib/ directory no longer uses hardcoded
++          name/path, allowing greater flexibility. Use `contrib-dir-set'
++          to change where stumpwm looks for your modules.
++
++commit 65b37595ab4ed6b5192ed434d9497dfd53715588
++Author: Shawn <sabetts@juicebox.(none)>
++Date:   Mon Nov 10 16:22:16 2008 -0800
++
++    Revert "reimplement frame-head to watch the frame trees"
++    
++    This reverts commit a6d595937be4244ed0a1334e7cfe1a81c5b6c938.
++
++commit 03c141d832ea14527b0bdbaaa40fcd08da37c1fd
++Author: Shawn <sabetts@juicebox.(none)>
++Date:   Mon Nov 10 16:21:57 2008 -0800
++
++    Revert "In frame-display-y and frame-display-height, handle the frame argument being a head."
++    
++    This reverts commit d048a601ef52158107cb6fc84ec3af59f14f8b15.
++
++commit d048a601ef52158107cb6fc84ec3af59f14f8b15
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Nov 10 16:06:47 2008 -0800
++
++    In frame-display-y and frame-display-height, handle the frame argument being a head.
++    
++    fixed C-t f, which was broken by patch a6d595937b
++
++commit a6d595937be4244ed0a1334e7cfe1a81c5b6c938
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Nov 7 16:43:22 2008 -0800
++
++    reimplement frame-head to watch the frame trees
++
++commit 4f0900b56df3c8dddd7917c1e76ae9f1ec4fabce
++Author: Lionel Flandrin <simias.n@gmail.com>
++Date:   Thu Nov 6 16:45:01 2008 +0100
++
++    Use PPCRE for rules matching instead of the "..." syntax.
++
++commit 5c3fd5d4c1e05ce08346300ad2ea1467496eb8f3
++Author: Greg Pfeil <greg@technomadic.org>
++Date:   Thu Aug 14 09:49:47 2008 -0400
++
++    use floor instead of truncate in expand-tree
++    
++    this way negative values when shrinking the frame won't get underestimated.
++
++commit afffa6c61afc22fd267758011be13ddca64d1490
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 31 14:15:57 2008 -0700
++
++    add contrib/sbclfix.lisp
++    
++    a module to work around sbcl's buggy run-program.
++    
++    -Shawn
++
++commit fe33d99d7ffcd8a9caf7fb6008be7d0afffae45e
++Author: John Li <jli@circularly.org>
++Date:   Wed Jul 16 23:24:18 2008 -0400
++
++    Add fmt-head-window-list variant that colors "hidden" windows.
++    
++    Windows not displayed in any frame get their titles colored with the
++    *hidden-window-color* command, "^5*" (magenta) by default. This can be
++    set to "" for the behavior of fmt-head-window-list.
++
++commit a8ea0cffbc42591d46ff6dc0e6a346a51f0780b3
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Fri Oct 24 14:57:04 2008 +0200
++
++    Added simple disk usage formatters for the modeline.
++
++commit 83dc80013f2853215a2a30157c56871c87c7b8ad
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Oct 29 12:55:42 2008 -0700
++
++    remove dump-desktop, dump-group, dump-screen aliases from documentation
++
++commit f34c9a2f8efe2760e3b87ab415360c335d92b6dd
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Wed Oct 22 19:12:04 2008 +0200
++
++    Added "Not connected to mpd" message to the modeline formatter.
++
++commit 381fd4c6fc7a46c020d6c4c51e39f9c9b13a42df
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Wed Oct 22 17:18:22 2008 +0200
++
++    Fixed mpd-toggle-* commands to work with mpd-get-status.
++
++commit 1e3a85e1d00996e3a243b6c451b9c2deb2a03444
++Author: Ivy Foster <ivy.foster@gmail.com>
++Date:   Tue Oct 28 23:40:18 2008 -0500
++
++    version.lisp{,.in} now uses defcommand
++
++commit 6371c67642b6ee3fe93258441a2027a492c6957d
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Oct 27 19:11:43 2008 -0700
++
++    fix the lag in float-group when dragging to move
++    
++    :configure-notify and :enter-notify events were piling up causing
++    extreme chunkage.
++
++commit dfe272361ac8a520aec56e0f7bc8e342ed4eaf4b
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Oct 27 19:10:19 2008 -0700
++
++    fix fullscreen in float-group
++    
++    This required refactoring of the :configure-request event. Before a
++    resize request was always sent to the current group whether the
++    request had one or not. Now only requests that are actually requested
++    are made.
++
++commit 45963874d0962c4dd744435bc6b29e84471a4cf8
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Oct 27 19:08:20 2008 -0700
++
++    disable the *escape-fake-key* if it and *escape-key* are the same.
++    
++    This fixes having duplicate keybindings in the keymap lists
++
++commit e2222e16873decd481ce9f2621ec840a27a29868
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Mon Oct 27 10:20:46 2008 +0100
++
++    Restored message when placing window in a non-visible group.
++
++commit bdbf07cf8997645c028a91cf498970409873d5bb
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sat Aug 9 00:22:33 2008 +0200
++
++    Added support for automatic group creation and/or restoration.
++    
++    This adds two keyword parameters to rules:
++      * :create , when non-NIL the group matching the rule is created if it doesn't already exist.
++        The group may be restored from a dump-file in *data-dir* if such a file exists. The dump filename
++        may be specified as :create "dump-file", if not it defaults to group-name.
++        Defaults to NIL.
++      * :restore , for group restoration from a dump file even if the matching group already exists.
++        The dump filename should be specified as :restore "dump-file".
++        Defaults to NIL.
++
++commit 636f36a3419b48ec4946b0ade3aa24f5bc88f55a
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Oct 27 01:54:08 2008 -0700
++
++    fix select-from-menu's call to read-from-keymap
++    
++    it wasn't updated when read-from-keymap changed.
++
++commit ae6d2c8d97a4a0a6cdab3ca61aa7308e4052b1cc
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 24 10:58:32 2008 -0700
++
++    move tile-group specific code from activate-fullscreen and deactivate-fullscreen
++
++commit e26d52084501cda9b6beb25461282ab0e7c9ac31
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 24 10:57:34 2008 -0700
++
++    rename frame.lisp to tile-group.lisp
++
++commit 2e8d652e59a07230bfea090eaac37680a72496da
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 24 10:41:54 2008 -0700
++
++    report the proper key sequence for help in the start up message
++    
++    it used to be hardcoded for C-t
++
++commit 36a6b0f865bcb43530d4ae543eff807815d92fb1
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 24 10:33:51 2008 -0700
++
++    fix unmatched paren
++
++commit 59333fa1e94c650a924a9015daec9dd3b8eaec87
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 24 09:26:07 2008 -0700
++
++    in list-window-properties, show the properties of the root window when there is no current window
++
++commit 262ce540437d7d1155bb82b93c55c3508b34be2e
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 24 09:21:23 2008 -0700
++
++    in list-window-properties, only print the first 20 digits in :cardinal properties
++    
++    _NET_WM_ICON can be huge.
++
++commit 55e99b100034b0ec2df54296c05a92a087dd27f7
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 24 09:20:31 2008 -0700
++
++    document *initializing*
++
++commit e06e3d3c8687dac5af265c5623fc761c210d8536
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 24 09:04:44 2008 -0700
++
++    new command, list-window-properties
++
++commit 16569129ffcd7d5d6557270ff2cdae931cb993bb
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 24 09:02:13 2008 -0700
++
++    rewrite split-string as a more general split-seq and use it to implement split-string
++
++commit 3b9e6208d9c3f49569f8e99114e903488797ab06
++Author: Shawn <sabetts@juicebox>
++Date:   Thu Oct 23 17:10:35 2008 -0700
++
++    add altgr support
++    
++    Thanks to TauPan for the original patch and testing.
++
++commit 17febc329b5f140af031b5848fa6a6cef7225ff8
++Author: Ivy Foster <ivy.foster@gmail.com>
++Date:   Wed Oct 22 19:01:28 2008 -0500
++
++    Fixed a couple of bugs in amixer.lisp
++
++commit 6baa1eceeb7ff82982d29f94494a7bafa0824353
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Oct 22 16:43:52 2008 -0700
++
++    ignore head in group-sync-head
++    
++    gets rid of a warning
++
++commit a9631c37dcd0978f978517e2bde2eac3d817c64f
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Oct 22 16:42:24 2008 -0700
++
++    minor clean ups to time.lisp
++    
++    - load time.lisp before mode-line.lisp
++    - move the modeline time formatting code to mode-line.lisp
++    - ditch *time* in time-plist
++
++commit b5a81996fc29afe662c24b4fff9ccc54e06fb16f
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Oct 22 16:34:42 2008 -0700
++
++    remove duplicate definition of gravity command
++
++commit d24ee3796009b9a1e40d16517b1c172029b35bf5
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Oct 22 16:32:11 2008 -0700
++
++    mark a bunch of tile-group only commands as such.
++
++commit 55f4869b02b519d83d2cf8a89b52e384df5595f1
++Author: Ivy Foster <ivy.foster@gmail.com>
++Date:   Wed Oct 22 17:44:10 2008 -0500
++
++    Added time.lisp
++    
++        - Output should be identical to previous time code
++        - Works with (format-expand) instead of (time-lambda)
++        - Added modeline support
++        - *All* time commands and variables now begin with time- or
++          *time-. If you customize *format-time-string-default*, do
++          change the first two words.
++
++commit 0ea16c46f0c7d672e810336f41947a9a0ae0cb32
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Oct 22 15:06:49 2008 -0700
++
++    rearrange the top level binding order.
++    
++    now *top-map* is first so user bindings aren't shadowed.
++
++commit 93dcbacb806628f8ad58c59a0b1d55f36418a962
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Wed Oct 22 17:18:22 2008 +0200
++
++    Fixed mpd-toggle-pause command to work with mpd-get-status.
++
++commit 1ef37ec7aa4c9f6a9f520fb430c2f1d1d6ad3e99
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Oct 21 22:09:25 2008 -0700
++
++    update docs
++    
++    remove the help command
++
++commit 1e11b6753b1869ad1bb9e24e426e51423cb4f812
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Oct 21 21:50:20 2008 -0700
++
++    add the help binding, C-t ?, to the startup message
++
++commit ce23931cb636856622d0ad8704255cebe446ece7
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Oct 21 21:49:53 2008 -0700
++
++    ditch the help its C-t ? binding.
++    
++    stumpwm already prints the bindings without that command. it's useless.
++
++commit d1d1059c885952fb99d6a7233a412ad04aa3ffea
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Oct 21 19:00:55 2008 -0700
++
++    fix maybe-map-window
++    
++    it was activing like maybe-raise-window.
++
++commit e65bd69c7f6972ab6986f567298ccf589d5b3e61
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Oct 21 21:28:10 2008 -0700
++
++    fix two minor borkups from the merge
++
++commit 1650598f48f313446c809223068eda3cc3f43678
++Merge: 334ff3f 82f5f11
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Oct 21 20:46:37 2008 -0700
++
++    Merge branch 'master' into test
++    
++    straight forward stuff. A few patches changes functions that had moved
++    to different files. in the case of bindings.lisp 2 bindings needed to
++    be added to the new bindings code.
++    
++    Conflicts:
++    
++    	NEWS
++    	bindings.lisp
++    	command.lisp
++    	group.lisp
++    	kmap.lisp
++    	screen.lisp
++    	window.lisp
++
++commit 334ff3f0ded97a08bf1155003546c351495408cf
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Aug 27 20:38:53 2008 -0700
++
++    fix focus/unfocus color for floating windows
++
++commit 6b182fcdd4024c394268686f674d69e143767dc6
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Aug 27 20:38:35 2008 -0700
++
++    improve docs for focus-window
++
++commit ce5362655e21547884c64fe3bf11145d1f016316
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Aug 27 14:11:19 2008 -0700
++
++    fix window-visible-p for tile-windows
++
++commit 9fe89bb43e6787933ac8e5c7da5821cb0eb5b07b
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Aug 27 13:53:49 2008 -0700
++
++    fix :key-seq type to work with read-from-keymap
++
++commit 7b449537682c233c478bfac2ff1fe469a962691f
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Aug 27 13:53:00 2008 -0700
++
++    fix the modeline for floating groups
++
++commit 1671cf9fa1b6cbf281773b865e67a6333aa2d648
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Aug 5 16:30:17 2008 -0700
++
++    update NEWS
++
++commit f918b9c2bc4c0e4a98670414b3db886a5db75788
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Aug 5 16:24:14 2008 -0700
++
++    update manual to reflesh changes to set-prefix-key/escape
++
++commit 242112aafb1210a08aad81e80a3730f37f9b7430
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Aug 5 16:22:57 2008 -0700
++
++    in window-matches-rule-p, check if the group slot is bound before using it.
++
++commit 671ff7249b70c4c3ffdd72cecdaaeaefb4c3578c
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Aug 5 16:22:29 2008 -0700
++
++    change kmaps from a hashtable to a struct containing a list
++    
++    This change was needed because there are now multiple top level maps
++    that all hang bindings off the escape key. set-prefix-key cannot know
++    what top level maps it needs to search to update the escape key, so
++    *escape-key* was created which is a key struct that is used in any map
++    that wants to use the escape key. Now that key's slots just need to be
++    updated. But a hashtable's keys cannot change or the lookup fails, so
++    a list is now used.
++
++commit 7e9ae2d36f15aad0e8a11d4a6e43df8264183024
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Aug 4 20:40:11 2008 -0700
++
++    add the new lisp files to the makefile
++    
++    change newfloat command to gnew-float
++
++commit 11f665c02f4a0e1654bbc4190d70571e3fb3fd2c
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Aug 4 20:34:23 2008 -0700
++
++    don't allow inactive commands to be called or tab completed
++    
++    Also, fix describe-command to handle aliases.
++
++commit d0666155fe9f72da948954b9c52a5f41ae1af3d1
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Aug 4 00:21:04 2008 -0700
++
++    add window-sync generic function and use it in a few places
++    
++    Also call group-delete-window after the window has been removed from
++    the window list in move-window-to-group.
++
++commit 236a89f4ba7e33d56bde1f6c7d563b1af5b1658a
++Author: Shawn <sabetts@juicebox>
++Date:   Sun Aug 3 23:34:43 2008 -0700
++
++    allow commands to belong to a class and tag commands appropriately
++    
++    Also document some undocumented commands.
++
++commit 4366132e6b72d29c9affe62c1e28f35e96edffb8
++Author: Shawn <sabetts@juicebox>
++Date:   Sun Aug 3 23:27:25 2008 -0700
++
++    fix up the window placement to properly put window in their frames on start up.
++
++commit 1ebb8bf7137677fb6b293a06a46ae93e29725164
++Author: Shawn <sabetts@juicebox>
++Date:   Sun Aug 3 22:27:47 2008 -0700
++
++    active bindings now change based on the current group
++    
++    there is now an alist, *group-top-maps*, that maps each group type to
++    a kmap symbol. For a given group, all kmap symbols whose group type
++    match the group are active along with *top-map*.
++
++commit eba627c8e41b0a17ea724998e833a9637000c458
++Author: Shawn <sabetts@juicebox>
++Date:   Sun Aug 3 21:40:03 2008 -0700
++
++    get rid of warning in with-data-file
++
++commit 7fcf9f80750ce7df48cbf9d81098a19fad8e3a47
++Author: Shawn <sabetts@juicebox>
++Date:   Sun Aug 3 21:39:32 2008 -0700
++
++    Add debug messages to manual.lisp
++
++commit 0fe89e93958c40223e073aa62551f658a9be2700
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Aug 2 03:16:55 2008 -0700
++
++    add some command aliases
++
++commit b2bb515f752eabb03ed4be4649c39c3b09e16cb0
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Aug 2 03:10:33 2008 -0700
++
++    distribute the window related code to the proper files
++
++commit f121d907084ad6b6bb91a439150a8b831eafaeb4
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Aug 2 02:07:22 2008 -0700
++
++    implement a basic floating group
++
++commit 3ba1e2d8eb8a52e61620b4283ce37d26e1949672
++Author: Shawn <sabetts@juicebox>
++Date:   Thu Jul 31 12:21:00 2008 -0700
++
++    add a group API and isolate all tile-group related code within the api
++    
++    This is the first stage towards adding other window management styles
++    to stumpwm.
++
++commit 82f5f11ac89d39bc5cd2a660d2ab060607aa0ada
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Oct 21 14:10:59 2008 -0700
++
++    bump version to 0.9.6-git
++
++commit f9d7c4374023cd8d658599378b5cc2ba61a77c75
++Merge: a72ec83 b63e471
++Author: Shawn <sabetts@juicebox.(none)>
++Date:   Tue Oct 21 14:07:48 2008 -0700
++
++    Merge branch 'master' of ssh://sabetts@git.sv.gnu.org/srv/git/stumpwm
++
++commit a72ec837b11830fbadf6992d71ad06dbea4efd65
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Oct 21 13:59:48 2008 -0700
++
++    update AUTHORS
++
++commit def21c3c394ecf168aa6c236e0173ee3194b8044
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Oct 21 13:55:17 2008 -0700
++
++    update NEWS file
++
++commit 876d33843bbcdad2af2af3cf86d8271dec3b71c2
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Tue Oct 21 00:10:31 2008 +0200
++
++    mpd.lisp re-add mpd-get-song-name
++    
++    *mpd-collapse-album-length* and *mpd-collapse-all-length* still
++    exist in export, but the code using it was swept away by recent
++    commit. This commit puts it back.
++
++commit b63e471d05c4a8020b554a9ec1a706500ee686c1
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Mon Oct 20 14:34:28 2008 +0200
++
++    Cancel mpd timer on disconnect or connection lost.
++
++commit be8e518d3531a994dec95760407cae19d25939e5
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Aug 19 21:03:18 2008 +0200
++
++    Fixed typo in documentation.
++
++commit 974aa3c50f8d27f56f85fb81fcfe9997ee842768
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Mon Aug 18 21:04:56 2008 +0200
++
++    Change wifi.lisp to use sysfs for most of its information gathering.
++
++commit ecbfd60e458cbe55cdd0513acd1f0cb93763d3de
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Thu Jul 31 20:51:48 2008 +0200
++
++    Add FreeBSD to the clisp hack. This should only influence contrib modules.
++
++commit 77d96ea9b3744d77452c15441103f0318d20a29b
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Wed Jul 30 16:12:46 2008 +0200
++
++    Simplified CLISP :linux hack.
++
++commit 62de04295d7e7047beb172729af3904c4413f48f
++Author: Ivy Foster <ivy.foster@gmail.com>
++Date:   Wed Oct 15 01:39:59 2008 -0500
++
++    Some contrib/mpd.lisp improvements
++    
++        - Minor code cleanup
++        - Export important user-visible variables and functions
++        - Cleaned up formatting code, added flexibility. See
++          documentation for variable *mpd-modeline-fmt* and/or the
++          file's opening remarks for more info.
++        - New command mpd-play-track allows selection of track by number
++
++commit c34f7a45423ec15592ed834a18a73ad7c906c202
++Author: Ivy Foster <ivy.foster@gmail.com>
++Date:   Sun Oct 19 11:49:07 2008 -0500
++
++    Cleaned up code in contrib/amixer.lisp
++    
++        - Pipes in volcontrol command now more readable
++        - Now you can easily define your own channels with defvolcontrol
++        - Removed redundant keysyms (now in keysyms.lisp)
++        - Removed keybindings (different people have different channels
++          and different preferences)
++
++commit 797386434b38a5054f1b862a188682d808648c2c
++Author: John Fremlin <john@fremlin.org>
++Date:   Fri Sep 5 13:39:52 2008 +0100
++
++    correct case when a keysym has more than one keycode
++
++commit 50160e83409b255ba793e1fd5f41ed0660f85916
++Author: Fredrik Tolf <fredrik@dolda2000.com>
++Date:   Wed Oct 15 16:18:20 2008 +0200
++
++    Contrib: aumix module
++
++commit eb3a8b3c435f1ad0f2631fc2647d834290d4fd15
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Wed Oct 15 22:11:11 2008 +0200
++
++    Moved mpd ping timer initialization to init-mpd-connection.
++    
++    This should fix the annoying error messages when loading mpd.lisp
++    without calling mpd-connect or without mpd running.
++
++commit 9155760d23a29b3b46bde3562be294803714c59f
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Oct 18 20:23:08 2008 -0700
++
++    normalize the wm-normal-hints structure whenever it is requested from the x server
++    
++    skype's profile window was setting the max-height hint to 0 which was breaking stumpwm, as seen here:
++    
++    #S(XLIB:WM-SIZE-HINTS :USER-SPECIFIED-POSITION-P NIL :USER-SPECIFIED-SIZE-P T
++       :X NIL :Y NIL :WIDTH 300 :HEIGHT 386 :MIN-WIDTH 300 :MIN-HEIGHT 386
++       :MAX-WIDTH 300
++       :MAX-HEIGHT 0
++       :WIDTH-INC NIL :HEIGHT-INC NIL :MIN-ASPECT NIL
++       :MAX-ASPECT NIL :BASE-WIDTH NIL :BASE-HEIGHT NIL :WIN-GRAVITY :NORTH-WEST
++       :PROGRAM-SPECIFIED-POSITION-P NIL :PROGRAM-SPECIFIED-SIZE-P T)
++
++commit 19bdb635acf7822cc25bbffc73ee39c36e5c04a9
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Oct 18 15:36:56 2008 -0700
++
++    fix a typo in perform-top-level-error-action
++
++commit d37b109d6c9f0d43888cd0dff5f9f31fa411da19
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Oct 18 14:35:31 2008 -0700
++
++    in the top level error handler, handle errors and serious-conditions seperate from everything else.
++    
++    For all other errors, try to recover and then fail just like an unhandled top level error.
++    
++    in with-restarts-menu, only catch serious-conditions and errors.
++
++commit 4a76004ff4dae823b956347f62934a81fff088fb
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Oct 18 14:32:42 2008 -0700
++
++    reformat the debugging output in echo-string-list
++
++commit 2216a859d8c8a00cef2c0d42e8d353681fc9eafc
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Oct 18 14:31:47 2008 -0700
++
++    add a comment to clisp's get-wm-class workaround
++
++commit 854b572e05a518ab99135303c886d89bfeee8839
++Author: Philip Fominykh <philip@glyf.org>
++Date:   Sat Oct 18 01:04:04 2008 -0400
++
++    fix run-prog, run-prog-collect-output and print-backtrace ccl support
++
++commit 47bf1b86043fc0eaec92763f7d4ab752fced3b8a
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 17 15:16:13 2008 -0700
++
++    add 2 more tests to test-wm-class
++
++commit 172f13e144268e51a87f314cb771dc4513943c78
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 17 15:00:28 2008 -0700
++
++    add workarounds.lisp which stores any workarounds for bugs in clx.
++    
++    Add a workaround for xlib:wm-class
++
++commit f2fad1ed880cf380fd7dd98e6be3561ff7486636
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 17 14:59:46 2008 -0700
++
++    add test-wm-class to test-wm.lisp
++
++commit a4887b61fe0b5c7ea3c20cb87cb21d762e135d19
++Author: 38a938c2 <38a938c2@rambler.ru>
++Date:   Sat Aug 30 21:12:55 2008 +0400
++
++    Added logging of OSD messages
++
++commit 85a7ac0765c6b757a52bd6885b34df995fa288bc
++Author: 38a938c2 <38a938c2@rambler.ru>
++Date:   Sat Aug 30 21:01:10 2008 +0400
++
++    Added a command to compact window numbers
++
++commit 23dd92b2cdedce181a281cbff8e3e889650ddaeb
++Author: Ivy Foster <ivy.foster@gmail.com>
++Date:   Mon Sep 1 01:12:49 2008 -0500
++
++    Added productivity module.
++
++commit 2f513a9a75d0b2d2a3802db5cb93bec8eaf83b64
++Author: Shawn <sabetts@juicebox>
++Date:   Thu Oct 16 00:42:17 2008 -0700
++
++    Set the _NET_FRAME_EXTENTS property on client windows
++
++commit 6041752320c69e2358dab1d29d121787921907b8
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Oct 4 18:00:53 2008 -0700
++
++    document defcommand
++
++commit aa163412123513b6f2518d175e302d4df382a32c
++Author: David Hansen <david.hansen@gmx.net>
++Date:   Sun Sep 14 05:48:58 2008 +0200
++
++    Make (define-key map key nil) behave like `undefine-key'.
++    
++    index 54561f5..547f464 100644
++
++commit 3127c7ffcec7b66f117c7720c6477229c33b04a9
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 3 14:15:03 2008 -0700
++
++    add redirect-all-output and data-dir-file
++    
++    also document them
++
++commit 359c994035c08aeae1f061ef5eecd6052ad193e8
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Oct 3 14:14:40 2008 -0700
++
++    only catch errors in eval-line
++
++commit 637cd9cf4b794142b907b95d28ed217a65491a98
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Sep 29 13:23:16 2008 -0700
++
++    fix resize-frame so it doesn't overlap frames
++    
++    split a frame twice so you have 3 sibling frames. resize one of them
++    and you'll see you can resize past the minimum frame size. eventually
++    stumpwm crashes. This patch fixes this by properly computing the
++    maximum resize a frame can get.
++
++commit 38d19ca7ea93fa9ff991ffd83735e78828a71b83
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Sep 24 02:57:19 2008 -0700
++
++    raise an error when parsing the keysym of a key string
++    
++    also rename the kbd-parse condition to kbd-parse-error and make it
++    inherit from error.
++
++commit 306a604d37f3ec0d1fd1ea3f8398de996332d2f5
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Sep 24 02:54:48 2008 -0700
++
++    fix error handlers to catch any kind of condition and handle warnings
++
++commit 5e7b5ee580ddd2aa4f66331ad924ca9fc9fb8c8a
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Sep 24 02:32:54 2008 -0700
++
++    fix argument type for bind command
++
++commit 1c6e6f8f51623af30e1d8bf926dc646f7c242940
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Sep 3 13:23:34 2008 -0700
++
++    in init-screen, fall back to the * font if the default one isn't found.
++
++commit 7128c9858b45f91cb75497f73f9fe948b209969e
++Author: Lionel Flandrin <lionel.flandrin@gmail.com>
++Date:   Mon Sep 1 00:19:34 2008 +0200
++
++    Make select-from-menu matching case-sensitive when the user inputs upcase
++
++commit 6374b40e0c0e7ea87bcf3f7ef80ec6dc186e73ef
++Author: John Li <jli@circularly.org>
++Date:   Sat Aug 30 23:07:16 2008 -0400
++
++    Add show-window-properties command.
++
++commit c96d260f041f6066a7bdc1bd0d7508cd1ddd9e70
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Aug 30 23:51:42 2008 -0700
++
++    Add sanity checks for incremental resize hints
++
++commit 7e7c81132fba8e2dbd02a2f365c1272badfbd5e4
++Author: Shawn <sabetts@juicebox>
++Date:   Fri Aug 29 11:01:48 2008 -0700
++
++    Revert "Added support for automatic group creation and/or restoration."
++    
++    The patch needs some refactoring.
++    
++    This reverts commit 6488f0ca9720632c6b13c0bd6a8f06588ecc7f4a.
++
++commit c0e236e57fbe487cf51016bd3d6c8f0bad2d78e9
++Author: Lionel Flandrin <lionel.flandrin@gmail.com>
++Date:   Thu Aug 28 22:17:38 2008 +0200
++
++    Make select-from-menu completion case insensitive
++
++commit 6488f0ca9720632c6b13c0bd6a8f06588ecc7f4a
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sat Aug 9 00:22:33 2008 +0200
++
++    Added support for automatic group creation and/or restoration.
++    
++    This adds three keyword parameters to define-frame-preference:
++      * :create , when T the group matching the rule is created if it doesn't already exist.
++        The group may be restored from a dump-file in *data-dir* if such a file exists (see :dump-name).
++        Defaults to nil.
++      * :restore , for group restoration from a dump file even if the matching group already exists.
++        Defaults to nil.
++      * :dump-name , group dump file to use for group restoration. File should be in *data-dir*.
++        Defaults to group name.
++
++commit e4ef2d5cb51d20fee6cb69e30771359cada780e4
++Author: 38a938c2 <38a938c2@rambler.ru>
++Date:   Sun Aug 24 23:47:39 2008 +0400
++
++    Self-reference fixes.
++    
++    It's better to support renaming of the main executable, or its being
++    called via absolute path.
++    From 74d93e5cd9d816ca4501c1e784d36510b3b20eeb Mon Sep 17 00:00:00 2001
++    From: 38a938c2 <38a938c2@rambler.ru>
++    Date: Sun, 24 Aug 2008 23:30:48 +0400
++    Subject: [PATCH] Corrected self-references in stumpish
++
++commit dc3be3333f99d1b40f7ce6f19756f3da7bc5cf24
++Author: Lionel Flandrin <lionel.flandrin@gmail.com>
++Date:   Sun Aug 24 13:49:23 2008 +0200
++
++    Make select-from-menu try match unmapped user input.
++    
++    For instance, if the user has to choose between:
++    ,--
++    | "xterm"
++    | "gimp"
++    | "firefox"
++    | "git"
++    `--
++    And he wants to choose "git", he can type "git", "it", "g.t" or even
++    "t$" and the correct entry will be selected.
++
++commit 1725ba4d941b01292207823f398fcdb8b9a86cb7
++Author: 38a938c2 <38a938c2@rambler.ru>
++Date:   Wed Aug 20 16:59:31 2008 +0400
++
++    Added logging of destroyed XLib windows
++
++commit fce4838e28154422c9f020b218a08f14382d9508
++Author: 38a938c2 <38a938c2@rambler.ru>
++Date:   Wed Aug 20 16:57:17 2008 +0400
++
++    Added a mention of urgent-window-hook
++
++commit 243afc8d885faadc6908749d34b85e9776e52802
++Author: John Li <jli@circularly.org>
++Date:   Thu Aug 14 00:17:11 2008 -0400
++
++    Add docs on modifiers (namely, how to set up super properly).
++
++commit 3440cd7a012fd9ad96600764024dcd484bd93581
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Tue Aug 12 13:07:45 2008 +0200
++
++    Fixed timeout problem.
++    
++    This adds a timer and a new var *MPD-TIMEOUT*. When set to nil the timer is disabled.
++    The value of *MPD-TIMEOUT* should be something under the real mpd server timeout value
++    so the client will ping mpd every *mpd-timeout* seconds.
++
++commit 560af12b31d656b3cc2b7104acaa74e4ca733e87
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Fri Aug 8 15:49:54 2008 +0200
++
++    Added new commands and default keybindings in mpd client.
++    
++     * added browse by album/artist commands
++     * added browse keymap
++     * cleaned some parts of the code
++
++commit a756a8274d93a0aac15f43643cfc53a37136c7a7
++Author: John Li <jli@circularly.org>
++Date:   Tue Aug 5 04:35:59 2008 -0400
++
++    Add g{next,prev}-with-window commands.
++
++commit 4900dbba7e001bb08bf4297b3d4f68ec9f6db611
++Author: John Li <jli@circularly.org>
++Date:   Tue Aug 5 04:28:50 2008 -0400
++
++    Simplifying a couple of lines.
++
++commit 6aa420447953a6e32a1288b2f4f02da245e4cf6e
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Aug 27 21:06:43 2008 -0700
++
++    update the screen-frame-window, as well, in update-colors-for-screen.
++
++commit a5ac4dc453a913f3daf8a772b4be8ab2eb425e67
++Author: John Li <jli@circularly.org>
++Date:   Wed Jul 30 22:07:16 2008 -0400
++
++    update-all-mode-lines added for mouse-based window focus events.
++    
++    Otherwise, the "current window" highlighting in the window list is
++    incorrect until the next mode-line update.
++
++commit 60a3294c0a49a3ef1dde51c841d9c75e44e8dab6
++Author: John Li <jli@circularly.org>
++Date:   Sun Jun 22 11:52:36 2008 -0400
++
++    Modify run-or-raise to cycle through all matched windows.
++    
++    Sorting by window number and then by group gives a predictable cycling
++    order. I removed the comments about not looking for a match because it
++    didn't seem to refer to any code.
++
++commit d745e764b15ed4ec8fe41d5e4af32342edd65180
++Author: John Li <jli@circularly.org>
++Date:   Thu Jul 31 01:47:19 2008 -0400
++
++    Remove unnecessary lambda.
++
++commit 7347f49710a0c946042d7270591e4aaab446a213
++Author: John Li <jli@circularly.org>
++Date:   Thu Jul 31 01:33:32 2008 -0400
++
++    Fix multiple heads frame numbering bug.
++    
++    When adding a new head, the frame on the new head inherits its number
++    from the head number, regardless of whether that number is in use or
++    not, which can lead to frames with duplicate numbers.
++
++commit 023ead05c365de69efc3cf11f91ad9de6d2b513f
++Author: John Li <jli@circularly.org>
++Date:   Tue Jul 29 21:37:49 2008 -0400
++
++    Fix up a bit of the color docs.
++
++commit 716ee45ad918d4db8938770ecdb1920ae3e02c24
++Author: John Li <jli@circularly.org>
++Date:   Sun Jul 27 23:30:03 2008 -0400
++
++    Fix /dev/null redirect in stumpish.
++
++commit c67664aca41d2bf5ac7f17b710da072bc386f14c
++Merge: 4efa1b8 58f84ef
++Author: Shawn <sabetts@juicebox.(none)>
++Date:   Tue Jul 29 15:03:07 2008 -0700
++
++    Merge branch 'cpubattery'
++
++commit 4efa1b8838f2cb5e02430e2e1345a41c15606904
++Author: John Li <jli@circularly.org>
++Date:   Tue Jul 29 03:26:22 2008 -0400
++
++    Fix width/height order for *window-info-format*.
++
++commit 2022adb078fa29ccbd0256747fa6ac5cc8b47c67
++Author: Lionel Flandrin <lionel.flandrin@gmail.com>
++Date:   Mon Jul 28 15:54:48 2008 +0200
++
++    Make "where-is" handle unbound command correctly
++
++commit 2840100855309746b2563d50d6305b1c0e750898
++Author: Patrick Pippen <daBittweiler@gmail.com>
++Date:   Sun Jul 27 22:40:34 2008 -0500
++
++    this remove the duplicate code from screen, group, and window.lisp
++    
++    added the move-to-head macro to primitives.lisp
++
++commit 58f84ef2283307d11d594bfd047f1e2202ace9ed
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 29 23:08:41 2008 +0200
++
++    Fixed read-line-from-sysfs for non-SBCL CLs.
++
++commit b0710fa5568c3d6c3b8b1939bc0009909c36fa37
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 29 22:37:29 2008 +0200
++
++    Move hack for missing :linux feature on clisp into wrappers.lisp
++
++commit 04a8311eed7ae3a05de7acf141c74073a51cd1b7
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 29 22:01:31 2008 +0200
++
++    CLISP doesn't provide the :linux feature on Linux.
++
++commit da832f4ff3c3ff42b164380a59a570b5876bae8d
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 29 18:13:30 2008 +0200
++
++    Whitespace cleanup in battery-portable.lisp
++
++commit 5f6c97d33b1a68f6d1918c227e994527a32d18e1
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 29 17:33:48 2008 +0200
++
++    Add warning about freezing sessions with this contrib module.
++
++commit 1e9a1e7033bfb4bea60e983222dfaad77668cb38
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 29 17:30:38 2008 +0200
++
++    Some fixes for wifi.lisp.
++    
++     - put it in its own package: stumpwm.contrib.wifi
++     - uses *iwconfig-path* to find iwconfig. (It's not in my PATH)
++     - use add-screen-mode-line-formatter
++
++commit ebae657821dc22df8bdd85b7779313a78766e182
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 29 17:29:03 2008 +0200
++
++    Use ADD-SCREEN-MODE-LINE-FORMATTER in battery-portable.lisp.
++
++commit 1d3fb5edb03113d3ccf6757761a56ee8fa4ab1d7
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Fri Jul 25 03:48:50 2008 +0200
++
++    Added IGNORE declaration in DEFINE-FRAME-PREFERENCE.
++
++commit e47e6e1f5392b1b0039d2477f14a517f5ffbe05b
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 29 17:44:23 2008 +0200
++
++    Add ADD-SCREEN-MODE-LINE-FORMATTER to properly add and update mode-line formatters.
++
++commit 6a06468ee0be9ead0256fbd61156c517134f0bb8
++Author: John Li <jli@circularly.org>
++Date:   Tue Jul 29 17:03:33 2008 +0200
++
++    Added wifi contrib module.
++
++commit c74663837602875accab2b1e918dd5ea4f988710
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Jul 28 15:14:57 2008 -0700
++
++    in frame-raise-window, always call focus-frame if the frame is the current.
++    
++    If raising a window in the current frame we must focus it or the group
++    and screen will get out of sync.
++
++commit 73549e599427338c501fa72246643bfc41c8e17c
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Jul 28 15:05:22 2008 -0700
++
++    give remove-split an optional frame argument
++    
++    Now any frame can be removed, not just the current one.
++
++commit ea8b6383283219772b1d7d3918a31e2494534a4a
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Jul 28 02:59:34 2008 -0700
++
++    change with-focus to use grab-keyboard
++
++commit 3e8b9a7d1eaa9a9b772b5408ec22de3bc661e8fc
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Jul 28 02:04:25 2008 -0700
++
++    in handle-key, ensure that keymap exists before displaying its bindings
++
++commit be0c7890c709f8d99b18c3b9314b2e2599a6ac44
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Jul 28 02:02:35 2008 -0700
++
++    add a place holder commands section to docs
++
++commit 144b94c7d6485952f628121264af7cc5fbfc6466
++Author: Shawn <sabetts@juicebox>
++Date:   Sun Jul 27 18:26:41 2008 -0700
++
++    add a default window name for those that don't supply one.
++
++commit c3fbca5eed9a471e2148458307fa0084fa02ec84
++Author: John Li <jli@circularly.org>
++Date:   Fri Jul 25 23:53:15 2008 -0400
++
++    Tweak neighbour to work more intuitively.
++    
++    Simple demonstration of the effect this has:
++    1. hsplit your screen so you have 2 columns.
++    2. vsplit one of the columns. You'll have something like this:
++    |---|---|
++    |   |   |
++    |---|   |
++    |   |   |
++    |---|---|
++    3. From the frame on the right, run (move-focus :left)
++    
++    Before, you end up on the bottom left frame. With this, you end up at
++    the top left. Similarly, when moving :down or :up to frames that have
++    equal width, you'll now select the left-most instead of the
++    right-most. This makes more sense to me.
++    
++     frame.lisp |    2 +-
++     1 files changed, 1 insertions(+), 1 deletions(-)
++
++commit a81d53d44ce40b7d19b245d45a79780aa8335ac4
++Author: John Li <jli@circularly.org>
++Date:   Sat Jul 26 06:06:25 2008 -0400
++
++    Fix remove-head bug.
++    
++    remove-head tried to reference part of the frame-tree (through
++    toggle-mode-line) after it was previously removed.
++
++commit cfde8f1c86aa732779e42b997e797468130417c4
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Jul 26 16:32:00 2008 -0700
++
++    update test-wm::get-wm-hints to handle reparenting wm
++
++commit 6739cdb8db6a6e367633c3803979f24577fd64e2
++Author: Shawn <sabetts@juicebox>
++Date:   Sat Jul 26 16:04:16 2008 -0700
++
++    add a test function for simias' decode-wm-hints backtrace
++    
++    backtrace available at: http://paste.lisp.org/display/64270
++
++commit 893def9b92530e8b1e27aba1a57cfac903213cb2
++Author: Shawn <sabetts@juicebox>
++Date:   Thu Jul 24 11:06:42 2008 -0700
++
++    modify break-display-xid-cache in test-wm.lisp to precipitate a xlib:lookup-error in stumpwm
++
++commit 18b795f586e5e04488eb5ad3ac629a8417cc8036
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Thu Jul 24 15:50:05 2008 +0200
++
++    CPU Frequency above one gigahertz is now always printed with 2 digits after the decimal point.
++
++commit 203d6cee7a632e9a1af338f6c512286e001007e9
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Thu Jul 24 15:48:42 2008 +0200
++
++    Fixed colorization of battery percentage.
++
++commit b78a69d5286400493ccc94d5beeefc46b561d9fc
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Wed Jul 23 00:35:56 2008 +0200
++
++    A sample configuration for Wmii-like keybindings.
++
++commit 5a49b9e4c9e35800390dc6031ab4455e654a0d88
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Jul 23 16:17:50 2008 -0700
++
++    properly find the :one restart when recovering from a xlib:lookup-error
++
++commit 7c9ce180934b817111fef856ee3f0b02521e7265
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Jul 23 14:02:41 2008 -0700
++
++    fix unregister-urgent-window and window-urgent-p for clisp 2.46
++
++commit 83ec4d66b27ea575ec0e0785f096c2ed3d030c7f
++Author: Shawn <sabetts@juicebox>
++Date:   Wed Jul 23 12:08:54 2008 -0700
++
++    fix copyright in module.lisp
++
++commit f167ddbf2f76e22cbf156158f4e73035cb6ea68a
++Author: Jonathan Moore Liles <wantingwaiting@users.sf.net>
++Date:   Tue Jul 22 19:23:26 2008 -0500
++
++    Replace next-urgent command, which got lost in the shuffle.
++
++commit 02a263c555a81daf277d4264432f8aeeb3dc8b77
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 22 23:50:08 2008 +0200
++
++    Fixed broken selection of available information sources when using battery-portable.
++
++commit aa1da23df499b2d0f5b17ac1bea5a20517d60b65
++Author: Shawn <sabetts@juicebox>
++Date:   Tue Jul 22 14:22:45 2008 -0700
++
++    add command load-module
++    
++    new file, module.lisp, handles loading and finding modules.
++
++commit b007547f4576ae6dcb3a4f3ec45fe667d42f5841
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 22 20:08:45 2008 +0200
++
++    Add Linux procfs support to contrib/battery-portable.lisp.
++
++commit 0fb94a56cc6ee31eacacf1c2b2e901ca70d76e04
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 22 19:00:37 2008 +0200
++
++    Some stupid errors have been fixed in contrib/battery-portable.lisp
++
++commit abdbb0135969a4b6f1827dc3a97bd03bc916bccf
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 22 05:45:33 2008 +0200
++
++    New hopefully portable battery info module (battery-portable.lisp). This is intended to replace battery.lisp in the near future.
++
++commit f1ba25f292e98fb45cdc215cd174a776075c946f
++Author: John Li <jli@circularly.org>
++Date:   Tue Jul 22 05:36:56 2008 +0200
++
++    Make battery.lisp use bar-zone-color's REVERSE argument.
++
++commit 26e4b0f19d7e56596af75accf82d70e98322c9d7
++Author: John Li <jli@circularly.org>
++Date:   Tue Jul 22 05:36:16 2008 +0200
++
++    Make bar-zone-color accept a REVERSE argument.
++
++commit 80123d13df31d0dc6ecb99705b6261b252f39e5c
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 22 05:33:30 2008 +0200
++
++    Added SBCL sysfs workaround.
++
++commit d24c6b898942d968f16875bf02ba673e9f2da589
++Author: Julian Stecklina <jsteckli@os.inf.tu-dresden.de>
++Date:   Tue Jul 22 05:33:06 2008 +0200
++
++    Added LOAD-CONTRIB function for easy loading of contrib modules.
++
++commit 410483ef90ce1eaf5e0657146a0867aa2c8c84db
++Author: Shawn <sabetts@juicebox>
++Date:   Mon Jul 21 14:24:26 2008 -0700
++
++    add install and uninstall Makefile rules
++
 +commit 6e67440f9a6f000bc2b921cd509e5bedb116cf5e
 +Author: Shawn <sabetts@juicebox>
 +Date:   Mon Jul 21 13:29:40 2008 -0700
@@ -251,7 +1870,7 @@
 +    add maintainer tags to each contrib file
 +
 +commit 0d3b96a851ab532a2bc5208b0e5abcdcd00697d8
-+Merge: dbfe3eb... 0dd9271...
++Merge: dbfe3eb 0dd9271
 +Author: Shawn <sabetts@juicebox.(none)>
 +Date:   Fri Jul 11 15:54:53 2008 -0700
 +
@@ -306,7 +1925,7 @@
 +    ---------------------
 +
 +commit 124248bf8433cf6f038e58986ea03f9bb83c56fe
-+Merge: bb7181f... 9e238c5...
++Merge: bb7181f 9e238c5
 +Author: Shawn <sabetts@juicebox>
 +Date:   Thu Jul 10 19:04:15 2008 -0700
 +
@@ -432,7 +2051,7 @@
 +    Don't crash when files don't exist in /proc.
 +
 +commit 1395ed812fcb499c0d79e409edbcf3d736df8388
-+Merge: d084dbc... 5673a35...
++Merge: d084dbc 5673a35
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Jun 21 20:05:08 2008 -0700
 +
@@ -487,7 +2106,7 @@
 +    fix misc texinfo formatting errors
 +
 +commit 1eaed3976784071b1731452e30bb29acb96f3928
-+Merge: 3b7afdf... 435659e...
++Merge: 3b7afdf 435659e
 +Author: Shawn <sabetts@juicebox.(none)>
 +Date:   Fri Jun 20 19:39:17 2008 -0700
 +
@@ -595,7 +2214,7 @@
 +    if *frame-indicator-text* is not a string then use prin1-to-string to make it one
 +
 +commit b76c3b55d86ff2417e9502a9de8159e8bd79fa66
-+Merge: 2d231bf... d2df0b1...
++Merge: 2d231bf d2df0b1
 +Author: Shawn <sabetts@juicebox>
 +Date:   Wed Jun 18 19:18:38 2008 -0700
 +
@@ -629,7 +2248,7 @@
 +      the number of rows (101 keybindings on 2 columns should use 51 rows)
 +
 +commit a793c9e281d99e935362a0c1778073c12f88919b
-+Merge: 47c1da2... 7b66306...
++Merge: 47c1da2 7b66306
 +Author: Shawn <sabetts@juicebox.(none)>
 +Date:   Wed Jun 18 18:58:43 2008 -0700
 +
@@ -891,7 +2510,7 @@
 +    One exported global variable changed to: *new-window-preferred-frame*
 +
 +commit 1afe97e765a7843feba51104f2448ea965255506
-+Merge: abf4c8e... bcd550b...
++Merge: abf4c8e bcd550b
 +Author: Shawn <sabetts@juicebox.(none)>
 +Date:   Sat May 10 19:47:17 2008 -0700
 +
@@ -973,7 +2592,7 @@
 +    Added HACKING section to the manual.
 +
 +commit c7a37fa7877fb71c11203a6f127ed7009e280f48
-+Merge: 4e9e5c9... 9b6a03e...
++Merge: 4e9e5c9 9b6a03e
 +Author: Shawn <sabetts@juicebox.(none)>
 +Date:   Wed May 7 19:03:14 2008 -0700
 +
@@ -1040,7 +2659,7 @@
 +    doesn't disappear.
 +
 +commit d977d53310331019421c7b9e9f8f9e131bbfc857
-+Merge: 87b0300... 738a2d8...
++Merge: 87b0300 738a2d8
 +Author: Shawn <sabetts@juicebox.(none)>
 +Date:   Fri May 2 15:10:40 2008 -0700
 +
@@ -1426,7 +3045,7 @@
 +    change C-t TAB key binding
 +
 +commit f2c0d01d3f86387211f934bbced9667d06b5d12c
-+Merge: e7068df... fddc0b7...
++Merge: e7068df fddc0b7
 +Author: Shawn <sabetts@juicebox.(none)>
 +Date:   Fri Feb 22 01:32:13 2008 -0800
 +
@@ -1445,7 +3064,7 @@
 +    Remove debug output in notifications.lisp
 +
 +commit 9bdbaf80189f0ba09eda336302dcb0d24d9e6d86
-+Merge: 6055c83... 3f5837b...
++Merge: 6055c83 3f5837b
 +Author: Tassilo Horn <tassilo@member.fsf.org>
 +Date:   Wed Feb 20 09:34:45 2008 +0100
 +
@@ -1701,14 +3320,14 @@
 +    fix build scripts so clisp works with ppcre dependency
 +
 +commit 164245ac3a416511042d9da619b163824dd3ffb8
-+Merge: 99a24cc... 77b6f7e...
++Merge: 99a24cc 77b6f7e
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Feb 1 16:50:58 2008 -0800
 +
 +    Merge branch 'male'
 +
 +commit 99a24cc791f9e96a291efec0cdec9bdae7003173
-+Merge: c31e2fc... 57e72d6...
++Merge: c31e2fc 57e72d6
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Feb 1 16:44:45 2008 -0800
 +
@@ -1791,105 +3410,105 @@
 +    consuming bandwidth.
 +
 +commit 57e72d6ff68dffa2fed2b62db1e9d49ee6cc8713
-+Merge: 30364c4... 019d6b1...
++Merge: 30364c4 019d6b1
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:53:37 2007 -0800
 +
 +    Merge commit '019d6b1918fc696068d15e495623f789addc4cd2'
 +
 +commit 30364c451a9a342589427c596f12b670908fda26
-+Merge: 673af42... f7c7649...
++Merge: 673af42 f7c7649
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:53:18 2007 -0800
 +
 +    Merge commit 'f7c7649f36cb7d552ea02fa928edb6dca2d75700'
 +
 +commit 673af4218ce7142f40fc51d5f50282c5801b8bfc
-+Merge: 5b06fcb... c35707f...
++Merge: 5b06fcb c35707f
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:52:59 2007 -0800
 +
 +    Merge commit 'c35707f611cca338f08e954d072cb03a88117d1d'
 +
 +commit 5b06fcbac84cfd5866c169ec123df88b238b0ea4
-+Merge: 8f2ce87... f12ab68...
++Merge: 8f2ce87 f12ab68
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:52:24 2007 -0800
 +
 +    Merge commit 'f12ab68e7ba49f38c8e99899686799bbd200cf4f'
 +
 +commit 8f2ce87434176b09559435abbf365b22d2e78d40
-+Merge: 7236b4b... 5916c58...
++Merge: 7236b4b 5916c58
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:51:49 2007 -0800
 +
 +    Merge commit '5916c5880e09a82c6e1d196a1105a54355f876b9'
 +
 +commit 7236b4bb622389e24231283c180bb25e6a6f78b7
-+Merge: 0507a6c... 5f58d4c...
++Merge: 0507a6c 5f58d4c
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:51:06 2007 -0800
 +
 +    Merge commit '5f58d4cac238399740e2c4bfcb1fda6471e89136'
 +
 +commit 0507a6c83e87a752095a7daa8447ce462a2821a6
-+Merge: 8da35c0... d110f25...
++Merge: 8da35c0 d110f25
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:50:46 2007 -0800
 +
 +    Merge commit 'd110f258001994d5154037a8084c3dcd12796d86'
 +
 +commit 8da35c00dd750fc9a9d64847ccde1fedc6818593
-+Merge: 6ba6e55... 4a472d5...
++Merge: 6ba6e55 4a472d5
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:50:18 2007 -0800
 +
 +    Merge commit '4a472d5fc317186adc8300355dcf6ce5bdd73762'
 +
 +commit 6ba6e55c6ec7e534fc47183afd9205db89fa81a5
-+Merge: 706382b... 613c599...
++Merge: 706382b 613c599
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:49:43 2007 -0800
 +
 +    Merge commit '613c5993dd36411814dd59ca13a0c44f1529b80e'
 +
 +commit 706382bb5c78be6a69e6f6b532b355a0647439ab
-+Merge: 4b76b9b... fd9a8cb...
++Merge: 4b76b9b fd9a8cb
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:48:59 2007 -0800
 +
 +    Merge commit 'fd9a8cbadd123065a2f32091acec197585dd4946'
 +
 +commit 4b76b9bc6788b75d40736518db05e5d9000c73f3
-+Merge: c05b816... e349ede...
++Merge: c05b816 e349ede
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:48:29 2007 -0800
 +
 +    Merge commit 'e349edea41c16618e590bece5e3defd600ed77e3'
 +
 +commit c05b816afe3d6dd2c3d58cd08bd523101591d4d9
-+Merge: 73b276e... 4042058...
++Merge: 73b276e 4042058
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:47:50 2007 -0800
 +
 +    Merge commit '4042058b11e6a98ee70ab081c51825a513d7c376'
 +
 +commit 73b276e0f353fc15d32f9bc2c506b2cd188562c3
-+Merge: 0ab3c4d... 53c34e3...
++Merge: 0ab3c4d 53c34e3
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:47:26 2007 -0800
 +
 +    Merge commit '53c34e3bf854660100e96502c1d05234feab5b08'
 +
 +commit 0ab3c4dd41bcc434031688c43d025fd58dd49205
-+Merge: 5150c3c... 5530410...
++Merge: 5150c3c 5530410
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:47:07 2007 -0800
 +
 +    Merge commit '5530410dec16e308e6e0daf590009aee4f123f4e'
 +
 +commit 5150c3c2cc4d595a211bb559eda8a1b0069e2b8b
-+Merge: ac5b142... d7e65e3...
++Merge: ac5b142 d7e65e3
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Dec 8 14:46:43 2007 -0800
 +
@@ -1958,7 +3577,7 @@
 +    values are :screen :head :frame and :window.
 +
 +commit fd9a8cbadd123065a2f32091acec197585dd4946
-+Merge: e349ede... ac5b142...
++Merge: e349ede ac5b142
 +Author: Jonathan Moore Liles <wantingwaiting@users.sf.net>
 +Date:   Fri Nov 16 15:31:01 2007 -0600
 +
@@ -2011,7 +3630,7 @@
 +    already visible, rather than (window-state).
 +
 +commit ac5b14282886661a8dd810221c7ac5b715ffacb6
-+Merge: 1e3cb24... 52401a7...
++Merge: 1e3cb24 52401a7
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Oct 20 12:33:06 2007 -0700
 +
@@ -2130,7 +3749,7 @@
 +    fix docstring typo in *mode-line-click-hook*
 +
 +commit fe99a6882b1ee051b4dd19cadadcce907683a55c
-+Merge: 29c1e5a... a402740...
++Merge: 29c1e5a a402740
 +Author: Jonathan Moore Liles <wantingwaiting@users.sf.net>
 +Date:   Sat Oct 13 11:07:11 2007 -0500
 +
@@ -2196,7 +3815,7 @@
 +    add clisp compiler files
 +
 +commit 0c32e8b96d3093ac49628828bd85e5097a6e18d2
-+Merge: a729b03... 47acbca...
++Merge: a729b03 47acbca
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Thu Oct 11 14:17:28 2007 -0700
 +
@@ -2246,7 +3865,7 @@
 +    Improve debugging output for windows.
 +
 +commit 373c59e8e9bcb27a3dc8fc8987061d4e1e4befaa
-+Merge: cabd9aa... 95b710b...
++Merge: cabd9aa 95b710b
 +Author: Jonathan Moore Liles <wantingwaiting@users.sf.net>
 +Date:   Tue Oct 9 00:47:05 2007 -0500
 +
@@ -2272,7 +3891,7 @@
 +    window (the window under it being focused when the mouse passed over).
 +
 +commit 576603962d3f8c03ccd7dddd601625012ae8d46d
-+Merge: 3ceca9d... 41b5a67...
++Merge: 3ceca9d 41b5a67
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Mon Oct 8 01:46:45 2007 -0700
 +
@@ -2366,7 +3985,7 @@
 +    Include fdump.lisp in clisp build.
 +
 +commit bc2c6310905309e403443a1e7b14766ff1d2bd75
-+Merge: 6377c4c... 0126654...
++Merge: 6377c4c 0126654
 +Author: Jonathan Moore Liles <wantingwaiting@users.sf.net>
 +Date:   Sun Oct 7 17:23:14 2007 -0500
 +
@@ -2379,7 +3998,7 @@
 +    Don't fail in string-match for small lengths of PAT.
 +
 +commit 23f086d45e8e84d18b463c85fa061a6fa25da8f4
-+Merge: 0ae8e8f... cb088c0...
++Merge: 0ae8e8f cb088c0
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sun Oct 7 04:52:32 2007 -0700
 +
@@ -2464,7 +4083,7 @@
 +    Add commands for remembering, dumping, restoring and forgetting window rules.
 +
 +commit 93bbd4ec0f4ff5c1d273bdc8a2bd33655091ced2
-+Merge: 8c2a992... 8385c7e...
++Merge: 8c2a992 8385c7e
 +Author: Jonathan Moore Liles <wantingwaiting@users.sf.net>
 +Date:   Tue Oct 2 19:14:52 2007 -0500
 +
@@ -2513,7 +4132,7 @@
 +    Don't fail in (window-leader) if transient-for returns an invalid id.
 +
 +commit 8c2a99200ef037574ad62377b19ec41355976bb9
-+Merge: 3e42a85... 6d922e7...
++Merge: 3e42a85 6d922e7
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Sep 29 02:01:01 2007 -0700
 +
@@ -2530,7 +4149,7 @@
 +    add changelog entries
 +
 +commit 1648dd75eff4ade77bcc04124c3b72fe0c840b4c
-+Merge: 38c83ba... a231ce1...
++Merge: 38c83ba a231ce1
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Sep 29 01:20:24 2007 -0700
 +
@@ -2543,7 +4162,7 @@
 +    add changelog entries.
 +
 +commit d6b35b1a6b6418dce2157ed0040dec0fe9572694
-+Merge: dc3b50c... e69ccb4...
++Merge: dc3b50c e69ccb4
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Sep 29 00:45:39 2007 -0700
 +
@@ -2560,7 +4179,7 @@
 +    add changelog entries. docstring for *processing-existing-windows*.
 +
 +commit 1a1a28395d3d64ca4cb328e393911b42e0b8662f
-+Merge: 8c841f3... ed28584...
++Merge: 8c841f3 ed28584
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 23:55:32 2007 -0700
 +
@@ -2583,14 +4202,14 @@
 +    add changelog
 +
 +commit 14c38637cf8ef1df0c9bf9ccf684b2bd5b57d76c
-+Merge: a0e62b7... 8b6e140...
++Merge: a0e62b7 8b6e140
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 23:44:07 2007 -0700
 +
 +    Merge commit '8b6e140cf2552ff4967fe4a64604dd02ef808ec8' into merge-male
 +
 +commit a0e62b75f2202024712f10923c90e69c5f6f6cc4
-+Merge: d15a299... d781144...
++Merge: d15a299 d781144
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 23:43:00 2007 -0700
 +
@@ -2603,7 +4222,7 @@
 +    add changelog entry
 +
 +commit 2de54f0de7af2b3db784f9c4b25a64f9ae0a231f
-+Merge: e76b072... c7ad141...
++Merge: e76b072 c7ad141
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 23:31:44 2007 -0700
 +
@@ -2616,14 +4235,14 @@
 +    add changelog entries
 +
 +commit 5473d98abce1204daf72499f0450cb59a1b09644
-+Merge: f4cc322... f5eabc2...
++Merge: f4cc322 f5eabc2
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 23:25:08 2007 -0700
 +
 +    Merge commit 'f5eabc29d4c4f8f39b1d0f1edfc4a52fd4549acd' into merge-male
 +
 +commit f4cc3221b5713c38588688e04e07a85014c7ee1a
-+Merge: d3918c8... b9daf9f...
++Merge: d3918c8 b9daf9f
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 23:24:08 2007 -0700
 +
@@ -2636,7 +4255,7 @@
 +    add changelog entries
 +
 +commit faaf9596590c5294a5688f68a797e9a112cb9d36
-+Merge: 3ab36e1... cf958ec...
++Merge: 3ab36e1 cf958ec
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 23:20:43 2007 -0700
 +
@@ -2649,7 +4268,7 @@
 +    add changelog entries
 +
 +commit 1d723b24afded8e37df7b8d01c7bc320d65a7456
-+Merge: e78a496... 2272678...
++Merge: e78a496 2272678
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 20:56:41 2007 -0700
 +
@@ -2668,7 +4287,7 @@
 +    % is percent, not dollar!
 +
 +commit f2976dbeaa32c2d7f0774ea09d3a2661cae43c17
-+Merge: 52ca583... 8b5e385...
++Merge: 52ca583 8b5e385
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 20:25:22 2007 -0700
 +
@@ -2693,7 +4312,7 @@
 +    Global whitespace cleanup.
 +
 +commit b37b14af272272b3c38f75f4a1618baab2e2e1e8
-+Merge: 81b99fb... c670e15...
++Merge: 81b99fb c670e15
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 19:24:34 2007 -0700
 +
@@ -2706,7 +4325,7 @@
 +    add changelog. keep screen-mode-line-mode
 +
 +commit 556ae0d8ab7018eac74e8b86eab45b3ae1c7a1fe
-+Merge: 77366e6... 2a7dea9...
++Merge: 77366e6 2a7dea9
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 17:41:14 2007 -0700
 +
@@ -2723,7 +4342,7 @@
 +    add changelog entry for b5ab9fb1bdc8850ad94d2af9164a7bfdb00c8b43
 +
 +commit 3431f77ac8496afa6b11e94714a369c591337aaf
-+Merge: 7f5e3aa... b5ab9fb...
++Merge: 7f5e3aa b5ab9fb
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 17:24:12 2007 -0700
 +
@@ -2736,7 +4355,7 @@
 +    add changelog for dd3047e100ab6e6103614de83e2d1fc39b19d454
 +
 +commit ed400cffe494584fa3efdfda398056bd729348fd
-+Merge: 82df94e... dd3047e...
++Merge: 82df94e dd3047e
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 17:22:49 2007 -0700
 +
@@ -2753,7 +4372,7 @@
 +    add changelog entries for 7065f4f359d8fc6058e5de4ebe41e06d64a5cc2a
 +
 +commit 5462b7f5a63478ecdd92cd9986880662e8f5e142
-+Merge: a482db6... 7065f4f...
++Merge: a482db6 7065f4f
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 16:53:46 2007 -0700
 +
@@ -2772,7 +4391,7 @@
 +    add changelog entry for b6ce36ea68f72a6d94f95532025c466e8b2d462b
 +
 +commit 5504834e56324b1abbe7e2ade3963dca1fb1f7b8
-+Merge: 8a81e57... b6ce36e...
++Merge: 8a81e57 b6ce36e
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 16:00:43 2007 -0700
 +
@@ -2789,7 +4408,7 @@
 +    add changelog for 8685f51a524b0601b1bf20d03182b7fd618e2005
 +
 +commit 7a3850d7cf5d59a59f2d9c91839a8aecf918d106
-+Merge: ffd90d8... 8685f51...
++Merge: ffd90d8 8685f51
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 15:46:09 2007 -0700
 +
@@ -2806,7 +4425,7 @@
 +    add changelog entry for 9f47438ea885735b81f76e80cfd90d3aad3dad46. touch up code a bit.
 +
 +commit 0a9134750db2fb35ba4a59d5bd47d8e237802e0f
-+Merge: b43514e... 9f47438...
++Merge: b43514e 9f47438
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Fri Sep 28 15:19:12 2007 -0700
 +
@@ -3109,7 +4728,7 @@
 +    add changelog for 773c66764a070f69513ef1350d90852e63b7e9e8
 +
 +commit 471af5c38d4641dd31877f86b5d807bcb135062f
-+Merge: d8d0e28... 773c667...
++Merge: d8d0e28 773c667
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Tue Sep 18 00:06:44 2007 -0700
 +
@@ -3122,7 +4741,7 @@
 +    add changelog for f28e2eb2cae77a5fd69db6625deb9b8656e16e9d
 +
 +commit 157d7eefdb4477cbcf52e57335bd2bf2f8d93b35
-+Merge: 047dea5... f28e2eb...
++Merge: 047dea5 f28e2eb
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Tue Sep 18 00:05:17 2007 -0700
 +
@@ -3135,7 +4754,7 @@
 +    add changelog for 4bca9cdb4c7e9fd556c9450bffb093e115124299
 +
 +commit 087d704c754ad00ca90e94785d63511cd0913fb2
-+Merge: 1ef0bc8... 4bca9cd...
++Merge: 1ef0bc8 4bca9cd
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Tue Sep 18 00:03:04 2007 -0700
 +
@@ -3148,7 +4767,7 @@
 +    add changelog for 04d705ee7b4624509c066f5c2e7fdbf3660a7d79
 +
 +commit 9337ddf18eb49456e50f79c193112de5c932cb24
-+Merge: 62750ca... 04d705e...
++Merge: 62750ca 04d705e
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Mon Sep 17 23:59:07 2007 -0700
 +
@@ -3179,14 +4798,14 @@
 +    Added (update-mode-lines).
 +
 +commit 329090e40d447c4c32d032bc3c3bbc129029e34e
-+Merge: 50e8c2f... a5b96d2...
++Merge: 50e8c2f a5b96d2
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sun Sep 16 15:15:40 2007 -0700
 +
 +    Merge commit 'a5b96d2d4710bd3be42020ab59717e3984c391e9' into merge-male
 +
 +commit 50e8c2f3b5f911acacc77afc3edf78aa1ac64d7d
-+Merge: 945f786... 6db80b1...
++Merge: 945f786 6db80b1
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sun Sep 16 15:05:10 2007 -0700
 +
@@ -3199,7 +4818,7 @@
 +    add changelog for 00d60eede354a5315f9760a64b935d67810641d8
 +
 +commit 5c7e48f90e3e9af03cf057f46ee8aa7280002f4a
-+Merge: 9c37db9... 00d60ee...
++Merge: 9c37db9 00d60ee
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sun Sep 16 13:37:45 2007 -0700
 +
@@ -3212,7 +4831,7 @@
 +    add changelog entry for 0ac73b5d5be8daa0897acda4a1721323e98080f8
 +
 +commit a327519e4cae6828af6087ec106878789159328d
-+Merge: 7c73f53... 0ac73b5...
++Merge: 7c73f53 0ac73b5
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sun Sep 16 13:32:46 2007 -0700
 +
@@ -3225,7 +4844,7 @@
 +    minor indenting to move-focus-and-or-window. add changelog entries.
 +
 +commit 36d1970243389a054a74698f9dd04fa0a5766add
-+Merge: afc4390... 09c75f6...
++Merge: afc4390 09c75f6
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sun Sep 16 13:27:27 2007 -0700
 +
@@ -3238,7 +4857,7 @@
 +    fix minor error in improved frame outline patch. add changelog entries
 +
 +commit f80bcf5028381e862017ba1a3a87b626bfb031d9
-+Merge: 9a05374... 5771786...
++Merge: 9a05374 5771786
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sun Sep 16 12:57:55 2007 -0700
 +
@@ -3251,7 +4870,7 @@
 +    fix up xwin-hide and rename *focus-policy* to *mouse-focus-policy*
 +
 +commit 3c1cdd2d061747e908bab88b7b390a6ada98922c
-+Merge: 3d00cc7... 0a0a55e...
++Merge: 3d00cc7 0a0a55e
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sun Sep 16 11:32:52 2007 -0700
 +
@@ -3268,7 +4887,7 @@
 +    fix up xinerama patch. use cl-ppcre to parse xpdyinfo head strings.
 +
 +commit 6569253eef2405408b2b90a9edc903a85dc3d49a
-+Merge: db06b7d... be3ffa8...
++Merge: db06b7d be3ffa8
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Sep 15 18:27:12 2007 -0700
 +
@@ -3464,7 +5083,7 @@
 +    add changelog entry for 15cb3d27e15e14dca3375282e673306929b7eecd
 +
 +commit 44ba41d460b25d3a58a90f39c30212ad0a37b87b
-+Merge: 5dfdc3b... 15cb3d2...
++Merge: 5dfdc3b 15cb3d2
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Sep 8 01:02:28 2007 -0700
 +
@@ -3481,7 +5100,7 @@
 +    touch up hidden group patch
 +
 +commit 767e367d33a000e3c01fcfc37a8265ef6719f716
-+Merge: e0c56ab... a54755f...
++Merge: e0c56ab a54755f
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Sat Sep 8 00:39:10 2007 -0700
 +

@@ -9,3 +9,71 @@
  attempts to be highly customizable while relying entirely on the
  keyboard for input. You will not find buttons, icons, title bars, tool
  bars, or any of the other conventional GUI widgets. 
+@@ -9,7 +9,7 @@
+ These design decisions reflect the growing popularity of productive,
+ customizable lisp based systems.
+ 
+-Build & Start Stumpwm
++Build & Start StumpWM
+ ---------------------
+ 
+ Prerequisites
+@@ -22,7 +22,7 @@
+ If you intend to use sbcl you need to install portable-clx. If you're
+ using clisp, make sure you use at least version 2.42 and that clisp is
+ compiled with new-clx. As of clisp 2.42, new-clx works fine with
+-stumpwm. Any version before that is too buggy to run stumpwm.
++StumpWM. Any version before that is too buggy to run StumpWM.
+ 
+ You can use asdf-install to install lisp libraries:
+   $ sbcl
+@@ -51,7 +51,7 @@
+ Building
+ ========
+ 
+-Building stumpwm from CVS requires that you build the configure script:
++Building StumpWM from CVS requires that you build the configure script:
+ 
+ $ autoconf
+ 
+@@ -59,7 +59,7 @@
+ 
+ $ ./configure
+ 
+-By default stumpwm elects sbcl. If you have both installed, you can
++By default StumpWM elects sbcl. If you have both installed, you can
+ explicitly select clisp like so:
+ 
+ $ ./configure --with-lisp=clisp
+@@ -81,13 +81,13 @@
+ $ echo /path/to/stumpwm >> ~/.xinitrc
+ $ startx
+ 
+-Hopefully that will put you in X running stumpwm!
++Hopefully that will put you in X running StumpWM!
+ 
+ SBCL And Threads
+ ----------------
+ 
+-SBCL compiled with threads causes problems with stumpwm. The most
+-common is sluggishness. It may also cause stumpwm to become
++SBCL compiled with threads causes problems with StumpWM. The most
++common is sluggishness. It may also cause StumpWM to become
+ unresponsive. If you use SBCL, consider using a version built without
+ threads.
+ 
+@@ -97,7 +97,7 @@
+ There's a texinfo manual, stumpwm.texi. the build scripts generate an
+ info file you can read in emacs or with the `info' program.
+ 
+-For other stuff visit the stumpwm wiki: 
++For other stuff visit the StumpWM wiki: 
+ 
+ http://stumpwm.antidesktop.net/
+ 
+@@ -107,4 +107,4 @@
+ ----------
+ 
+ See http://stumpwm.nongnu.org/community.html for more information on
+-contacting stumpwm developers and users.
++contacting StumpWM developers and users.

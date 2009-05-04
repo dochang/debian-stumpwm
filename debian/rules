@@ -14,8 +14,7 @@ doc-dir		:= usr/share/doc/$(debpkg)
 bin-dir		:= usr/bin
 
 
-COMMIT_ID	:= $(shell cat debian/commit.id)
-DEBIAN_VERSION	:= Debian Git checkout $(COMMIT_ID)
+DEBIAN_VERSION	:= Debian Git checkout $(shell echo -n `head -1 debian/changelog | sed -e 's/^.*(\(.*\)).*$$/\\1/'`)
 
 configure: $(QUILT_STAMPFN)
 	./autogen.sh

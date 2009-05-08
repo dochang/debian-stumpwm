@@ -18,7 +18,7 @@ DEBIAN_VERSION	:= Debian Git checkout $(shell echo -n `head -1 debian/changelog 
 
 configure: $(QUILT_STAMPFN)
 	./autogen.sh
-	./configure --with-lisp=clisp \
+	./configure --with-lisp=sbcl \
 		--with-ppcre=/usr/share/common-lisp/source/cl-ppcre
 
 build: configure

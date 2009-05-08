@@ -10,6 +10,8 @@ stumpwm (1:20090502.git482df740-1) UNRELEASED; urgency=low
 
   * debian/control:
     + Standards-Version to 3.8.1, no changes needed.
+    + remove clisp from Build-Depends-Indep and add sbcl and
+      cl-clx-sbcl instead.
 
   * debian/patches/02_correct-Stumpwm-StumpWM-in-README.diff: refresh.
   * debian/patches/04_default-to-x-terminal-emulator.diff: refresh.
@@ -17,6 +19,8 @@ stumpwm (1:20090502.git482df740-1) UNRELEASED; urgency=low
 
   * debian/rules:
     + use the full Debian package version for PACKAGE_VERSION.
+    + s/clisp/sbcl/ in upstream's configure to build the Info manual
+      with SBCL (Closes: #492111).
 
   * debian/watch:
     + new file, thanks to lintian.

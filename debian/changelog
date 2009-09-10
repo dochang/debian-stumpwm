@@ -3,6 +3,7 @@ stumpwm (1:20090804.git9d6cb388-1) UNRELEASED; urgency=low
   * New Git checkout (9d6cb38872ef8f384e2f5fc3088f3bfaabfd2445):
     + this include upstream version 0.9.7-git.
     + check the upstream NEWS file for user visible changes.
+    + fix FTBFS with new SBCL (Closes: #536915).
 
   * debian/control:
     + Standards-Version to 3.8.3, no changes needed.

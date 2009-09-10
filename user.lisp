@@ -106,22 +106,30 @@ location. Note: this function rarely works."
     (send-fake-click (current-window) button)))
 
 (defun programs-in-path (&optional full-path (path (split-string (getenv "PATH") ":")))
-  "Return a list of programs in the path that start with @var{base}. if
-@var{full-path} is @var{t} then return the full path, otherwise just
-return the filename. @var{path} is by default the @env{PATH}
-evironment variable but can be specified. It should be a string containing
-each directory seperated by a colon."
-  (loop
-   for p in path
-   for dir = (probe-path p)
-   when dir
-   nconc (loop
-          for file in (directory (merge-pathnames (make-pathname :name :wild) dir))
-          for namestring = (file-namestring file)
-	    when (pathname-is-executable-p file)
-	    collect (if full-path
-			(namestring file)
-			namestring))))
+  "Return a list of programs in the path. if @var{full-path} is
+@var{t} then return the full path, otherwise just return the
+filename. @var{path} is by default the @env{PATH} evironment variable
+but can be specified. It should be a string containing each directory
+seperated by a colon."
+  (sort
+   (loop
+      for p in path
+      for dir = (probe-path p)
+      when dir
+      nconc (loop
+               for file in (union
+                            ;; SBCL doesn't match files with types if type
+                            ;; is not wild and CLISP won't match files
+                            ;; without a type when type is wild. So cover all the bases
+                            (directory-no-deref (merge-pathnames (make-pathname :name :wild) dir))
+                            (directory-no-deref (merge-pathnames (make-pathname :name :wild :type :wild) dir))
+                            :test 'equal)
+               for namestring = (file-namestring file)
+               when (pathname-is-executable-p file)
+               collect (if full-path
+                           (namestring file)
+                           namestring)))
+   #'string<))
 
 (defstruct path-cache
   programs modification-dates paths)
@@ -214,13 +222,22 @@ such a case, kill the shell command to resume StumpWM."
 "Quit StumpWM."
   (throw :top-level :quit))
 
-(defcommand soft-restart () ()
+(defcommand restart-soft () ()
   "Soft Restart StumpWM. The lisp process isn't restarted. Instead,
 control jumps to the very beginning of the stumpwm program. This
-differs from a theoretical hard restart, which would restart the unix
-process."
+differs from RESTART, which restarts the unix process.
+
+Since the process isn't restarted, existing customizations remain
+after the restart."
   (throw :top-level :restart))
 
+(defcommand restart-hard () ()
+  "Restart stumpwm. This is handy if a new stumpwm executable has been
+made and you wish to replace the existing process with it.
+
+Any run-time customizations will be lost after the restart."
+  (throw :top-level :hup-process))
+                
 (defun find-matching-windows (props all-groups all-screens)
   "Returns list of windows matching @var{props} (see run-or-raise
 documentation for details). @var{all-groups} will find windows on all

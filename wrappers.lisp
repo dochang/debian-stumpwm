@@ -143,17 +143,24 @@
   #-(or allegro clisp cmu gcl lispworks lucid sbcl scl openmcl)
   (error 'not-implemented))
 
-(defun pathname-is-executable-p (pathname)
-  "Return T if the pathname describes an executable file."
-  #+sbcl
-  (let ((filename (coerce (sb-int:unix-namestring pathname) 'base-string)))
-    (and (eq (sb-unix:unix-file-kind filename) :file)
-         (sb-unix:unix-access filename sb-unix:x_ok)))
-  ;; FIXME: this is not exactly perfect
-  #+clisp
-  (logand (posix:convert-mode (posix:file-stat-mode (posix:file-stat pathname)))
-          (posix:convert-mode '(:xusr :xgrp :xoth)))
-  #-(or sbcl clisp) t)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; On 20th May 2009, SBCL lost unix-file-kind and replaced it with the
+  ;; internal native-file-kind. Since there's no overlap, we'd better cope with
+  ;; either possibility.
+  (let (#+sbcl (file-kind-fun
+                (or (find-symbol "NATIVE-FILE-KIND" :sb-impl)
+                    (find-symbol "UNIX-FILE-KIND" :sb-unix))))
+    (defun pathname-is-executable-p (pathname)
+      "Return T if the pathname describes an executable file."
+      #+sbcl
+      (let ((filename (coerce (sb-ext:native-namestring pathname) 'base-string)))
+        (and (eq (funcall file-kind-fun filename) :file)
+             (sb-unix:unix-access filename sb-unix:x_ok)))
+      ;; FIXME: this is not exactly perfect
+      #+clisp
+      (logand (posix:convert-mode (posix:file-stat-mode (posix:file-stat pathname)))
+              (posix:convert-mode '(:xusr :xgrp :xoth)))
+      #-(or sbcl clisp) t)))
 
 (defun probe-path (path)
   "Return the truename of a supplied path, or nil if it does not exist."
@@ -196,7 +203,7 @@
    (make-array (length data) :element-type '(unsigned-byte 8) :initial-contents data)
    custom:*terminal-encoding*)
   #-(or sbcl clisp)
-  (map 'list #'code-char string))
+  (map 'string #'code-char data))
 
 (defun string-to-bytes (string)
   "Convert a string to a vector of octets."
@@ -244,6 +251,23 @@ they should be windows. So use this function to make a window out of them."
 (defun recover-from-lookup-error ()
   #+(or clisp sbcl) (invoke-restart :one)
   #-(or clisp sbcl) (error 'not-implemented))
+
+(defun directory-no-deref (pathspec)
+  "Call directory without dereferencing symlinks in the results"
+  #+(or cmu scl) (directory pathspec :truenamep nil)
+  #+clisp (mapcar #'car (directory pathspec :full t))
+  #+lispworks (directory pathspec :link-transparency nil)
+  #+openmcl (directory pathspec :follow-links nil)
+  ;; FIXME: seems like there ought to be a less cumbersome way to run
+  ;; different code based on the version.
+  #+sbcl (macrolet ((dir (p)
+                      (if (>= (parse-integer (third (split-seq (lisp-implementation-version) '(#\.))))
+                              24)
+                          `(directory ,p :resolve-symlinks nil)
+                          `(directory ,p))))
+           (dir pathspec))
+  #-(or clisp cmu lispworks openmcl sbcl scl) (directory pathspec)
+  )
 
 ;;; CLISP does not include features to distinguish different Unix
 ;;; flavours (at least until version 2.46). Until this is fixed, use a
@@ -308,5 +332,37 @@ regarding files in sysfs. Data is read in chunks of BLOCKSIZE bytes."
 
        (if (< pos blocksize)
 	   (return (subseq string 0 string-filled))))))
+
+(defun argv ()
+  #+sbcl (copy-list sb-ext:*posix-argv*)
+  #+clisp (coerce (ext:argv) 'list)
+  #-( or sbcl clisp)
+  (error "unimplemented"))
+
+(defun execv (program &rest arguments)
+  ;; FIXME: seems like there should be a way to do this in sbcl the way it's done in clisp. -sabetts
+  #+sbcl
+  (sb-alien:with-alien ((prg sb-alien:c-string program)
+                        (argv (array sb-alien:c-string 256)))
+    (loop
+       for i in arguments
+       for j below 255
+       do (setf (sb-alien:deref argv j) i))
+    (setf (sb-alien:deref argv (length arguments)) nil)
+    (sb-alien:alien-funcall (sb-alien:extern-alien "execv" (function sb-alien:int sb-alien:c-string (* sb-alien:c-string)))
+                            prg (sb-alien:cast argv (* sb-alien:c-string))))
+  #+clisp
+  (funcall (ffi::find-foreign-function "execv"
+                                       (ffi:parse-c-type '(ffi:c-function
+                                                           (:arguments
+                                                            (prg ffi:c-string)
+                                                            (args (ffi:c-array-ptr ffi:c-string))
+                                                            )
+                                                           (:return-type ffi:int)))
+                                       nil nil nil)
+           program
+           (coerce arguments 'array))
+  #-(or sbcl clisp)
+  (error "Unimplemented"))
 
 ;;; EOF

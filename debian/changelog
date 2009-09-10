@@ -1,4 +1,4 @@
-stumpwm (1:20090804.git9d6cb388-1) UNRELEASED; urgency=low
+stumpwm (1:20090804.git9d6cb388-1) unstable; urgency=low
 
   * New Git checkout (9d6cb38872ef8f384e2f5fc3088f3bfaabfd2445):
     + this include upstream version 0.9.7-git.
@@ -33,7 +33,7 @@ stumpwm (1:20090804.git9d6cb388-1) UNRELEASED; urgency=low
       /usr/share/common-lisp/systems/ in `asdf:*central-registry*'
       anymore by default (Closes: #545344).
 
- --
+ -- Luca Capello <luca@pca.it>  Thu, 10 Sep 2009 21:12:46 +0200
 
 stumpwm (1:20090502.git482df740-1) unstable; urgency=low
 

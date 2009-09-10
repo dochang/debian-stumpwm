@@ -1,3 +1,4 @@
+Add upstream ChangeLog from `git log` in the master branch
 --- /dev/null
 +++ stumpwm/ChangeLog
 @@ -0,0 +1,9985 @@

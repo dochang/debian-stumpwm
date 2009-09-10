@@ -1,3 +1,7 @@
+Since common-lisp-controller_6.19, /usr/share/common-lisp/systems/ is
+not registered anymore in `asdf:*central-registry*' by default.  Thus
+`(asdf:...)' calls do not work anymore and must be replaced with the
+corresponding `(clc:clc-require...)' ones.
 --- stumpwm.orig/Makefile.in
 +++ stumpwm/Makefile.in
 @@ -5,7 +5,7 @@

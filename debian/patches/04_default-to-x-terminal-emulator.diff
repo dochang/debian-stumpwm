@@ -1,3 +1,4 @@
+Default to Debian alternative x-terminal-emulator
 --- stumpwm.orig/bindings.lisp
 +++ stumpwm/bindings.lisp
 @@ -79,8 +79,8 @@

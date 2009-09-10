@@ -1,3 +1,4 @@
+Default to Debian alternative x-www-browser
 --- stumpwm.orig/sample-stumpwmrc.lisp
 +++ stumpwm/sample-stumpwmrc.lisp
 @@ -17,7 +17,7 @@

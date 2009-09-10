@@ -8,6 +8,14 @@ stumpwm (1:20090804.git9d6cb388-1) UNRELEASED; urgency=low
     + Standards-Version to 3.8.3, no changes needed.
 
   * debian/patches/series: updated.
+  * debian/patches/02_correct-Stumpwm-StumpWM-in-README.diff:
+    + add patch description, thanks to lintian.
+  * debian/patches/04_default-to-x-terminal-emulator.diff:
+    + add patch description, thanks to lintian.
+  * debian/patches/05_default-to-x-www-browser.diff:
+    + add patch description, thanks to lintian.
+  * debian/patches/06_add-upstream-changelog.diff:
+    + add patch description, thanks to lintian.
   * debian/patches/07_use-clc-require-for-manual-creation.diff:
     + adapt to common-lisp-controller_6.19, which does not register
       /usr/share/common-lisp/systems/ in `asdf:*central-registry*'

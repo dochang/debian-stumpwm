@@ -4,6 +4,9 @@ stumpwm (1:20090804.git9d6cb388-1) UNRELEASED; urgency=low
     + this include upstream version 0.9.7-git.
     + check the upstream NEWS file for user visible changes.
 
+  * debian/control:
+    + Standards-Version to 3.8.3, no changes needed.
+
  --
 
 stumpwm (1:20090502.git482df740-1) unstable; urgency=low

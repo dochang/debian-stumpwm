@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Time-stamp: <2008/07/23 20:48:49 CEST luca@gismo.pca.it>
+# Time-stamp: <2009/09/10 19:54:47 CEST luca@gismo.pca.it>
 #
 # Copyright 2007 Luca Capello <luca@pca.it>
 # This file is part of the Debian StumpWM package and is licensed
@@ -12,7 +12,7 @@
 # Lisp implementation StumpWM should use.
 
 
-EVAL_LOAD="(asdf:oos 'asdf:load-op 'stumpwm)"
+EVAL_LOAD="(clc:clc-require 'stumpwm)"
 EVAL_RUN="(stumpwm:stumpwm)"
 
 load_lisp() {

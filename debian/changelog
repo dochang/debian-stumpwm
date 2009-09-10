@@ -7,6 +7,12 @@ stumpwm (1:20090804.git9d6cb388-1) UNRELEASED; urgency=low
   * debian/control:
     + Standards-Version to 3.8.3, no changes needed.
 
+  * debian/patches/series: updated.
+  * debian/patches/07_use-clc-require-for-manual-creation.diff:
+    + adapt to common-lisp-controller_6.19, which does not register
+      /usr/share/common-lisp/systems/ in `asdf:*central-registry*'
+      anymore by default.
+
   * debian/stumpwm.bin:
     + adapt to common-lisp-controller_6.19, which does not register
       /usr/share/common-lisp/systems/ in `asdf:*central-registry*'

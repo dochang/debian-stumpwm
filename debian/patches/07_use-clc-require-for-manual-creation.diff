@@ -1,0 +1,11 @@
+--- stumpwm.orig/Makefile.in
++++ stumpwm/Makefile.in
+@@ -5,7 +5,7 @@
+ openmcl_BUILDOPTS=--load ./make-image.lisp
+ 
+ clisp_INFOOPTS=-K full -on-error exit -x "(load \"asdf.lisp\") (load \"stumpwm.asd\") (load \"@PPCRE_PATH@/cl-ppcre.asd\") (asdf:operate 'asdf:load-op :stumpwm) (load (compile-file \"manual.lisp\")) (stumpwm::generate-manual) (ext:exit)"
+-sbcl_INFOOPTS=--eval "(progn (require 'asdf) (require 'stumpwm) (load \"manual.lisp\"))" --eval "(progn (stumpwm::generate-manual) (sb-ext:quit))"
++sbcl_INFOOPTS=--eval "(progn (clc:clc-require 'asdf) (clc:clc-require 'stumpwm) (load \"manual.lisp\"))" --eval "(progn (stumpwm::generate-manual) (sb-ext:quit))"
+ openmcl_INFOOPTS=--eval "(require 'asdf) (require 'stumpwm) (load (compile-file \"manual.lisp\")) (stumpwm::generate-manual) (quit)"
+ 
+ datarootdir = @datarootdir@

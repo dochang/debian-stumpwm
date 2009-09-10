@@ -1,6 +1,190 @@
 --- /dev/null
 +++ stumpwm/ChangeLog
-@@ -0,0 +1,9801 @@
+@@ -0,0 +1,9985 @@
++commit 9d6cb38872ef8f384e2f5fc3088f3bfaabfd2445
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Tue Aug 4 11:22:40 2009 -0700
++
++    bump version to 0.9.7-git
++
++commit 48683d5fc8d410f993a38e87468041f92eca70af
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Mon Aug 3 11:54:07 2009 -0700
++
++    update NEWS
++
++commit 891fc44e9ee3891b3d06c55d18421c5de1497bee
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Mon Aug 3 11:54:02 2009 -0700
++
++    update AUTHORS
++
++commit b51118f9c510b51394ce23c5acfe333de49bb717
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Wed Jul 15 11:15:33 2009 -0700
++
++    fix restart-hard for newer versions of sbcl
++
++commit 3c4a53cdf32c485252510a92693e007e7a6664c9
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Mon Jul 13 01:02:09 2009 -0700
++
++    make completing-read trim spaces off the beginning and end of the input
++    
++    callers updated.
++
++commit feb599fc0eb03b6a139144016da6917bd125ead5
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Mon Jul 13 00:46:12 2009 -0700
++
++    fix list-modules
++    
++    under sbcl it borked with an error.
++
++commit 0bcdcd197c100b39063ba3ac1c6aae86cab90ca5
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Wed Jun 3 17:51:11 2009 +0100
++
++    Fixed non-implementation specific version of bytes-to-string.
++    
++    I'm not really sure if this is the right thing to do, but it seems to
++    work for me under CCL.  The old version was totally broken.
++
++commit 32b021d37643e5d6b8715972753d8b0ede25b573
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Mon Jul 13 00:33:13 2009 -0700
++
++    make programs-in-path return a sorted list
++    
++    This fixes the problem of things like emacs22-gtk tab completing before emacs
++
++commit e37f4fc8e27029c76cafe363af3816432ddaf6fa
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Mon Jul 13 00:32:23 2009 -0700
++
++    make directory-no-deref work with sbcl versions that don't have :resolve-symlinks
++
++commit 7fbecec233339e4587288e2e520833af4581774d
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Jun 16 23:39:06 2009 +0100
++
++    Don't dereference symlinks in program completion list.
++    
++    The directory function dereferences symlinks in its results, so if you
++    have /usr/bin/firefox -> ../lib/iceweasel/iceweasel (as debian does),
++    you won't be able to complete on firefox.  This patch fixes that.
++    I've included support for as many lisp implementations as I could, but
++    I've only tested this end-to-end on sbcl, clisp and ccl.
++
++commit 161212ab81afd04881c813b4b13e537ea9b86f30
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Sun Jul 12 22:02:04 2009 -0700
++
++    refactor add-group and gnew commands
++    
++    add-group now
++    
++    * produces an error if the name is empty
++    * switches to the new group if BACKGROUND argument is nil
++    
++    callers are updated
++
++commit a5e1a2e149ef51eecb3730163f5e9dbb165e73d6
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Sun Jul 12 21:18:19 2009 -0700
++
++    ignore capslock modifier when grabbing top level bindings
++    
++    capslock is now ignored the same way numlock is.
++
++commit 75fb86ec4092bdd0da0dae0cfd5a252bcffe278f
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Sun Jul 12 05:46:16 2009 -0700
++
++    make screen a class.
++
++commit ce32b78f999701f5c61871b038f97c4ad5d95108
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Sun Jul 12 04:43:43 2009 -0700
++
++    rename soft-restart to restart-soft. add restart-hard. add execv and argv functions.
++    
++    You can now HUP the stumpwm process with restart-hard
++
++commit d449f456819c5813c198e3718223f4ad2b61e4b7
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Sun Jul 5 18:14:17 2009 -0700
++
++    move head related functions from screen.lisp to head.lisp
++
++commit c7f3a17c2df5585dc784d09cd64f12ca2bb855f6
++Author: Dirk Sondermann <ds-stumpwm@dyximaq.de>
++Date:   Sun Jun 14 13:09:07 2009 +0200
++
++    Fix building the manual with latest SBCL
++    
++    pathname-is-executable-p is no longer a simple
++    function in the sense of SBCL, but has become a closure. Therefore,
++    sb-impl::%simple-fun-arglist fails at extracting the arglist and
++    yields a value that isn't even a list.
++
++commit 2eae3e6a6356ade7b70d52ed7b1053928d33a1ab
++Author: Rupert Swarbrick <rswarbrick@googlemail.com>
++Date:   Sat Jun 6 09:57:46 2009 +0100
++
++    fix compilation with new SBCL's
++    
++    Compilation seems to have died with new SBCLs due to a change in the
++    directory code. I think the following patch should fix it.
++
++commit 8ae18f4229792929779ee9445ad6e9e00e5029ba
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Mon Jun 1 13:02:28 2009 -0700
++
++    fix up the loop in describe-key
++
++commit 37888f73090540edc1877385f3f9a46efef74037
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat May 30 19:06:17 2009 +0100
++
++    Modified describe-key and where-is to check group type specific keymaps.
++
++commit a49d9554c9428ec640d513a8df238381c29ce71e
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Mon Jun 1 12:49:42 2009 -0700
++
++    add Michael Raskin's window-tags.lisp to contrib/
++
++commit 63548fd75aa98587b415332946d4de7f2b7ce641
++Author: David Vazquez <davazp@es.gnu.org>
++Date:   Sat May 16 04:52:08 2009 +0200
++
++    export current-head symbol
++
++commit b2d92acb80b0e5675a08a77dad97954d92813201
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat May 23 19:01:50 2009 +0100
++
++    Avoid crash when window placement rules specify a non-existent frame.
++
++commit 96d8518ce34be400d16ae97c076007c713e283b2
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Thu May 14 18:07:08 2009 -0700
++
++    fix programs-in-path for clisp
++
++commit 48cf09424ae480ae37e17419d8f68a773cdbcf7e
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Wed May 13 13:56:08 2009 -0700
++
++    in programs-in-path, use :wild for both name and type when searching for executables.
++
++commit 23f251d371e8de121134fdb6f146b88a7f35e0ee
++Author: Antti Nykanen <aon@iki.fi>
++Date:   Sun May 3 15:19:08 2009 +0300
++
++    Make the info command accept a format string as an argument
++
 +commit 482df740882c2e9db6b58e89743d7f968fe34fa8
 +Author: Antti Nykanen <aon@iki.fi>
 +Date:   Sat May 2 19:45:57 2009 +0300

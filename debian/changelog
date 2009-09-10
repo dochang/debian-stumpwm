@@ -21,6 +21,12 @@ stumpwm (1:20090804.git9d6cb388-1) UNRELEASED; urgency=low
       /usr/share/common-lisp/systems/ in `asdf:*central-registry*'
       anymore by default.
 
+  * debian/README.source:
+    + refer to /usr/share/doc/quilt/README.source, thanks to lintian.
+
+  * debian/rules:
+    + install debian/README.source as well.
+
   * debian/stumpwm.bin:
     + adapt to common-lisp-controller_6.19, which does not register
       /usr/share/common-lisp/systems/ in `asdf:*central-registry*'

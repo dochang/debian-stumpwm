@@ -27,8 +27,10 @@
 (in-package :stumpwm)
 
 (export '(*suppress-abort-messages*
+          *suppress-frame-indicator*
           *timeout-wait*
           *timeout-frame-indicator-wait*
+          *frame-indicator-text*
           *frame-indicator-timer*
           *message-window-timer*
           *urgent-window-hook*
@@ -536,7 +538,7 @@ chosen, resignal the error."
 display a message whenever you switch frames:
 
 @example
-\(defun my-rad-fn (from-frame to-frame)
+\(defun my-rad-fn (to-frame from-frame)
   (stumpwm:message \"Mustard!\"))
 
 \(stumpmwm:add-hook stumpwm:*focus-frame-hook* 'my-rad-fn)
@@ -600,8 +602,9 @@ Useful for re-using the &REST arg after removing some options."
       (push (pop plist) copy))
     (setq plist (cddr plist))))
 
-(defun screen-display-string (screen)
-  (format nil "DISPLAY=~a:~d.~d"
+(defun screen-display-string (screen &optional (assign t))
+  (format nil
+          (if assign "DISPLAY=~a:~d.~d" "~a:~d.~d")
           (screen-host screen)
           (xlib:display-display *display*)
           (screen-id screen)))
@@ -706,9 +709,11 @@ do:
             (setf cur (cdr cur))
             (let* ((tmp (loop while (and cur (char<= #\0 (car cur) #\9))
                               collect (pop cur)))
-                   (len (and tmp (parse-integer (coerce tmp 'string)))))
+                   (len (and tmp (parse-integer (coerce tmp 'string))))
+                   ;; So that eg "%25^t" will trim from the left
+                   (from-left-p (when (char= #\^ (car cur)) (pop cur))))
               (if (null cur)
-                  (format t "%~a" len)
+                  (format t "%~a~@[~a~]" len from-left-p)
                   (let* ((fmt (cadr (assoc (car cur) fmt-alist :test 'char=)))
                          (str (cond (fmt
                                      ;; it can return any type, not jut as string.
@@ -718,9 +723,12 @@ do:
                                     (t
                                      (concatenate 'string (string #\%) (string (car cur)))))))
                     ;; crop string if needed
-                    (setf output (concatenate 'string output (if len
-                                                                 (subseq str 0 (min len (length str)))
-                                                                 str)))
+                    (setf output (concatenate 'string output
+                                              (cond ((null len) str)
+                                                    ((not from-left-p) ; Default behavior
+                                                     (subseq str 0 (min len (length str))))
+                                                    ;; New behavior -- trim from the left
+                                                    (t (subseq str (max 0 (- (length str) len)))))))
                     (setf cur (cdr cur))))))
            (t
             (setf output (concatenate 'string output (string (car cur)))

@@ -18,7 +18,7 @@
 ;; Is there a better way to use asdf.lisp than including it with stumpwm?
 #+clisp
 (progn
-  (load "asdf.lisp")
+  (require 'asdf '("asdf.lisp"))
   (load "stumpwm.asd")
   (load "@PPCRE_PATH@/cl-ppcre.asd"))
 #+clisp
@@ -44,8 +44,24 @@
   (asdf:oos 'asdf:load-op 'stumpwm))
 #+openmcl
 (progn
-  (ccl:save-application "stumpwm" :toplevel-function (lambda ()
-                                              (stumpwm:stumpwm)
-                                              (ccl:quit))))
+  (ccl:save-application "stumpwm" :prepend-kernel t :toplevel-function #'stumpwm:stumpwm))
 
-#-(or sbcl clisp openmcl) (error "This lisp implementation is not supported.")
+;;; ECL
+
+#+ ecl
+(progn
+  (require 'asdf)
+  (load "@PPCRE_PATH@/cl-ppcre.asd"))
+#+ ecl
+(asdf:make-build 'stumpwm :type :program :monolithic t
+                 :move-here t
+                 :epilogue-code '(progn
+                                  (funcall (intern "STUMPWM" (find-package "STUMPWM")))
+                                  0))
+
+#+ ecl
+(when (probe-file "stumpwm-mono")
+  (when (probe-file "stumpwm") (delete-file "stumpwm"))
+  (rename-file "stumpwm-mono" "stumpwm"))
+
+#-(or sbcl clisp openmcl ecl) (error "This lisp implementation is not supported.")

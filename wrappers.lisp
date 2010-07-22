@@ -29,84 +29,84 @@
 (export '(getenv))
 
 (define-condition not-implemented (stumpwm-error)
-  () (:documentation "Describes a non implemented functionnality."))
+  () (:documentation "A function has been called that is not implemented yet."))
 
-;;; XXX: DISPLAY env var isn't set for cmucl
-(defun run-prog (prog &rest opts &key args (wait t) &allow-other-keys)
+(defun run-prog (prog &rest opts &key args output (wait t) &allow-other-keys)
   "Common interface to shell. Does not return anything useful."
-  #+gcl (declare (ignore wait))
-  (setq opts (remove-plist opts :args :wait))
-  #+allegro (apply #'excl:run-shell-command (apply #'vector prog prog args)
-                   :wait wait opts)
-  #+(and clisp      lisp=cl)
-  (progn
+  #+(or clisp ccl ecl gcl)
     ;; Arg. We can't pass in an environment so just set the DISPLAY
     ;; variable so it's inherited by the child process.
-    (setf (getenv "DISPLAY") (format nil "~a:~d.~d"
-                                     (screen-host (current-screen))
-                                     (xlib:display-display *display*)
-                                     (screen-id (current-screen))))
-    (apply #'ext:run-program prog :arguments args :wait wait opts))
-  #+(and clisp (not lisp=cl))
-  (if wait
-      (apply #'lisp:run-program prog :arguments args opts)
-      (lisp:shell (format nil "~a~{ '~a'~} &" prog args)))
-  #+cmu (apply #'ext:run-program prog args :output t :error t :wait wait opts)
-  #+gcl (apply #'si:run-process prog args)
-  #+liquid (apply #'lcl:run-program prog args)
-  #+lispworks (apply #'sys::call-system
-                     (format nil "~a~{ '~a'~}~@[ &~]" prog args (not wait))
-                     opts)
-  #+lucid (apply #'lcl:run-program prog :wait wait :arguments args opts)
-  #+sbcl (apply #'sb-ext:run-program prog args :output t :error t :wait wait
-                ;; inject the DISPLAY variable in so programs show up
-                ;; on the right screen.
-                :environment (cons (screen-display-string (current-screen))
-                                   (remove-if (lambda (str)
-                                                (string= "DISPLAY=" str :end2 (min 8 (length str))))
-                                              (sb-ext:posix-environ)))
-                opts)
-  #+ccl (ccl:run-program prog (mapcar (lambda (s)
-                                        (if (simple-string-p s) s (coerce s 'simple-string)))
-                                      args)
-                         :wait wait :output t :error t)
-  #-(or allegro clisp cmu gcl liquid lispworks lucid sbcl ccl)
+    (when (current-screen)
+      (setf (getenv "DISPLAY") (screen-display-string (current-screen) nil)))
+  (setq opts (remove-plist opts :args :output :wait))
+  #+allegro
+  (apply #'excl:run-shell-command (apply #'vector prog prog args)
+         :output output :wait wait :environment
+         (when (current-screen)
+           (list (cons "DISPLAY" (screen-display-string (current-screen)))))
+         opts)
+  #+ccl
+  (ccl:run-program prog (mapcar (lambda (s)
+                                  (if (simple-string-p s)
+                                      s
+                                      (coerce s 'simple-string)))
+                                args)
+                         :wait wait :output (if output output t) :error t)
+  #+clisp
+  (let ((stream (apply #'ext:run-program prog :arguments args :wait wait
+                       :output (if output :stream :terminal) opts)))
+    (when output
+      (loop for ch = (read-char stream nil stream)
+            until (eq ch stream)
+            do (write-char ch output))))
+  #+cmu
+  (let ((env ext:*environment-list*))
+    (when (current-screen)
+      (setf env (cons (cons "DISPLAY"
+                            (screen-display-string (current-screen) nil))
+                      env)))
+  (apply #'ext:run-program prog args :output (if output output t)
+         :env env :error t :wait wait opts))
+  #+ecl
+  (if output
+      (let ((stream (ext:run-program prog args :input nil)))
+        (loop for line = (read-line stream nil)
+           while line
+           do (format output "~A~%" line)))
+      (ext:system (format nil "~a~{ '~a'~}~@[ &~]" prog args (not wait))))
+  #+gcl
+  (let ((stream (apply #'si:run-process prog args)))
+    (when wait
+      (loop for ch = (read-char stream nil stream)
+            until (eq ch stream)
+            do (write-char ch output))))
+  #+liquid
+  (apply #'lcl:run-program prog :output output :wait wait :arguments args opts)
+  #+lispworks
+  (let ((cmdline (format nil "~a ~a~{ '~a'~}"
+                         (screen-display-string (current-screen) t)
+                         prog args (not wait))))
+    (if output
+        (apply #'sys::call-system-showing-output cmdline
+               :output-stream output :wait wait args)
+        (apply #'sys::call-system cmdline :wait wait args)))
+  #+sbcl
+  (let ((env (sb-ext:posix-environ)))
+    (when (current-screen)
+      (setf env (cons (screen-display-string (current-screen) t)
+                      (remove-if (lambda (str)
+                                   (string= "DISPLAY=" str
+                                            :end2 (min 8 (length str))))
+                                 env))))
+    (apply #'sb-ext:run-program prog args :output (if output output t)
+           :error t :wait wait :environment env opts))
+  #-(or allegro ccl clisp cmu ecl gcl liquid lispworks sbcl)
   (error 'not-implemented))
 
-;;; XXX: DISPLAY isn't set for cmucl
 (defun run-prog-collect-output (prog &rest args)
   "run a command and read its output."
-  #+allegro (with-output-to-string (s)
-              (excl:run-shell-command (format nil "~a~{ ~a~}" prog args)
-                                      :output s :wait t))
-  ;; FIXME: this is a dumb hack but I don't care right now.
-  #+clisp (with-output-to-string (s)
-            ;; Arg. We can't pass in an environment so just set the DISPLAY
-            ;; variable so it's inherited by the child process.
-            (setf (getenv "DISPLAY") (format nil "~a:~d.~d"
-                                             (screen-host (current-screen))
-                                             (xlib:display-display *display*)
-                                             (screen-id (current-screen))))
-            (let ((out (ext:run-program prog :arguments args :wait t :output :stream)))
-              (loop for i = (read-char out nil out)
-                    until (eq i out)
-                    do (write-char i s))))
-  #+cmu (with-output-to-string (s) (ext:run-program prog args :output s :error s :wait t))
-  #+sbcl (with-output-to-string (s)
-           (sb-ext:run-program prog args :output s :error s :wait t
-                               ;; inject the DISPLAY variable in so programs show up
-                               ;; on the right screen.
-                               :environment (cons (screen-display-string (current-screen))
-                                                  (remove-if (lambda (str)
-                                                               (string= "DISPLAY=" str :end2 (min 8 (length str))))
-                                                             (sb-ext:posix-environ)))))
-  #+ccl (with-output-to-string (s)
-          (ccl:run-program prog (mapcar (lambda (s)
-                                          (if (simple-string-p s) s (coerce s 'simple-string)))
-                                        args)
-                           :wait t :output s :error t))
-  #-(or allegro clisp cmu sbcl ccl)
-  (error 'not-implemented))
+  (with-output-to-string (s)
+    (run-prog prog :args args :output s :wait t)))
 
 (defun getenv (var)
   "Return the value of the environment variable."
@@ -121,7 +121,8 @@
   #+mcl (ccl::getenv var)
   #+sbcl (sb-posix:getenv (string var))
   #+openmcl (ccl:getenv (string var))
-  #-(or allegro clisp cmu gcl lispworks lucid mcl sbcl scl openmcl)
+  #+ecl (ext:getenv (string var))
+  #-(or allegro clisp cmu gcl lispworks lucid mcl sbcl scl openmcl ecl)
   (error 'not-implemented))
 
 (defun (setf getenv) (val var)
@@ -140,27 +141,23 @@
   #+lucid (setf (lcl:environment-variable (string var)) (string val))
   #+sbcl (sb-posix:putenv (format nil "~A=~A" (string var) (string val)))
   #+openmcl (ccl:setenv (string var) (string val))
-  #-(or allegro clisp cmu gcl lispworks lucid sbcl scl openmcl)
+  #+ecl (ext:setenv (string var) (string val))
+  #-(or allegro clisp cmu gcl lispworks lucid sbcl scl openmcl ecl)
   (error 'not-implemented))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  ;; On 20th May 2009, SBCL lost unix-file-kind and replaced it with the
-  ;; internal native-file-kind. Since there's no overlap, we'd better cope with
-  ;; either possibility.
-  (let (#+sbcl (file-kind-fun
-                (or (find-symbol "NATIVE-FILE-KIND" :sb-impl)
-                    (find-symbol "UNIX-FILE-KIND" :sb-unix))))
-    (defun pathname-is-executable-p (pathname)
-      "Return T if the pathname describes an executable file."
-      #+sbcl
-      (let ((filename (coerce (sb-ext:native-namestring pathname) 'base-string)))
-        (and (eq (funcall file-kind-fun filename) :file)
-             (sb-unix:unix-access filename sb-unix:x_ok)))
-      ;; FIXME: this is not exactly perfect
-      #+clisp
-      (logand (posix:convert-mode (posix:file-stat-mode (posix:file-stat pathname)))
-              (posix:convert-mode '(:xusr :xgrp :xoth)))
-      #-(or sbcl clisp) t)))
+(defun pathname-is-executable-p (pathname)
+  "Return T if the pathname describes an executable file."
+  (declare (ignorable pathname))
+  #+sbcl
+  (let ((filename (coerce (sb-ext:native-namestring pathname) 'string)))
+    (and (or (pathname-name pathname)
+             (pathname-type pathname))
+         (sb-unix:unix-access filename sb-unix:x_ok)))
+  ;; FIXME: this is not exactly perfect
+  #+clisp
+  (logand (posix:convert-mode (posix:file-stat-mode (posix:file-stat pathname)))
+          (posix:convert-mode '(:xusr :xgrp :xoth)))
+  #-(or sbcl clisp) t)
 
 (defun probe-path (path)
   "Return the truename of a supplied path, or nil if it does not exist."
@@ -189,7 +186,6 @@
   #+sbcl (sb-debug:backtrace frames *standard-output*)
   #+clisp (ext:show-stack 1 frames (sys::the-frame))
   #+ccl (ccl:print-call-history :count frames :stream *standard-output* :detailed-p nil)
-
   #-(or sbcl clisp ccl) (write-line "Sorry, no backtrace for you."))
 
 (defun bytes-to-string (data)
@@ -216,31 +212,31 @@
 
 (defun utf8-to-string (octets)
   "Convert the list of octets to a string."
-  #+sbcl (handler-bind
-             ((sb-impl::octet-decoding-error #'(lambda (c) (invoke-restart 'use-value "?"))))
-           (sb-ext:octets-to-string 
-            (coerce octets '(vector (unsigned-byte 8)))
-            :external-format :utf-8))
-  #+clisp (ext:convert-string-from-bytes (coerce octets '(vector (unsigned-byte 8)))
-                                         charset:utf-8)
-  #-(or sbcl clisp)
-  (map 'string #'code-char octets))
+  (let ((octets (coerce octets '(vector (unsigned-byte 8)))))
+    #+ccl (ccl:decode-string-from-octets octets :external-format :utf-8)
+    #+clisp (ext:convert-string-from-bytes octets charset:utf-8)
+    #+sbcl (handler-bind
+               ((sb-impl::octet-decoding-error #'(lambda (c)
+                                                   (declare (ignore c))
+                                                   (invoke-restart 'use-value "?"))))
+             (sb-ext:octets-to-string octets :external-format :utf-8))
+    #-(or ccl clisp sbcl) (map 'string #'code-char octets)))
 
 (defun string-to-utf8 (string)
   "Convert the string to a vector of octets."
+  #+ccl (ccl:encode-string-to-octets string :external-format :utf-8)
+  #+clisp (ext:convert-string-to-bytes string charset:utf-8)
   #+sbcl (sb-ext:string-to-octets
           string
           :external-format :utf-8)
-  #+clisp (ext:convert-string-to-bytes string charset:utf-8)
-  #-(or sbcl clisp)
-  (map 'list #'char-code string))
+  #-(or ccl clisp sbcl) (map 'list #'char-code string))
 
 (defun make-xlib-window (xobject)
   "For some reason the clx xid cache screws up returns pixmaps when
 they should be windows. So use this function to make a window out of them."
   #+clisp (make-instance 'xlib:window :id (slot-value xobject 'xlib::id) :display *display*)
-  #+sbcl (xlib::make-window :id (slot-value xobject 'xlib::id) :display *display*)
-  #-(or sbcl clisp)
+  #+(or sbcl ecl openmcl) (xlib::make-window :id (slot-value xobject 'xlib::id) :display *display*)
+  #-(or sbcl clisp ecl openmcl)
   (error 'not-implemented))
 
 ;; Right now clisp and sbcl both work the same way
@@ -261,7 +257,7 @@ they should be windows. So use this function to make a window out of them."
   ;; FIXME: seems like there ought to be a less cumbersome way to run
   ;; different code based on the version.
   #+sbcl (macrolet ((dir (p)
-                      (if (>= (parse-integer (third (split-seq (lisp-implementation-version) '(#\.))))
+                      (if (>= (parse-integer (third (split-seq (lisp-implementation-version) '(#\.))) :junk-allowed t)
                               24)
                           `(directory ,p :resolve-symlinks nil)
                           `(directory ,p))))
@@ -309,14 +305,19 @@ regarding files in sysfs. Data is read in chunks of BLOCKSIZE bytes."
 	(stringlen blocksize))
 
     (loop
-       ; Read in the raw bytes
+       ;; Read in the raw bytes
        (setf bytes-read
 	     (sb-unix:unix-read fd (sb-sys:vector-sap buf) blocksize))
 
-       ; This is # bytes both read and in the correct line.
+       ;; Why does SBCL return NIL when an error occurs?
+       (when (or (null bytes-read)
+                 (< bytes-read 0))
+         (error "UNIX-READ failed."))
+
+       ;; This is # bytes both read and in the correct line.
        (setf pos (or (position (char-code #\Newline) buf) bytes-read))
 
-       ; Resize the string if necessary.
+       ;; Resize the string if necessary.
        (when (> (+ pos string-filled) stringlen)
 	 (setf stringlen (max (+ pos string-filled)
 			      (* 2 stringlen)))
@@ -324,7 +325,7 @@ regarding files in sysfs. Data is read in chunks of BLOCKSIZE bytes."
 	   (replace new string)
 	   (setq string new)))
 
-       ; Translate read bytes to string
+       ;; Translate read bytes to string
        (setf (subseq string string-filled)
 	     (sb-ext:octets-to-string (subseq buf 0 pos)))
 
@@ -340,6 +341,7 @@ regarding files in sysfs. Data is read in chunks of BLOCKSIZE bytes."
   (error "unimplemented"))
 
 (defun execv (program &rest arguments)
+  (declare (ignorable program arguments))
   ;; FIXME: seems like there should be a way to do this in sbcl the way it's done in clisp. -sabetts
   #+sbcl
   (sb-alien:with-alien ((prg sb-alien:c-string program)

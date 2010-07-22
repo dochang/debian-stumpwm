@@ -127,9 +127,6 @@
     (focus-all where)
     (update-all-mode-lines)))
 
-(defmethod group-window-visible-p ((group tile-group) win)
-  (eq (frame-window (window-frame win)) win))
-
 (defmethod group-root-exposure ((group tile-group))
   (show-frame-outline group nil))
 
@@ -563,22 +560,20 @@ LEAF. Return tree with leaf removed."
     (expand-tree newtree amt dir)
     newtree))
 
-(defun resize-tree (tree w h &optional x y)
+(defun resize-tree (tree w h &optional (x (tree-x tree)) (y (tree-y tree)))
   "Scale TREE to width W and height H, ignoring aspect. If X and Y are
   provided, reposition the TREE as well."
   (let* ((tw (tree-width tree))
          (th (tree-height tree))
-         (wf (/ 1 (/ tw w)))
-         (hf (/ 1 (/ th h)))
-         (xo (if x (- x (tree-x tree)) 0))
-         (yo (if y (- y (tree-y tree)) 0)))
+         (tx (tree-x tree))
+         (ty (tree-y tree))
+         (wf (/ w tw))
+         (hf (/ h th)))
     (tree-iterate tree (lambda (f)
                          (setf (frame-height f) (round (* (frame-height f) hf))
-                               (frame-y f) (round (* (frame-y f) hf))
+                               (frame-y f) (+ (round (* (- (frame-y f) ty) hf)) y)
                                (frame-width f) (round (* (frame-width f) wf))
-                               (frame-x f) (round (* (frame-x f) wf)))
-                         (incf (frame-y f) yo)
-                         (incf (frame-x f) xo)))
+                               (frame-x f) (+ (round (* (- (frame-x f) tx) wf)) x))))
     (dformat 4 "resize-tree ~Dx~D -> ~Dx~D~%" tw th (tree-width tree) (tree-height tree))))
 
 (defun remove-frame (tree leaf)
@@ -725,7 +720,8 @@ depending on the tree's split direction."
                        (sync-frame-windows group leaf))))))
 
 (defun split-frame (group how &optional (ratio 1/2))
-  "split the current frame into 2 frames. return T if it succeeded. NIL otherwise."
+  "Split the current frame into 2 frames. Return new frame number, if
+  it succeeded. NIL otherwise."
   (check-type how (member :row :column))
   (let* ((frame (tile-group-current-frame group))
          (head (frame-head group frame)))
@@ -760,7 +756,7 @@ depending on the tree's split direction."
         ;; we also need to show the new window in the other frame
         (when (frame-window f2)
           (unhide-window (frame-window f2)))
-        t))))
+        (frame-number f2)))))
 
 (defun draw-frame-outline (group f tl br)
   "Draw an outline around FRAME."

@@ -2,12 +2,13 @@ LISP=@LISP_PROGRAM@
 
 clisp_BUILDOPTS=-K full -on-error exit ./make-image.lisp
 sbcl_BUILDOPTS=--load ./make-image.lisp
-openmcl_BUILDOPTS=--load ./make-image.lisp
+ccl_BUILDOPTS=--load ./make-image.lisp
+ecl_BUILDOPTS=-norc -shell ./make-image.lisp
 
-clisp_INFOOPTS=-K full -on-error exit -x "(load \"asdf.lisp\") (load \"stumpwm.asd\") (load \"@PPCRE_PATH@/cl-ppcre.asd\") (asdf:operate 'asdf:load-op :stumpwm) (load (compile-file \"manual.lisp\")) (stumpwm::generate-manual) (ext:exit)"
+clisp_INFOOPTS=-K full -on-error exit -x "(require 'asdf '(\"asdf.lisp\")) (load \"stumpwm.asd\") (load \"@PPCRE_PATH@/cl-ppcre.asd\") (asdf:operate 'asdf:load-op :stumpwm) (load (compile-file \"manual.lisp\")) (stumpwm::generate-manual) (ext:exit)"
 sbcl_INFOOPTS=--eval "(progn (require 'asdf) (require 'stumpwm) (load \"manual.lisp\"))" --eval "(progn (stumpwm::generate-manual) (sb-ext:quit))"
-openmcl_INFOOPTS=--eval "(require 'asdf) (require 'stumpwm) (load (compile-file \"manual.lisp\")) (stumpwm::generate-manual) (quit)"
-
+ccl_INFOOPTS=--eval "(progn (require 'asdf) (require 'stumpwm))" --load manual.lisp --eval "(progn (stumpwm::generate-manual) (quit))"
+ecl_INFOOPTS=-eval "(progn (require 'asdf) (load \"@PPCRE_PATH@/cl-ppcre.asd\") (require 'stumpwm) (load \"manual.lisp\"))" -eval "(progn (stumpwm::generate-manual) (ext:quit))"
 datarootdir = @datarootdir@
 prefix=@prefix@
 exec_prefix= @exec_prefix@
@@ -18,20 +19,20 @@ infodir=@infodir@
 
 # This is copied from the .asd file. It'd be nice to have the list in
 # one place, but oh well.
-FILES=package.lisp primitives.lisp wrappers.lisp keysyms.lisp		\
-keytrans.lisp kmap.lisp input.lisp core.lisp command.lisp menu.lisp	\
-screen.lisp head.lisp group.lisp window.lisp floating-group.lisp			\
-tile-window.lisp window-placement.lisp message-window.lisp		\
-selection.lisp user.lisp iresize.lisp bindings.lisp events.lisp		\
-help.lisp fdump.lisp mode-line.lisp time.lisp color.lisp module.lisp	\
-stumpwm.lisp version.lisp
+FILES=stumpwm.asd package.lisp primitives.lisp wrappers.lisp		\
+pathnames.lisp keysyms.lisp keytrans.lisp kmap.lisp input.lisp		\
+core.lisp command.lisp menu.lisp screen.lisp head.lisp group.lisp	\
+window.lisp floating-group.lisp tile-window.lisp window-placement.lisp	\
+message-window.lisp selection.lisp user.lisp iresize.lisp		\
+bindings.lisp events.lisp help.lisp fdump.lisp mode-line.lisp		\
+time.lisp color.lisp module.lisp stumpwm.lisp version.lisp
 
 all: stumpwm stumpwm.info
 
 stumpwm.info: stumpwm.texi
 	makeinfo stumpwm.texi
 
-# FIXME: This rule is too hardcoded 
+# FIXME: This rule is too hardcoded
 stumpwm.texi: stumpwm.texi.in
 	$(LISP) $(@LISP@_INFOOPTS)
 
@@ -40,7 +41,7 @@ stumpwm: $(FILES)
 
 release:
 	git tag -a -m "version @PACKAGE_VERSION@" @PACKAGE_VERSION@
-	git-archive --format=tar --prefix=stumpwm-@PACKAGE_VERSION@/ HEAD > stumpwm-@PACKAGE_VERSION@.tar
+	git archive --format=tar --prefix=stumpwm-@PACKAGE_VERSION@/ HEAD > stumpwm-@PACKAGE_VERSION@.tar
 	tar xf stumpwm-@PACKAGE_VERSION@.tar
 	cd stumpwm-@PACKAGE_VERSION@ && tar zxf @PPCRE_PATH@/../cl-ppcre.tar.gz && mv cl-ppcre-* cl-ppcre
 	git log > stumpwm-@PACKAGE_VERSION@/ChangeLog
@@ -54,7 +55,9 @@ upload-release:
 	( echo rm stumpwm-latest.tgz.sig && echo rm stumpwm-latest.tgz && echo ln stumpwm-@PACKAGE_VERSION@.tgz stumpwm-latest.tgz && echo ln stumpwm-@PACKAGE_VERSION@.tgz.sig stumpwm-latest.tgz.sig ) | sftp -b - sabetts@dl.sv.nongnu.org:/releases/stumpwm/
 
 clean:
-	rm -f *.fasl *.fas *.lib *.*fsl stumpwm stumpwm.texi stumpwm.info
+	rm -f *.fasl *.fas *.lib *.*fsl
+	rm -f *.log *.fns *.fn *.aux *.cp *.ky *.log *.toc *.pg *.tp *.vr *.vrs
+	rm -f stumpwm stumpwm.texi stumpwm.info
 
 install: stumpwm.info stumpwm
 	test -z "$(destdir)$(bindir)" || mkdir -p "$(destdir)$(bindir)"

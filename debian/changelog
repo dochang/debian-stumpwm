@@ -1,3 +1,12 @@
+stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
+
+  * debian/control:
+    + add me into Uploaders
+  * debian/copyright:
+    + add copyright info about me
+
+ -- Desmond O. Chang <dochang@gmail.com>  Thu, 22 Jul 2010 21:45:04 +0800
+
 stumpwm (1:20090804.git9d6cb388-1) unstable; urgency=low
 
   * New Git checkout (9d6cb38872ef8f384e2f5fc3088f3bfaabfd2445):

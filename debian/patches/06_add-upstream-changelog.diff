@@ -1,7 +1,468 @@
 Add upstream ChangeLog from `git log` in the master branch
 --- /dev/null
-+++ stumpwm/ChangeLog
-@@ -0,0 +1,9985 @@
++++ b/ChangeLog
+@@ -0,0 +1,10446 @@
++commit f6262b0688412629ee512fae07e47a045dd77397
++Author: Shawn Betts <sabetts@Woaaahdudelike.local>
++Date:   Fri Jul 9 05:36:07 2010 -0700
++
++    Revert "fix get-modifier-map" it was breaking for at least one person
++    
++    This reverts commit 439180985920a628b18d4426f1a29b1c36576531.
++
++commit 439180985920a628b18d4426f1a29b1c36576531
++Author: Shawn Betts <sabetts@gmail.com>
++Date:   Thu Jun 17 09:46:41 2010 -0700
++
++    fix get-modifier-map
++    
++    keycode->keysyms only returns one keysym so it borks if multiple
++    keycodes map to the same keysym.
++
++commit f4fd30db359b97d02bf1f43431d059167f24cf5a
++Author: Julian Stecklina <js@alien8.de>
++Date:   Thu May 20 13:18:19 2010 +0200
++
++    Use my private email address.
++
++commit 0f27da1f05f9f562720b403e2e5d70fc230f658c
++Author: Shawn Betts <Shawn Betts sabetts@andrew.cmu.edu>
++Date:   Tue May 18 12:14:28 2010 -0700
++
++    bump version to 0.9.8-git
++
++commit a39012e430d5307ae6487d9b5ae559e2967dc0ba
++Author: Shawn Betts <Shawn Betts sabetts@andrew.cmu.edu>
++Date:   Tue May 18 12:09:32 2010 -0700
++
++    update NEWS file
++
++commit 013fca86035fa5cdbe66283ca5f4397913e0998d
++Author: Shawn Betts <Shawn Betts sabetts@andrew.cmu.edu>
++Date:   Tue May 18 12:04:26 2010 -0700
++
++    update AUTHORS
++
++commit cf4548a36a9d14a32d2531042eb7c072d45270a3
++Author: Shawn Betts <Shawn Betts sabetts@andrew.cmu.edu>
++Date:   Tue May 18 11:54:11 2010 -0700
++
++    call git archive
++
++commit 159d794814bbf8158dc808b05b73a75d30e7a1b5
++Author: Shawn Betts <Shawn Betts sabetts@andrew.cmu.edu>
++Date:   Tue May 18 11:47:16 2010 -0700
++
++    ditch the flet in modules.lisp.in in favor of a regular function
++    
++    It was giving warnings in the build.
++
++commit 236fc8c221fda8d8e54f776671062fb31b75f781
++Author: Shawn Betts <Shawn Betts sabetts@andrew.cmu.edu>
++Date:   Wed May 12 08:56:56 2010 -0700
++
++    in pathname-is-executable-p, coerce the native namestring to a string
++    
++    base-string was breaking when accented latin-1 characters were in the filename
++
++commit 0f256a480d177274412f8f92b10eb0aa00dd3931
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Fri Jan 22 12:20:53 2010 +0100
++
++    Added password identification support for mpd contrib.
++
++commit c9a53e6ac8f4a50272f58ac128f1cb4d8c619ed6
++Author: Shawn Betts <Shawn Betts sabetts@andrew.cmu.edu>
++Date:   Wed May 12 08:36:01 2010 -0700
++
++    Change completing-read and read-one-line to use &key arguments
++    
++    This breaks backward compatibility!
++
++commit 2494f6ae7f726c1ea42533d78d423b31b9f31ad8
++Author: David Vázquez <davazp@es.gnu.org>
++Date:   Sat Feb 13 00:03:52 2010 +0100
++
++    REQUIRE-MATCH argument for completing-read function.
++
++commit 1c0a119148b36e2a24368201b5981ae655c6fc3d
++Merge: e1e6004 dff9aa6
++Author: Julian Stecklina <js@alien8.de>
++Date:   Tue Apr 27 02:20:14 2010 +0200
++
++    Merged my ECL branch. Removed ASDF from module system.
++
++commit e1e60047c11f3650bbfe8a01127f767e6dcc6af7
++Author: Julian Stecklina <js@alien8.de>
++Date:   Tue Apr 27 02:10:19 2010 +0200
++
++    Guard against head-height not being a multiple of four.
++
++commit cb9a5574cba13d556c08fdd6279d3ee3e7cc3fe0
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Thu Apr 15 18:47:09 2010 +0100
++
++    Use probe-file in find-module so that it returns NIL if the module is not found.
++
++commit 3d153bf9df2347e7eb92192f79967ba760651a77
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Apr 4 19:02:40 2010 +0100
++
++    Added select-window-by-name command.
++    
++    Differs from select-window in that it requires an exact match for the
++    window name.  This is useful if you use completion and have windows
++    whose names are a prefix of others.
++
++commit dff9aa64d3eba7386b598ed160e93a8c2b088ecd
++Author: Julian Stecklina <js@alien8.de>
++Date:   Sat Mar 20 03:00:58 2010 +0100
++
++    Fixed make-image.lisp for ECL.
++
++commit fcd674a5cbd8eb0c800d2cba3b397358688903ea
++Author: Julian Stecklina <js@alien8.de>
++Date:   Sat Mar 20 01:36:14 2010 +0100
++
++    Added stumpwm.asd to dependency list.
++
++commit d1764dc43124db884611f2f8dde5039279412203
++Author: Julian Stecklina <js@alien8.de>
++Date:   Sat Mar 20 01:29:22 2010 +0100
++
++    Add now automatically generated module.lisp to .gitignore
++
++commit 6d4cdffd12c8a2fe31b688bdcdf4b3da67adac45
++Author: Julian Stecklina <js@alien8.de>
++Date:   Sat Mar 20 01:28:47 2010 +0100
++
++    Put ECL-built stumpwm binary where it belongs. (Requires ECL HEAD)
++
++commit 0d65411c13e2cd10286f6706f87cd5604249298e
++Author: Julian Stecklina <js@alien8.de>
++Date:   Tue Mar 16 23:46:58 2010 +0100
++
++    Made module system independent from ASDF.
++
++commit 6b555dc700e88055dc98e15e47fd92e7489df9c7
++Author: Julian Stecklina <js@alien8.de>
++Date:   Tue Mar 16 23:47:10 2010 +0100
++
++    Comment typo.
++
++commit e07cf3cdbc3455fe7f2ad098c00e6933c3fd8e10
++Author: Julian Stecklina <js@alien8.de>
++Date:   Sat Mar 13 15:46:36 2010 +0100
++
++    ECL head fixes the CLX issue. Move ASDF loading to where it is needed.
++
++commit 1515e3f0a31cf60ead9506ea01b5ef83aee3c8c1
++Author: Julian Stecklina <js@alien8.de>
++Date:   Wed Mar 10 04:16:39 2010 +0100
++
++    Workaround for ECL. Should be removed, if ECL's make-build can handle ECL modules.
++
++commit c7d9c12919b841fa255ffc74d7253c2a283f8a27
++Author: Julian Stecklina <js@alien8.de>
++Date:   Thu Mar 4 02:43:50 2010 +0100
++
++    Cleanup sample wmii-like config.
++
++commit 5166bb29462a8c0e7ff81d90b519fbf5561a6b06
++Author: Julian Stecklina <js@alien8.de>
++Date:   Tue Dec 29 13:41:30 2009 +0100
++
++    Made resize-mode-line more readable. (Includes some mathematical simplifications as well.)
++
++commit cc368264b8c7a6047535893a3644419d73df9578
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Mon Jan 25 07:46:32 2010 +0000
++
++    Export *frame-indicator-text* and *suppress-frame-indicator*.
++
++commit 545fd7a2963c156fe303461020899d75f2e430fa
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat Jan 2 21:45:38 2010 +0000
++
++    UTF-8 support for CCL.
++
++commit 8b40f161313d25a42b6953700269fe6f10ce0c0e
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Nov 24 17:56:03 2009 +0000
++
++    Modify pathname-is-executable-p to work with symlinks in recent SBCLs.
++    
++    sb-impl::native-file-kind differentiates between regular files and
++    symlinks, so symlinks in your path won't be picked up for completion.
++    This simpler implementation should work for any version of SBCL.
++
++commit 088885cbb8f05d158f4963d46636a99e4ca3ad46
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Dec 29 01:13:36 2009 +0000
++
++    Fixed misleading documentation for add-hook.
++
++commit 3dad430e30b32f0156bd868b7f1abe6cbaa153a0
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Nov 24 18:16:15 2009 +0000
++
++    Updated manual to refer to STUMPWM-USER package.
++
++commit 2ca1e14119db9c14bec2db1347cb2d868149e5bb
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Dec 20 18:43:36 2009 +0000
++
++    Tidied up run-prog and run-prog-collect-output.
++    
++    These functions were getting into a bit of a state, so I've had a tidy
++    up.  The result is by no means perfect, but I think it's an
++    improvement.  I've removed support for a couple of ancient versions
++    (CLISP before version 2.26 and Lucid before it became Liquid), and
++    added support for setting DISPLAY to the current screen for more
++    lisps.  As an added bonus this patch fixes the build on ECL (at least
++    from a REPL).
++
++commit b5f7c42268669e675f43afb586295cbcc23e75fe
++Author: Julian Stecklina <js@alien8.de>
++Date:   Sat Dec 26 18:11:58 2009 +0100
++
++    Fixed contribs for CCL.
++
++commit d7aae00d344f30db79b361714c27d300353bfc68
++Author: Julian Stecklina <js@alien8.de>
++Date:   Sat Dec 26 18:11:35 2009 +0100
++
++    Added parts of CL-FAD to resolve portability issues with DIRECTORY.
++
++commit d0807c59ef209c6e053aae2ff4a132f65493c202
++Author: Julian Stecklina <js@alien8.de>
++Date:   Sat Dec 26 18:10:43 2009 +0100
++
++    Reword documentation.
++
++commit 6c29e9a883e6ffb4bbbe17554fa2baf2cad02e8e
++Author: Adlai Chandrasekhar <munchking@gmail.com>
++Date:   Sat Dec 26 15:35:44 2009 +0200
++
++    Eliminating compilation warnings on CCL
++
++commit fae2fd24c2d88b3d2a489a3e66e4be7ee312a1f5
++Author: Adlai Chandrasekhar <munchking@gmail.com>
++Date:   Sat Dec 26 15:35:43 2009 +0200
++
++    Updating the build scripts for CCL
++
++commit f989ae668b92769cfc1a5395426cc0de2bc226e9
++Author: Adlai Chandrasekhar <munchking@gmail.com>
++Date:   Sat Dec 26 15:35:42 2009 +0200
++
++    Updating the README
++    
++    - CCL is now listed as a supported platform
++     - `make install' is mentioned
++     - There's also a little warning about CCL's thirst for VIRT.
++
++commit d19d5899f7e5f621ae1c2dd5883ca1d5986a739b
++Author: Adlai Chandrasekhar <munchking@gmail.com>
++Date:   Sat Dec 26 15:35:41 2009 +0200
++
++    Fixing make-image.lisp for CCL
++    
++    CCL:SAVE-APPLICATION by default just dumps a heap image, which is
++    used with the CCL kernel (this kernel/image division is found in
++    other lisps too, such as SBCL). This image can't be run without
++    the separate kernel file.
++    
++    To get CCL to dump an executable image, you can request that the
++    kernel be prepended to the image.
++
++commit 12ed0c7450ce91be9421fc8058e833c1bebcfe4b
++Author: Julian Stecklina <js@alien8.de>
++Date:   Sat Dec 26 16:40:14 2009 +0100
++
++    Clean LaTeX generated files.
++
++commit c12f9cee9daeebdf719544adf8699bbd49051586
++Author: Julian Stecklina <js@alien8.de>
++Date:   Fri Dec 25 20:42:37 2009 +0100
++
++    Mark unused variable.
++
++commit bbb391a5756644cdb10758249c8f5f23ab943c17
++Author: Julian Stecklina <js@alien8.de>
++Date:   Fri Dec 25 20:42:07 2009 +0100
++
++    Don't print error in modeline, because it may be multiple lines long. Clisp...
++
++commit fa1e55b35b6ca0e7a6c51d3a44cc33013cc52b05
++Author: Julian Stecklina <js@alien8.de>
++Date:   Fri Dec 25 20:41:24 2009 +0100
++
++    Proper error checking in read-line-from-sysfs (SBCL-version).
++
++commit f890c02dd12078dc9d4df9bf2a5ee0cfb813c1d9
++Author: Julian Stecklina <js@alien8.de>
++Date:   Fri Dec 25 20:39:57 2009 +0100
++
++    Documentation typo.
++
++commit e379ca5b508a8501c6a96c73f61fecba2ddf95ee
++Author: Julian Stecklina <js@alien8.de>
++Date:   Mon Dec 21 22:57:14 2009 +0100
++
++    Fixed contrib/wifi for clisp.
++
++commit 037877a3a4205f34bb74723c660b7fdc0c42e0d9
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Mon Dec 21 08:45:02 2009 +0000
++
++    Added CCL build files to .gitignore.
++
++commit 619da8258a11b8f8448a12de20bcf5679c2939a1
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Thu Dec 3 15:32:30 2009 +0000
++
++    Use the same implementation of make-xlib-window in openmcl as sbcl/ecl.
++
++commit c844a76031e48f0148532d45a1cf05a55f49beb2
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Nov 29 22:27:50 2009 +0000
++
++    CLISP build: don't load the bundled asdf.lisp if asdf is already present.
++    
++    This fixes the build process for clisp setups which automatically load asdf.
++
++commit c727853afb55b11e6775aad1431a6fb3ca203c33
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Nov 29 10:07:42 2009 +0000
++
++    Removed obsolete load-contrib export.
++
++commit 98382fe5dadd4d9020a36ba50a8053e46239903f
++Author: Philipp Moritz <pcmoritz@googlemail.com>
++Date:   Sat Aug 15 20:13:29 2009 +0200
++
++    Some changes to the manual
++    
++    Change in manual.lisp: Print lowercase argument lists for the documentation
++    Change in stumpwm.texi.in: Some changes in the presentation of the manual
++
++commit cde0d26b6bf94ea83bad7f6d1e0631a06cb7f804
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Thu Nov 12 17:59:36 2009 +0000
++
++    Use probe-path rather than probe-file in version.lisp.
++    
++    CLISP signals an error when probe-file is used on a directory.
++
++commit 81a93d33d9eddedfc37b65e55dd8db742d22ada2
++Author: Lionel Flandrin <lionel@svkt.org>
++Date:   Sun Nov 8 21:26:02 2009 +0100
++
++    Fixed gkill when all groups are hidden.
++    
++    The behaviour of the function "next-group" has been slightly modified
++    (and documented): If there is no "next-group" (i.e. the "current" is
++    the last remaining group) it returns NIL instead of "current".
++
++commit 3a48539107706cd74b02b0c668d767066cbf5c3a
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Wed Nov 11 17:36:55 2009 +0000
++
++    Fixed bug in the fix for the repositioning bug in resize-tree.
++
++commit 11cb937f0e0b3fddb384aad94cc91d93706f3454
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Nov 10 17:40:36 2009 +0000
++
++    Fixed repositioning bug in resize-tree.
++
++commit fc54e7af397d3ccb60c0c8f02ad9511681b8c9d5
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Mon Oct 26 18:23:41 2009 +0000
++
++    Remove group-window-visible-p.
++    
++    This method is pretty pointless because it does exactly the same as
++    window-visible-p, but has an extra (unused) parameter.  It was also
++    never implemented for floating groups, which caused bug #25055.  I've
++    removed the method and replaced the one call to it with a call to
++    window-visible-p.
++
++commit 605ec1405b2ec468d1c51d665582318121c4d84e
++Author: Lionel Flandrin <simias.n@gmail.com>
++Date:   Tue Nov 10 00:57:08 2009 +0100
++
++    Added git hash to *version* string.
++
++commit 3d283598c8949e89892dff50c7d522f999965ee8
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Oct 25 13:49:34 2009 +0000
++
++    Don't call string-trim in completing read if the result is nil.
++    
++    This fixes the annoying 'Command 'NIL' not found' message when you
++    abort entering a command at the C-t ; prompt with C-g.
++
++commit af50637abd782f487144a77e31544d5ba9480af0
++Author: Adlai Chandrasekhar <munchking@gmail.com>
++Date:   Sat Oct 24 09:07:13 2009 +0200
++
++    Added left trim option for format-expand strings
++
++commit e870e79d715e38f83aac66e4120f6619b23833fb
++Author: Vitaly Mayatskikh <vitaly@gravicappa.englab.brq.redhat.com>
++Date:   Wed Nov 4 11:40:00 2009 +0100
++
++    SBCL in some Linux distros returns customized lisp implementation
++    version string, like:
++    
++    * (lisp-implementation-version)
++    
++    "1.0.30-2.fc12"
++    
++    Wrapper function directory-no-deref doesn't expect junk at the end of
++    version. This patch fixes it.
++
++commit c8e28d7d6984ba70f925691524bad47b4352f2d8
++Author: Julian Stecklina <js@alien8.de>
++Date:   Tue Nov 3 03:56:57 2009 +0100
++
++    Beautify docstring.
++
++commit dd4f7f1cd7b678b4c3be8dfed8389b9c2164fca8
++Author: Michael Raskin <38a938c2@rambler.ru>
++Date:   Tue Nov 3 03:49:09 2009 +0100
++
++    Return frame number of newly splitted frame.
++
++commit 4a901ee413b1fb63fac98523bdd15a36946e2f8c
++Author: Raffael Mancini <raffael.mancini@hcl-club.lu>
++Date:   Thu Oct 22 22:40:35 2009 +0200
++
++    Enable resizing windows in float group by using mouse 3 on the decoration
++
++commit 95c420e6214908d96e08eeed27bb7a1ee0d103bf
++Author: Julian Stecklina <js@alien8.de>
++Date:   Mon Oct 5 02:30:53 2009 +0200
++
++    Fixed contrib/battery-portable.lisp for strange sysfs layouts.
++
++commit 1e5107a8c419e8a71b1894e3199e16725cf75b27
++Author: Julian Stecklina <js@alien8.de>
++Date:   Mon Oct 5 01:48:38 2009 +0200
++
++    Added support for ECL to build system.
++    Included missing stuff from ayrnieu's paste in #stumpwm.
++
++commit 2f052dbd698031f7bfd843a1647728d58fc5abea
++Author: Julian Stecklina <js@alien8.de>
++Date:   Mon Oct 5 00:31:13 2009 +0200
++
++    Fixed a paren typo introduced by 'make completing-read trim spaces off the beginning and end of the input'.
++    
++    This was discovered by the ECL compiler.
++
 +commit 9d6cb38872ef8f384e2f5fc3088f3bfaabfd2445
 +Author: Shawn Betts <sabetts@gmail.com>
 +Date:   Tue Aug 4 11:22:40 2009 -0700

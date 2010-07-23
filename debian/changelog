@@ -4,6 +4,8 @@ stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
     + add me into Uploaders
   * debian/copyright:
     + add copyright info about me
+  * debian/patches:
+    + update patches
 
  -- Desmond O. Chang <dochang@gmail.com>  Thu, 22 Jul 2010 21:45:04 +0800
 

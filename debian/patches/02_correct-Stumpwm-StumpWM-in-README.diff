@@ -1,6 +1,6 @@
 Correct mispelled StumpWM in README
---- stumpwm.orig/README
-+++ stumpwm/README
+--- a/README
++++ b/README
 @@ -1,7 +1,7 @@
  The Stump Window Manager
  ------------------------
@@ -9,7 +9,7 @@ Correct mispelled StumpWM in README
 +StumpWM is a window manager written entirely in Common Lisp. It
  attempts to be highly customizable while relying entirely on the
  keyboard for input. You will not find buttons, icons, title bars, tool
- bars, or any of the other conventional GUI widgets. 
+ bars, or any of the other conventional GUI widgets.
 @@ -9,7 +9,7 @@
  These design decisions reflect the growing popularity of productive,
  customizable lisp based systems.
@@ -20,15 +20,15 @@ Correct mispelled StumpWM in README
  
  Prerequisites
 @@ -22,7 +22,7 @@
- If you intend to use sbcl you need to install portable-clx. If you're
- using clisp, make sure you use at least version 2.42 and that clisp is
- compiled with new-clx. As of clisp 2.42, new-clx works fine with
--stumpwm. Any version before that is too buggy to run stumpwm.
-+StumpWM. Any version before that is too buggy to run StumpWM.
+ If you intend to use SBCL or CCL you need to install portable-clx. If
+ you're using clisp, make sure you use at least version 2.42 and that
+ clisp is compiled with new-clx. As of clisp 2.42, new-clx works fine
+-with stumpwm. Any version before that is too buggy to run stumpwm.
++with StumpWM. Any version before that is too buggy to run StumpWM.
  
  You can use asdf-install to install lisp libraries:
    $ sbcl
-@@ -51,7 +51,7 @@
+@@ -53,7 +53,7 @@
  Building
  ========
  
@@ -37,7 +37,7 @@ Correct mispelled StumpWM in README
  
  $ autoconf
  
-@@ -59,7 +59,7 @@
+@@ -61,7 +61,7 @@
  
  $ ./configure
  
@@ -46,7 +46,7 @@ Correct mispelled StumpWM in README
  explicitly select clisp like so:
  
  $ ./configure --with-lisp=clisp
-@@ -81,13 +81,13 @@
+@@ -86,13 +86,13 @@
  $ echo /path/to/stumpwm >> ~/.xinitrc
  $ startx
  
@@ -63,16 +63,16 @@ Correct mispelled StumpWM in README
  unresponsive. If you use SBCL, consider using a version built without
  threads.
  
-@@ -97,7 +97,7 @@
+@@ -110,7 +110,7 @@
  There's a texinfo manual, stumpwm.texi. the build scripts generate an
  info file you can read in emacs or with the `info' program.
  
--For other stuff visit the stumpwm wiki: 
-+For other stuff visit the StumpWM wiki: 
+-For other stuff visit the stumpwm wiki:
++For other stuff visit the StumpWM wiki:
  
  http://stumpwm.antidesktop.net/
  
-@@ -107,4 +107,4 @@
+@@ -120,4 +120,4 @@
  ----------
  
  See http://stumpwm.nongnu.org/community.html for more information on

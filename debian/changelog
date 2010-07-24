@@ -2,6 +2,7 @@ stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
 
   * debian/control:
     + add me into Uploaders
+    + change Standards-Version to 3.9.0
   * debian/copyright:
     + add copyright info about me
   * debian/patches:
@@ -9,7 +10,7 @@ stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
   * debian/source/format: 
     + change source format to 3.0 (quilt)
 
- -- Desmond O. Chang <dochang@gmail.com>  Fri, 23 Jul 2010 18:24:48 +0800
+ -- Desmond O. Chang <dochang@gmail.com>  Sat, 24 Jul 2010 13:23:00 +0800
 
 stumpwm (1:20090804.git9d6cb388-1) unstable; urgency=low
 

@@ -1,4 +1,4 @@
-stumpwm (1:20060930-4) unstable; urgency=low
+stumpwm (1:20070908-1) unstable; urgency=low
 
   Finally, with this release a binary /usr/bin/stumpwm is provided
   (thus solving the long-standing bug #356948).

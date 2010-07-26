@@ -1,5 +1,6 @@
-stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
+stumpwm (1:20100709.gitf6262b0-1) unstable; urgency=low
 
+  * New Git checkout (f6262b0688412629ee512fae07e47a045dd77397)
   * debian/control:
     + add me into Uploaders
     + change Standards-Version to 3.9.1
@@ -10,7 +11,7 @@ stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
   * debian/source/format: 
     + change source format to 3.0 (quilt)
 
- -- Desmond O. Chang <dochang@gmail.com>  Sat, 24 Jul 2010 13:23:00 +0800
+ -- Desmond O. Chang <dochang@gmail.com>  Tue, 27 Jul 2010 01:35:11 +0800
 
 stumpwm (1:20090804.git9d6cb388-1) unstable; urgency=low
 

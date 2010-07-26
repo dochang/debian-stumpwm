@@ -2,7 +2,7 @@ stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
 
   * debian/control:
     + add me into Uploaders
-    + change Standards-Version to 3.9.0
+    + change Standards-Version to 3.9.1
   * debian/copyright:
     + add copyright info about me
   * debian/patches:

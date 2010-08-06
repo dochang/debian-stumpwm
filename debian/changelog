@@ -8,10 +8,12 @@ stumpwm (1:20100709.gitf6262b0-1) unstable; urgency=low
     + add copyright info about me
   * debian/patches:
     + update patches
-  * debian/source/format: 
+  * debian/source/format:
     + change source format to 3.0 (quilt)
+  * debian/compat:
+    + upgrade from 5 to 7
 
- -- Desmond O. Chang <dochang@gmail.com>  Tue, 27 Jul 2010 01:35:11 +0800
+ -- Desmond O. Chang <dochang@gmail.com>  Fri, 06 Aug 2010 21:13:53 +0800
 
 stumpwm (1:20090804.git9d6cb388-1) unstable; urgency=low
 

@@ -1,5 +1,6 @@
-stumpwm (1:20100709.gitf6262b0-1) unstable; urgency=low
+stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
 
+  [ Desmond O. Chang ]
   * New Git checkout (f6262b0688412629ee512fae07e47a045dd77397)
   * debian/control:
     + add me into Uploaders
@@ -13,7 +14,10 @@ stumpwm (1:20100709.gitf6262b0-1) unstable; urgency=low
   * debian/compat:
     + upgrade from 5 to 7
 
- -- Desmond O. Chang <dochang@gmail.com>  Fri, 06 Aug 2010 21:13:53 +0800
+  [ Luca Capello ]
+  * debian/gbp.conf: new file.
+
+ --
 
 stumpwm (1:20090804.git9d6cb388-1) unstable; urgency=low
 

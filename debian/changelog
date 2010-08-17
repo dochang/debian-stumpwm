@@ -16,6 +16,8 @@ stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
     + upgrade from 5 to 7
 
   [ Luca Capello ]
+  * debian/copyright:
+    + update copyright assignment to 2010.
   * debian/gbp.conf: new file.
   * debian/README.source:
     - remove, now useless.

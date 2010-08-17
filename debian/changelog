@@ -5,6 +5,7 @@ stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
   * debian/control:
     + add me into Uploaders
     + change Standards-Version to 3.9.1
+    + remove Build-Depends on quilt.
   * debian/copyright:
     + add copyright info about me
   * debian/patches:
@@ -16,6 +17,11 @@ stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
 
   [ Luca Capello ]
   * debian/gbp.conf: new file.
+  * debian/README.source:
+    - remove, now useless.
+  * debian/rules:
+    - remove any quilt call.
+    - do not install anymore README.source.
 
  --
 

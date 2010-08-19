@@ -1,4 +1,4 @@
-stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
+stumpwm (1:20100709.gitf6262b0-1) unstable; urgency=low
 
   [ Desmond O. Chang ]
   * New Git checkout (f6262b0688412629ee512fae07e47a045dd77397)
@@ -25,7 +25,7 @@ stumpwm (1:20100709.gitf6262b0-1) UNRELEASED; urgency=low
     - remove any quilt call.
     - do not install anymore README.source.
 
- --
+ -- Desmond O. Chang <dochang@gmail.com>  Thu, 19 Aug 2010 23:31:57 +0800
 
 stumpwm (1:20090804.git9d6cb388-1) unstable; urgency=low
 

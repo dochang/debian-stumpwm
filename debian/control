@@ -2,8 +2,7 @@ Source: stumpwm
 Section: devel
 Priority: optional
 Maintainer: Debian Common Lisp Team <pkg-common-lisp-devel@lists.alioth.debian.org>
-Uploaders: Luca Capello <luca@pca.it>, Peter Van Eynde <pvaneynd@debian.org>,
- Desmond O. Chang <dochang@gmail.com>
+Uploaders: Peter Van Eynde <pvaneynd@debian.org>, Desmond O. Chang <dochang@gmail.com>
 Build-Depends-Indep: dh-lisp, texinfo, autoconf, sbcl, cl-clx-sbcl, cl-ppcre
 Build-Depends: debhelper (>= 7.0.0)
 Standards-Version: 3.9.1

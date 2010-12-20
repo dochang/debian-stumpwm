@@ -1,3 +1,11 @@
+stumpwm (1:20100709.gitf6262b0-2) UNRELEASED; urgency=low
+
+  [ Luca Capello ]
+  * debian/control:
+    + remove myself from Uploaders:.
+
+ --
+
 stumpwm (1:20100709.gitf6262b0-1) unstable; urgency=low
 
   [ Desmond O. Chang ]

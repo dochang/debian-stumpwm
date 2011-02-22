@@ -109,6 +109,9 @@
   ((current-window :accessor float-group-current-window))
   )
 
+(defmethod group-startup ((group float-group))
+  )
+
 (defmethod group-add-window ((group float-group) window &key &allow-other-keys)
   (change-class window 'float-window)
   (float-window-align window)
@@ -168,7 +171,16 @@
 (defmethod group-root-exposure ((group float-group))
   )
 
-(defmethod group-add-head ((group float-group))
+(defmethod group-add-head ((group float-group) head)
+  (declare (ignore head)))
+
+(defmethod group-remove-head ((group float-group) head)
+  (declare (ignore head)))
+
+(defmethod group-resize-head ((group float-group) oh nh)
+  (declare (ignore oh nh)))
+
+(defmethod group-sync-all-heads ((group float-group))
   )
 
 (defmethod group-sync-head ((group float-group) head)
@@ -232,6 +244,7 @@
                                                      :discard-p t)
                      until (eq ev :done))
                (ungrab-pointer))
+             (update-configuration window)
              ;; don't forget to update the cache
              (setf (window-x window) (xlib:drawable-x (window-parent window))
                    (window-y window) (xlib:drawable-y (window-parent window)))))))

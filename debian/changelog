@@ -1,8 +1,11 @@
-stumpwm (1:20100709.gitf6262b0-2) UNRELEASED; urgency=low
+stumpwm (1:20110213.git34362e5-1) UNRELEASED; urgency=low
 
   [ Luca Capello ]
   * debian/control:
     + remove myself from Uploaders:.
+
+  [ Desmond O. Chang]
+  * New Git checkout (34362e53db13d6e1c3a3511e4beca7f14ac5aa38)
 
  --
 

@@ -24,7 +24,7 @@ load_lisp() {
 	    sbcl --eval "$EVAL_LOAD" --eval "$EVAL_RUN"
 	    ;;
 	clisp)
-	    clisp -x "$EVAL_LOAD $EVAL_RUN"
+	    clisp -x '(require "clx")' -x "$EVAL_LOAD $EVAL_RUN"
 	    ;;
 	*)
 	    echo "Unkown Common Lisp implementation."

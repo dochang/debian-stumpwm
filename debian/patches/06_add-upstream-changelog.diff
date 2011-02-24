@@ -1,7 +1,135 @@
 Add upstream ChangeLog from `git log` in the master branch
 --- /dev/null
 +++ b/ChangeLog
-@@ -0,0 +1,10446 @@
+@@ -0,0 +1,10574 @@
++commit 34362e53db13d6e1c3a3511e4beca7f14ac5aa38
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Sun Feb 13 14:31:05 2011 -0500
++
++    Add Nils Anspach to AUTHORS
++
++commit 087304d12d0821f788d4e71683e88eee0611aea8
++Author: Nils Anspach <idnkmn@googlemail.com>
++Date:   Sun Feb 13 14:28:22 2011 -0500
++
++    Right-justification of mode line elements
++    
++    Hello list,
++    
++    attached is a patch which allows for text elements of the mode line
++    (and those of the message window, if that is required) to be
++    right-justified.
++    
++    For this to work you have to put a '^>' into the respective format
++    command, for instance:
++    
++    (setf *screen-mode-line-format*
++          (list "[%n:%h] %v^>"
++                '(:eval (run-shell-command "echo -n `date +'%a %e-%b %R'`"
++    	          t))))
++    
++    It also works in case of multiple lines of text. Everything after '^>'
++    up to the end of the respective line is right-justified. The next line
++    then starts left-justified again.
++    
++    Nils
++
++commit f839c7966ef03c637c3011ba2930a37456edae8f
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Mon Jan 3 17:07:15 2011 +0000
++
++    Fix issue with pick-preferred-frame not finding anything.
++    
++    closes #24289
++
++commit bdabe8ce21d6629610e9667a0267abc8cc23a14c
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Mon Jan 3 14:59:49 2011 +0000
++
++    Only set message window timeout if we're actually displaying a message.
++
++commit 8d2847df6417134595b28692c8876f9efeb401fa
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Mon Jan 3 11:42:33 2011 +0000
++
++    Replace xwin-maxsize-p with window-maxsize-p (using cached copy of hints).
++
++commit e4a352d6c66b061992d23209af8701cee79e10d2
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Fri Dec 31 18:47:11 2010 +0000
++
++    Use feature test to check for XTEST support at compile time.
++
++commit 14bdbc96563ced1cd0c79c8a638763842162bdcb
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Dec 28 14:40:32 2010 +0000
++
++    Check X server supports XTEST before using it.
++
++commit 0a745aecbdc50285a50350510d0cf0ed0696b02d
++Author: Dirk Sondermann <ds-stumpwm@dyximaq.de>
++Date:   Tue Dec 28 14:26:26 2010 +0000
++
++    Fix passing arguments with 'colon'.
++
++commit 61c170be843b2dc94016d3e086ef15a504263d35
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Dec 28 14:17:09 2010 +0000
++
++    Implement send-fake-click using XTEST where available.
++
++commit 5f81f05a229072033056ffa7979099193ec553d3
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Dec 26 11:15:20 2010 +0000
++
++    Move tile group specific code out of head.lisp and into group methods.
++    
++    closes #28784
++
++commit 87864de773ad4b9da25f09b334ecc86fd6db117d
++Author: Anonymous <swell.k@gmail.com>
++Date:   Mon Dec 27 15:24:24 2010 +0000
++
++    stumpish changes for non-GNU systems
++
++commit 0feb156a744863a2f85526ddbb1a5eee0550b462
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Sun Dec 26 11:09:17 2010 +0000
++
++    Add resize-head function.
++
++commit 7092bea5b2211d135c30d8b1f120a973cde928af
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Sat Dec 25 13:35:12 2010 +0000
++
++    Modify frame-head to work based on the center of the frame.
++
++commit f9e386dac1a85e33f600298b82e190b8bcd0e3b4
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat Dec 25 12:56:02 2010 +0000
++
++    Send a configure-notify to windows after moving/resizing in float groups.
++
++commit aad7fd8ba5775b8a7084aad912c9088d251f2a18
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Mon Dec 28 17:05:00 2009 +0000
++
++    Move tile group specific init code out of stumpwm-internal.
++
++commit 8019677e6d46d9e9b5bf6302115b1a53c435bf29
++Author: Friedrich Delgado <delgado@pre-sense.de>
++Date:   Sun Oct 3 11:44:58 2010 +0100
++
++    shorten surfraw.lisp somewhat by using a macro that harvests all the elvis
++    
++    If you want the old names back, you can use defcommand-alias.
++
++commit 2f8f1982b600716c3afdecec012d57d5f960c4fe
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Oct 3 12:38:54 2010 +0100
++
++    Export concat.
++
 +commit f6262b0688412629ee512fae07e47a045dd77397
 +Author: Shawn Betts <sabetts@Woaaahdudelike.local>
 +Date:   Fri Jul 9 05:36:07 2010 -0700

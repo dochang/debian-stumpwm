@@ -1,4 +1,4 @@
-stumpwm (1:20110213.git34362e5-1) UNRELEASED; urgency=low
+stumpwm (1:20110213.git34362e5-1) unstable; urgency=low
 
   [ Luca Capello ]
   * debian/control:
@@ -11,7 +11,7 @@ stumpwm (1:20110213.git34362e5-1) UNRELEASED; urgency=low
   * debian/patches:
     + delete 07_use-clc-require-for-manual-creation.diff
 
- --
+ -- Desmond O. Chang <dochang@gmail.com>  Tue, 22 Feb 2011 19:53:31 +0800
 
 stumpwm (1:20100709.gitf6262b0-1) unstable; urgency=low
 

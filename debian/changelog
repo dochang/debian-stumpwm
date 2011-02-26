@@ -8,6 +8,8 @@ stumpwm (1:20110213.git34362e5-1) UNRELEASED; urgency=low
   * New Git checkout (34362e53db13d6e1c3a3511e4beca7f14ac5aa38)
   * depend on clisp-module-clx (Closes: #608017)
   * sbcl should exit after stumpwm exits (Closes: #614571)
+  * debian/patches:
+    + delete 07_use-clc-require-for-manual-creation.diff
 
  --
 

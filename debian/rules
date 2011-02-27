@@ -21,7 +21,7 @@ configure:
 
 build: configure
 	sed -e 's/@PACKAGE_VERSION@/${DEBIAN_VERSION}/' version.lisp.in >version.lisp
-	$(MAKE) stumpwm.info
+	HOME=$(shell pwd) $(MAKE) stumpwm.info
 
 clean:
 	dh_testdir

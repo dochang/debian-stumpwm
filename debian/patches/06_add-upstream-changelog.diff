@@ -1,7 +1,167 @@
 Add upstream ChangeLog from `git log` in the master branch
 --- /dev/null
 +++ b/ChangeLog
-@@ -0,0 +1,10574 @@
+@@ -0,0 +1,10734 @@
++commit b77c69a61d174a4af315faa90851b212f278a373
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Sun Mar 13 21:33:11 2011 -0400
++
++    Filter sysfs thermal zone files more strictly.
++
++commit c2f365c7a3856a7ec8b1ff4b230970ba99472083
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat Mar 12 19:25:41 2011 +0000
++
++    Script to look for stuff that might need adding to the manual.
++
++commit 01148d4ea554885235152775f9a921b8defd7b67
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat Mar 12 17:44:59 2011 +0000
++
++    Add .dir-locals.el to disable indent-tabs-mode.
++
++commit 60361e3e9dcad5da73b1118180c96c7bb5546333
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat Mar 12 11:42:37 2011 +0000
++
++    Tidy up menu.lisp.
++
++commit 513ecb094191c5e6735164462a950e62f95d84f7
++Author: Anonymous <swell.k@gmail.com>
++Date:   Thu Mar 10 16:31:55 2011 +0300
++
++    stumpwm-mode.el, remove trailing newline added by echo(1)
++
++commit 1c6ba2ca9f2bc490100dfcaf66ce0de2535b78fd
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Fri Mar 11 07:33:00 2011 +0000
++
++    Add Matt Spear to AUTHORS.
++
++commit fc440d0350c3e7e5cd9d4fd5a576b35c20647dc6
++Author: Matt Spear <batman900@gmail.com>
++Date:   Mon Mar 7 22:40:24 2011 -0800
++
++    Add hooks for entering and leaving command mode.
++    
++    * Command mode start and end messages are part of the hooks by default
++      so they can be disabled.
++    * Use a counter to allow stacked pointer grabs.
++    * Move definition of *root-map* into kmap.lisp.
++
++commit 00f5805a40b05345868e9e8d4b1275cf5fba0024
++Author: Anonymous <swell.k@gmail.com>
++Date:   Wed Mar 9 18:26:08 2011 +0000
++
++    Make stumpish work with GNU sed <4.2.
++
++commit 8da87f3a1d25b657aa1ce263c6830b14c443da38
++Author: Matt Spear <batman900@gmail.com>
++Date:   Mon Feb 28 10:08:46 2011 -0800
++
++    add time-format function and modify existing time functions to use it.
++
++commit cbb9ff9d56a0d4686a25e4551176e55672bdc93c
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Mar 6 19:49:54 2011 +0000
++
++    Update AUTHORS.
++
++commit c76dab61e578687a86296e52cddd5b5b5753a1d2
++Author: Lionel Flandrin <lionel@svkt.org>
++Date:   Sun Mar 6 16:41:39 2011 +0000
++
++    Add :_NET_WM_DESKTOP to +netwm-supported+ to make OpenOffice.org happy.
++    
++    That seems to make OpenOffice.org behave correctly, when it's missing
++    it keeps sending client-messages requesting group switches when you
++    move it in another group. It may improve the stumpwm experience with
++    other java software as well.
++    
++    I've also added a call to force-output in dformat, I think it's better
++    not to buffer writes to *debug-stream* in case of a crash, it also
++    make it easier to find out what's happening in "real time" when you
++    tail -f the log file.
++
++commit 361fc0d7183f8f4057b9aa285f53323855589b32
++Author: Michael Raskin <38a938c2@rambler.ru>
++Date:   Sun Mar 6 19:31:01 2011 +0000
++
++    Add commands to search titles and tags by regexp.
++
++commit 3412d66f85f3c302ffd9000a8c9645c82d4936a6
++Author: Josh Elsasser <josh@elsasser.org>
++Date:   Mon Dec 27 11:41:14 2010 -0800
++
++    OpenBSD support for contrib/battery-portable.lisp
++    
++    I wrote some quick openbsd support for the battery-portable
++    contrib. Tested on a single-battery laptop and an (obviously)
++    no-battery desktop.
++    
++    Note that the change to the fmt-time function is necessary because
++    openbsd doesn't report a battery life estimate when the battery is
++    charging, the time will be nil in that case.
++
++commit d53b1a8ce0e55069b7276827aa0f6f66141d5c15
++Author: Krzysztof Drewniak <krzysdrewniak@gmail.com>
++Date:   Sat Feb 26 18:19:50 2011 -0600
++
++    Fixed bug #30871: Wrong time formatting function for %H.
++    
++    time.lisp: Modified *time-format-string-alist*
++
++commit 88bc474c40dbd92a7be0e3641a77e1e35c3d82ab
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sun Feb 27 19:32:04 2011 -0500
++
++    Added display of regex search string in menu.
++    
++    Replaced *current-menu-input* global variable with a current-input field
++    in menu-state struct
++
++commit 837e16ad98b41f0e8294e74bef419b749bbb23a2
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sun Feb 27 19:31:42 2011 -0500
++
++    Another fix for scrolling. Now regex search and all the other stuff
++    should work fine.
++
++commit 89a18cc66a5404e56055c415ae1a1af96d049a6d
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sun Feb 27 19:31:15 2011 -0500
++
++    Fixed small bug in menu scrolling and added page-{up,down} support.
++    
++    This adds two more ways to move selection in the menu:
++     - page-up/down which simply gets you to your current
++       position +/- *menu-maximum-height*
++     - scroll-up/down which gets you to your current position +/-
++       *menu-scrolling-step*
++
++commit f0678b27ae03aad15f08b5699e5bc0e2ab5fe895
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sun Feb 27 19:30:39 2011 -0500
++
++    Added bound-check call in check-menu-complete so menu view is computed
++    correctly when you search something not currently visible.
++
++commit fb66c3d20e919d464bbb6cf42c9d104af4885004
++Author: Morgan Veyret <patzy@appart.kicks-ass.net>
++Date:   Sun Feb 27 19:30:05 2011 -0500
++
++    Added scrolling to select-from-menu.
++    
++    News variables added in primitives.lisp: *menu-maximum-height* and *menu-scrolling-step*
++
++commit 4f421b46d11b2600f5aa5e52e484225532588ccf
++Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
++Date:   Thu Feb 24 12:37:05 2011 -0500
++
++    /proc/acpi/thermal_zone/ may be missing in recent version of Linux kernel.
++    
++    This patch introduce alternative way to get thermal zone information via /sys.
++
 +commit 34362e53db13d6e1c3a3511e4beca7f14ac5aa38
 +Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
 +Date:   Sun Feb 13 14:31:05 2011 -0500

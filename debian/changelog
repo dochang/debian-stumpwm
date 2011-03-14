@@ -1,11 +1,11 @@
-stumpwm (1:20110313.gitb77c69a-1) UNRELEASED; urgency=low
+stumpwm (1:20110313.gitb77c69a-1) unstable; urgency=low
 
   * New Git checkout (b77c69a61d174a4af315faa90851b212f278a373)
   * fix contrib/cpu.lisp for linux 2.6.37 (Closes: #616631)
   * debian/patches:
     + delete 02_correct-Stumpwm-StumpWM-in-README.diff
 
- --
+ -- Desmond O. Chang <dochang@gmail.com>  Mon, 14 Mar 2011 13:51:25 +0800
 
 stumpwm (1:20110213.git34362e5-1) unstable; urgency=low
 

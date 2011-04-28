@@ -1,4 +1,4 @@
-stumpwm (1:20110419.gitb80ff16-1) UNRELEASED; urgency=low
+stumpwm (1:20110419.gitb80ff16-1) unstable; urgency=low
 
   * New Git checkout (b80ff164527b0cfbf677ea847047b04e8f0f008c)
   * replace CLC with ASDF in /usr/bin/stumpwm (Closes: #624472).
@@ -8,7 +8,7 @@ stumpwm (1:20110419.gitb80ff16-1) UNRELEASED; urgency=low
       "description-synopsis-starts-with-article" warning
     + Build-Depends on clisp instead of sbcl
 
- --
+ -- Desmond O. Chang <dochang@gmail.com>  Fri, 29 Apr 2011 01:54:31 +0800
 
 stumpwm (1:20110313.gitb77c69a-1) unstable; urgency=low
 

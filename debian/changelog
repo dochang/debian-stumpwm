@@ -6,6 +6,7 @@ stumpwm (1:20110419.gitb80ff16-1) UNRELEASED; urgency=low
     + upgrade Standards-Version to 3.9.2
     + new description synopsis in order to get rid of lintian's
       "description-synopsis-starts-with-article" warning
+    + Build-Depends on clisp instead of sbcl
 
  --
 

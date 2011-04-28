@@ -15,7 +15,7 @@ Architecture: all
 Depends: ${misc:Depends}, clisp-module-clx | cl-clx-sbcl | cmucl-source, cl-ppcre
 Recommends: cl-asdf
 Suggests: slime, x-terminal-emulator, www-browser, info-browser, menu, x11-utils, rlwrap
-Description: a Common Lisp window manager
+Description: tiling, keyboard driven Common Lisp window manager
  StumpWM is a window manager written entirely in Common Lisp. It
  attempts to be highly customizable while relying entirely on the
  keyboard for input. You will not find buttons, icons, title bars,

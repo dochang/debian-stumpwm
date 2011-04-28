@@ -1,6 +1,6 @@
 Default to Debian alternative x-www-browser
---- stumpwm.orig/sample-stumpwmrc.lisp
-+++ stumpwm/sample-stumpwmrc.lisp
+--- a/sample-stumpwmrc.lisp
++++ b/sample-stumpwmrc.lisp
 @@ -17,7 +17,7 @@
  ;; Read some doc
  (define-key *root-map* (kbd "d") "exec gv")

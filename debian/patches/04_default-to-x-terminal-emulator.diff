@@ -1,7 +1,7 @@
 Default to Debian alternative x-terminal-emulator
 --- a/bindings.lisp
 +++ b/bindings.lisp
-@@ -79,8 +79,8 @@
+@@ -75,8 +75,8 @@
    *escape-key* '*root-map*)
  
  (fill-keymap *root-map*

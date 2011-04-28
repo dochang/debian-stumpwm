@@ -1,7 +1,76 @@
 Add upstream ChangeLog from `git log` in the master branch
 --- /dev/null
 +++ b/ChangeLog
-@@ -0,0 +1,10734 @@
+@@ -0,0 +1,10803 @@
++commit b80ff164527b0cfbf677ea847047b04e8f0f008c
++Author: Lionel Flandrin <lionel.flandrin@parrot.com>
++Date:   Wed Apr 13 07:50:25 2011 +0000
++
++    New contrib module "passwd.lisp" to generate passwords.
++    
++    This module can be used to generate unique passwords from a single
++    "master" key by using HMAC-SHA1 (depends on ironclad).
++    
++    The code uses SBCL-specific timers to expire the passphrase cache and
++    clear the clipboard.
++
++commit 2fc9af681733ad6c3fbb7d9165bc4e07e0e2f8ce
++Author: Lionel Flandrin <lionel.flandrin@parrot.com>
++Date:   Wed Apr 13 07:49:09 2011 +0000
++
++    Add a password mode to read-one-line and a new :password stumpwm-type.
++    
++    When :password is T, read-one-line will display #\* in place of the
++    actual input and won't save the result in the input-history.
++
++commit 3cbc27f87663f555d2a6f84112c3560d988e58c2
++Author: Lionel Flandrin <lionel.flandrin@parrot.com>
++Date:   Wed Apr 13 08:25:03 2011 +0000
++
++    Fix group-map-number when a group 0 exists
++
++commit b416aadf3f6adc26d58e53174ba86381d278c5e4
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Mar 27 19:21:07 2011 +0100
++
++    Simplify make-image.lisp.
++
++commit bda504315f326f4c8d3a48854f8d79a55bda7737
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Mar 27 15:07:35 2011 +0100
++
++    Make group-map-number work with hidden groups.
++
++commit d35f580870443e792c3620cfbde558e2a94eceff
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat Mar 26 18:46:08 2011 +0000
++
++    Make ECL build put the output file in the right place.
++
++commit 7e4cb61c096a8fc1e40ee74eb5caed6f0584c59d
++Author: Matt Spear <batman900@gmail.com>
++Date:   Thu Mar 17 19:01:21 2011 +0000
++
++    allow *window-number-map* and *group-number-map* to be any kind of sequence.
++
++commit 03751622772570d82dc923cc70ccc6c2f5a000d4
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Thu Mar 17 07:24:46 2011 +0000
++
++    Use *group-number-map* in select-group.
++
++commit 9bbdb2ecbcc2063134ee511cdf18e4406feb20ff
++Author: Ivan Kanis <ivan@tao>
++Date:   Sun Dec 19 16:35:21 2010 +0100
++
++    add support for specifying a frame size in pixels
++
++commit 02b6bef3969050cbeb5aa694f6e39686e0c54a94
++Author: Matt Spear <batman900@gmail.com>
++Date:   Tue Mar 15 20:35:54 2011 -0700
++
++    add *window-number-map* and *group-number-map*.
++
 +commit b77c69a61d174a4af315faa90851b212f278a373
 +Author: Vitaly Mayatskikh <v.mayatskih@gmail.com>
 +Date:   Sun Mar 13 21:33:11 2011 -0400

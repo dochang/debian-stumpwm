@@ -370,6 +370,10 @@ then describes the symbol."
   (or (argument-pop input)
       (read-one-line (current-screen) prompt)))
 
+(define-stumpwm-type :password (input prompt)
+  (or (argument-pop input)
+      (read-one-line (current-screen) prompt :password t)))
+
 (define-stumpwm-type :key (input prompt)
   (let ((s (or (argument-pop input)
                (read-one-line (current-screen) prompt))))
@@ -409,18 +413,17 @@ then describes the symbol."
 
 (defun select-group (screen query)
   "Attempt to match string QUERY against group number or partial name."
-  (let ((num (ignore-errors (parse-integer query))))
-    (labels ((match-whole (grp)
-               (string-equal (group-name grp) query))
-             (match-partial (grp)
-               (let* ((end (min (length (group-name grp)) (length query))))
-                 (string-equal (group-name grp) query :end1 end :end2 end)))
-             (match-num (grp)
-               (eql (group-number grp) num)))
-      (when query
-        (or (find-if #'match-whole (screen-groups screen))
-            (find-if #'match-partial (screen-groups screen))
-            (find-if #'match-num (screen-groups screen)))))))
+  (labels ((match-num (grp)
+             (string-equal (princ-to-string (group-map-number grp)) query))
+           (match-whole (grp)
+             (string-equal (group-name grp) query))
+           (match-partial (grp)
+             (let* ((end (min (length (group-name grp)) (length query))))
+               (string-equal (group-name grp) query :end1 end :end2 end))))
+    (when query
+      (or (find-if #'match-num (screen-groups screen))
+          (find-if #'match-whole (screen-groups screen))
+          (find-if #'match-partial (screen-groups screen))))))
 
 (define-stumpwm-type :group (input prompt)
   (let ((match (select-group (current-screen)

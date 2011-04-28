@@ -12,19 +12,21 @@
 # Lisp implementation StumpWM should use.
 
 
-EVAL_LOAD="(clc:clc-require 'stumpwm)"
+EVAL_ASDF="#-asdf (require :asdf)"
+EVAL_ASDF_CLISP="#-asdf (require :asdf '(\"/usr/share/common-lisp/source/cl-asdf/asdf.lisp\"))"
+EVAL_LOAD="(asdf:oos 'asdf:load-op :stumpwm)"
 EVAL_RUN="(stumpwm:stumpwm)"
 
 load_lisp() {
     case "$1" in
 	cmucl)
-	    lisp -eval "$EVAL_LOAD $EVAL_RUN"
+	    lisp -eval "$EVAL_ASDF $EVAL_LOAD $EVAL_RUN"
 	    ;;
 	sbcl)
-	    sbcl --eval "$EVAL_LOAD" --eval "$EVAL_RUN" --eval '(quit)'
+	    sbcl --eval "$EVAL_ASDF" --eval "$EVAL_LOAD" --eval "$EVAL_RUN" --eval '(quit)'
 	    ;;
 	clisp)
-	    clisp -x '(require "clx")' -x "$EVAL_LOAD $EVAL_RUN"
+	    clisp -x '(require "clx")' -x "$EVAL_ASDF_CLISP $EVAL_LOAD $EVAL_RUN"
 	    ;;
 	*)
 	    echo "Unkown Common Lisp implementation."

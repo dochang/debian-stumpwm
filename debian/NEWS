@@ -1,3 +1,14 @@
+stumpwm (1:20110419.gitb80ff16-1) unstable; urgency=low
+
+  Lisp implementations no longer include ASDF in their images.  SBCL has
+  its bundled ASDF but CLISP not.  To use ASDF in CLISP, user has to
+  install cl-asdf.  From this release, stumpwm recommends cl-asdf.
+
+  Note that it's unnecessary to manually load ASDF before running
+  /usr/bin/stumpwm.  Stumpwm can take care of it.
+
+ -- Desmond O. Chang <dochang@gmail.com>  Fri, 29 Apr 2011 01:54:31 +0800
+
 stumpwm (1:20070908-1) unstable; urgency=low
 
   Finally, with this release a binary /usr/bin/stumpwm is provided

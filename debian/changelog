@@ -1,6 +1,7 @@
 stumpwm (1:20110419.gitb80ff16-1) UNRELEASED; urgency=low
 
   * New Git checkout (b80ff164527b0cfbf677ea847047b04e8f0f008c)
+  * replace CLC with ASDF in /usr/bin/stumpwm (Closes: #624472).
 
  --
 

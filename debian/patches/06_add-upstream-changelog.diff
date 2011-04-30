@@ -1,7 +1,16 @@
 Add upstream ChangeLog from `git log` in the master branch
 --- /dev/null
 +++ b/ChangeLog
-@@ -0,0 +1,10803 @@
+@@ -0,0 +1,10812 @@
++commit 14571fc4b5deec581e1c9be663dbdc7a69db3dc0
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Mon Mar 21 18:02:55 2011 +0000
++
++    Remove module.lisp.in.
++    
++    Preserves the lack of runtime dependency on ASDF and the ability to
++    specify contrib dir as a configure switch.
++
 +commit b80ff164527b0cfbf677ea847047b04e8f0f008c
 +Author: Lionel Flandrin <lionel.flandrin@parrot.com>
 +Date:   Wed Apr 13 07:50:25 2011 +0000

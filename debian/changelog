@@ -1,6 +1,7 @@
 stumpwm (1:20110420.git14571fc-1) UNRELEASED; urgency=low
 
   * New Git checkout (14571fc4b5deec581e1c9be663dbdc7a69db3dc0)
+  * move startup options into load.lisp (Closes: #624636).
 
  --
 

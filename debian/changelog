@@ -1,9 +1,9 @@
-stumpwm (1:20110420.git14571fc-1) UNRELEASED; urgency=low
+stumpwm (1:20110420.git14571fc-1) unstable; urgency=low
 
   * New Git checkout (14571fc4b5deec581e1c9be663dbdc7a69db3dc0)
   * move startup options into load.lisp (Closes: #624636).
 
- --
+ -- Desmond O. Chang <dochang@gmail.com>  Sun, 01 May 2011 02:34:34 +0800
 
 stumpwm (1:20110419.gitb80ff16-1) unstable; urgency=low
 

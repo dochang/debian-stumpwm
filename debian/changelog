@@ -1,10 +1,10 @@
-stumpwm (1:20110819.gitca08e08-1) UNRELEASED; urgency=low
+stumpwm (1:20110819.gitca08e08-1) unstable; urgency=low
 
   * New Git checkout (ca08e0842f4d2d69d8523862d5b9c68d18abc366)
   * debian/rules
     + add missing targets 'build-indep' and 'build-arch'
 
- --
+ -- Desmond O. Chang <dochang@gmail.com>  Thu, 27 Oct 2011 15:38:41 +0800
 
 stumpwm (1:20110420.git14571fc-1) unstable; urgency=low
 

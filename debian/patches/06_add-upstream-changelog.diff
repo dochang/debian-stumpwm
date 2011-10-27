@@ -1,7 +1,49 @@
 Add upstream ChangeLog from `git log` in the master branch
 --- /dev/null
 +++ b/ChangeLog
-@@ -0,0 +1,10812 @@
+@@ -0,0 +1,10854 @@
++commit ca08e0842f4d2d69d8523862d5b9c68d18abc366
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Fri Aug 19 07:09:45 2011 +0100
++
++    Added run-or-pull to manual.
++
++commit 920995ffe4cb05d7b0a243b42354cf16c8eb6c32
++Author: Krzysztof Drewniak <krzysdrewniak@gmail.com>
++Date:   Tue Jul 12 15:12:53 2011 +0100
++
++    Added application menu contrib module.
++
++commit d8a41bfeb299176591ef8645b655cd9eaf1df35d
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Jun 14 12:08:09 2011 +0100
++
++    Removed stone age advice about SBCL and threads.
++
++commit bafcc7698d3629f29fa6699e8acc61c3fcea0386
++Author: Matt Spear <batman900@gmail.com>
++Date:   Mon May 30 00:32:11 2011 -0700
++
++    hsplit vsplit ratio
++
++commit 0bef7e420142bad605e5d21c62bdb30acde1953a
++Author: Michael Raskin <38a938c2@rambler.ru>
++Date:   Mon May 30 11:06:01 2011 +0100
++
++    Add *split-frame-hook*.
++
++commit ad19a2ab333ba9f4c9c1ae30afa51384fb72ecaf
++Author: Josip Gracin <jgracin@inge-mark.hr>
++Date:   Mon May 30 10:51:43 2011 +0100
++
++    Default selection in select-window-from-menu
++
++commit 906468499b90986e3214b1b8455a9bd0411dd28e
++Author: Daniel Borchmann <daniel.borchmann@mailbox.tu-dresden.de>
++Date:   Fri Apr 29 19:08:50 2011 +0100
++
++    battery-portable: use sysfs power_now file rather than current_now if available.
++
 +commit 14571fc4b5deec581e1c9be663dbdc7a69db3dc0
 +Author: Ben Spencer <dangerous.ben@gmail.com>
 +Date:   Mon Mar 21 18:02:55 2011 +0000

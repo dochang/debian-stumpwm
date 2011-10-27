@@ -19,9 +19,13 @@ configure:
 		--with-contrib-dir=/$(clc-files)/contrib \
 		--with-ppcre=/usr/share/common-lisp/source/cl-ppcre
 
-build: configure
+build-indep: configure
 	sed -e 's/@PACKAGE_VERSION@/${DEBIAN_VERSION}/' version.lisp.in >version.lisp
 	XDG_CACHE_HOME=$(shell pwd)/.cache $(MAKE) stumpwm.info
+
+build-arch:
+
+build: build-indep
 
 clean:
 	dh_testdir

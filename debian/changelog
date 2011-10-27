@@ -1,6 +1,8 @@
 stumpwm (1:20110819.gitca08e08-1) UNRELEASED; urgency=low
 
   * New Git checkout (ca08e0842f4d2d69d8523862d5b9c68d18abc366)
+  * debian/rules
+    + add missing targets 'build-indep' and 'build-arch'
 
  --
 

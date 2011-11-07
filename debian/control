@@ -1,5 +1,5 @@
 Source: stumpwm
-Section: devel
+Section: x11
 Priority: optional
 Maintainer: Debian Common Lisp Team <pkg-common-lisp-devel@lists.alioth.debian.org>
 Uploaders: Peter Van Eynde <pvaneynd@debian.org>, Desmond O. Chang <dochang@gmail.com>

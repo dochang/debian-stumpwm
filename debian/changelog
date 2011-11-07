@@ -2,11 +2,16 @@ stumpwm (1:20110819.gitca08e08-2) UNRELEASED; urgency=low
 
   * debian/load.lisp
     + hot-upgrade ASDF if user has a local version of ASDF
+    + update copyright info
   * debian/control
     + change Section to 'x11'
     + Provides x-window-manager
   * debian/wm
     + new file
+  * debian/copyright
+    + update copyright info
+  * debian/stumpwm.bin
+    + update copyright info
 
  --
 

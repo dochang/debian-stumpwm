@@ -1,4 +1,4 @@
-stumpwm (1:20110819.gitca08e08-2) UNRELEASED; urgency=low
+stumpwm (1:20110819.gitca08e08-2) unstable; urgency=low
 
   * debian/load.lisp
     + hot-upgrade ASDF if user has a local version of ASDF
@@ -13,7 +13,7 @@ stumpwm (1:20110819.gitca08e08-2) UNRELEASED; urgency=low
   * debian/stumpwm.bin
     + update copyright info
 
- --
+ -- Desmond O. Chang <dochang@gmail.com>  Mon, 07 Nov 2011 16:06:21 +0800
 
 stumpwm (1:20110819.gitca08e08-1) unstable; urgency=low
 

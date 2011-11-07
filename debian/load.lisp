@@ -22,5 +22,5 @@
 
 (stumpwm:stumpwm)
 
-#+sbcl
+#+(or clisp sbcl)
 (quit)

@@ -1,3 +1,9 @@
+stumpwm (1:20110819.gitca08e08-2) UNRELEASED; urgency=low
+
+  * 
+
+ --
+
 stumpwm (1:20110819.gitca08e08-1) unstable; urgency=low
 
   * New Git checkout (ca08e0842f4d2d69d8523862d5b9c68d18abc366)

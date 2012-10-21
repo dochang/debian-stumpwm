@@ -13,9 +13,8 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this software; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-;; Boston, MA 02111-1307 USA
+;; along with this software; see the file COPYING.  If not, see
+;; <http://www.gnu.org/licenses/>.
 
 ;; Commentary:
 ;;
@@ -254,10 +253,11 @@ _NET_WM_STATE_DEMANDS_ATTENTION set"
                    :data data))
 
 (defun window-map-number (window)
-  (let ((num (window-number window)))
-    (or (and (< num (length *window-number-map*))
-             (elt *window-number-map* num))
-        num)))
+  (princ-to-string
+   (let ((num (window-number window)))
+     (or (and (< num (length *window-number-map*))
+              (elt *window-number-map* num))
+         num))))
 
 (defun fmt-window-status (window)
   (let ((group (window-group window)))

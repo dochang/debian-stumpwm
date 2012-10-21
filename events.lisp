@@ -13,9 +13,8 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this software; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-;; Boston, MA 02111-1307 USA
+;; along with this software; see the file COPYING.  If not, see
+;; <http://www.gnu.org/licenses/>.
 
 ;; Commentary:
 ;;
@@ -592,7 +591,8 @@ the window in it's frame."
   (let (screen ml win)
     (cond
       ((and (setf screen (find-screen window)) (not child))
-       (group-button-press (screen-current-group screen) x y :root))
+       (group-button-press (screen-current-group screen) x y :root)
+       (run-hook-with-args *root-click-hook* screen code x y))
       ((setf ml (find-mode-line-window window))
        (run-hook-with-args *mode-line-click-hook* ml code x y))
       ((setf win (find-window-by-parent window (top-windows)))

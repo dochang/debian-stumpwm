@@ -13,9 +13,8 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this software; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-;; Boston, MA 02111-1307 USA
+;; along with this software; see the file COPYING.  If not, see
+;; <http://www.gnu.org/licenses/>.
 
 ;; Commentary:
 ;;
@@ -46,7 +45,7 @@
                                     (*print-pretty* nil))
                                 (format s "@defun {~a} ~{~a~^ ~}~%~a~&@end defun~%~%"
                                         name
-                                        #+sbcl (sb-introspect:function-arglist fn)
+                                        #+sbcl (sb-introspect:function-lambda-list fn)
                                         #+clisp (ext:arglist fn)
                                         #- (or sbcl clisp) '("(Check the code for args list)")
                                         (documentation fn 'function))
@@ -59,7 +58,7 @@
                                      (*print-pretty* nil))
                                 (format s "@defmac {~a} ~{~a~^ ~}~%~a~&@end defmac~%~%"
                                         name
-                                        #+sbcl (sb-introspect:function-arglist (macro-function symbol))
+                                        #+sbcl (sb-introspect:function-lambda-list (macro-function symbol))
                                         #+clisp (ext:arglist symbol)
                                         #- (or sbcl clisp) '("(Check the code for args list)")
                                         ;;; FIXME: when clisp compiles
@@ -96,7 +95,7 @@
                               (let ((cmd (symbol-function (find-symbol (string-upcase name) :stumpwm))))
                                 (format s "@deffn {Command} ~a ~{~a~^ ~}~%~a~&@end deffn~%~%"
                                         name
-                                        #+sbcl (sb-introspect:function-arglist cmd)
+                                        #+sbcl (sb-introspect:function-lambda-list cmd)
                                         #+clisp (ext:arglist cmd)
                                         #- (or sbcl clisp) '("(Check the code for args list)")
                                         (documentation cmd 'function))

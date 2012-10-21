@@ -13,9 +13,8 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this software; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-;; Boston, MA 02111-1307 USA
+;; along with this software; see the file COPYING.  If not, see
+;; <http://www.gnu.org/licenses/>.
 
 ;; Commentary:
 ;;
@@ -112,7 +111,7 @@ otherwise specified."
     (if (and (>= index 0)
              (< index (length *group-number-map*)))
         (format nil "~:[~;-~]~a" (minusp num) (elt *group-number-map* index))
-        num)))
+        (princ-to-string num))))
 
 (defun fmt-group-status (group)
   (let ((screen (group-screen group)))

@@ -13,9 +13,8 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this software; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-;; Boston, MA 02111-1307 USA
+;; along with this software; see the file COPYING.  If not, see
+;; <http://www.gnu.org/licenses/>.
 
 ;; Commentary:
 ;;
@@ -345,15 +344,15 @@ then describes the symbol."
   (let ((n (or (argument-pop input)
                (completing-read (current-screen)
                                 prompt
-                                (mapcar 'prin1-to-string
-                                        (mapcar 'window-number
-                                                (group-windows (current-group))))))))
+                                (mapcar 'window-map-number
+                                        (group-windows (current-group)))))))
     (when n
-      (handler-case
-          (parse-integer n)
-        (parse-error (c)
-          (declare (ignore c))
-          (throw 'error "Number required."))))))
+      (let ((win (find n (group-windows (current-group))
+                       :test #'string=
+                       :key #'window-map-number)))
+        (if win
+            (window-number win)
+            (throw 'error "No Such Window."))))))
 
 (define-stumpwm-type :number (input prompt)
   (let ((n (or (argument-pop input)
@@ -414,7 +413,7 @@ then describes the symbol."
 (defun select-group (screen query)
   "Attempt to match string QUERY against group number or partial name."
   (labels ((match-num (grp)
-             (string-equal (princ-to-string (group-map-number grp)) query))
+             (string-equal (group-map-number grp) query))
            (match-whole (grp)
              (string-equal (group-name grp) query))
            (match-partial (grp)

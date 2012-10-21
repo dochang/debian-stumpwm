@@ -13,9 +13,8 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this software; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-;; Boston, MA 02111-1307 USA
+;; along with this software; see the file COPYING.  If not, see
+;; <http://www.gnu.org/licenses/>.
 
 ;; Commentary:
 ;;
@@ -357,6 +356,8 @@ are valid values.
 (defparameter +default-font-name+ "9x15bold")
 (defparameter +default-focus-color+ "White")
 (defparameter +default-unfocus-color+ "Black")
+(defparameter +default-float-focus-color+ "Orange")
+(defparameter +default-float-unfocus-color+ "SteelBlue4")
 (defparameter +default-frame-outline-width+ 2)
 
 ;; Don't set these variables directly, use set-<var name> instead
@@ -419,6 +420,8 @@ Use the window's resource name.
    (win-bg-color :initform nil :accessor screen-win-bg-color)
    (focus-color :initform nil :accessor screen-focus-color)
    (unfocus-color :initform nil :accessor screen-unfocus-color)
+   (float-focus-color :initform nil :accessor screen-float-focus-color)
+   (float-unfocus-color :initform nil :accessor screen-float-unfocus-color)
    (msg-border-width :initform nil :accessor screen-msg-border-width)
    (frame-outline-width :initform nil :accessor screen-frame-outline-width)
    (font :initform nil :accessor screen-font)
@@ -1096,8 +1099,7 @@ Like :tight but no border is ever visible.
 After changing this variable you may need to call
 sync-all-frame-windows to see the change.")
 
-(defvar *data-dir* (make-pathname :directory (append (pathname-directory (user-homedir-pathname))
-                                                     (list ".stumpwm.d")))
+(defvar *data-dir* nil
   "The directory used by stumpwm to store data between sessions.")
 
 (defun data-dir-file (name &optional type)

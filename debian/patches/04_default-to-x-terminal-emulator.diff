@@ -1,7 +1,7 @@
 Default to Debian alternative x-terminal-emulator
 --- a/bindings.lisp
 +++ b/bindings.lisp
-@@ -75,8 +75,8 @@
+@@ -74,8 +74,8 @@
    *escape-key* '*root-map*)
  
  (fill-keymap *root-map*
@@ -36,7 +36,7 @@ Default to Debian alternative x-terminal-emulator
  
 --- a/stumpwm.texi.in
 +++ b/stumpwm.texi.in
-@@ -229,7 +229,7 @@
+@@ -210,7 +210,7 @@
  Once you have StumpWM up and running, the first thing you might want
  to do is start @command{emacs}. Type @kbd{C-t e}, or in other words
  @kbd{Control + t} followed by @kbd{e}. Now perhaps you want an
@@ -45,7 +45,7 @@ Default to Debian alternative x-terminal-emulator
  
  To see a list of windows StumpWM is managing, type @kbd{C-t w}. The
  highlighted window is the one you're looking at right now. It's the
-@@ -244,16 +244,16 @@
+@@ -225,16 +225,16 @@
  executed from the input bar or bound to a key.
  
  At this point you probably want to switch back from your new
@@ -68,7 +68,7 @@ Default to Debian alternative x-terminal-emulator
  
  Another common activity is browsing the interwebs. Type @kbd{C-t !}.
  The input bar pops up again. You can now run a shell command.  Let's
-@@ -369,7 +369,7 @@
+@@ -350,7 +350,7 @@
  
  @item C-t c
  @itemx C-t C-c

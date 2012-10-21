@@ -1,7 +1,149 @@
 Add upstream ChangeLog from `git log` in the master branch
 --- /dev/null
 +++ b/ChangeLog
-@@ -0,0 +1,10854 @@
+@@ -0,0 +1,10996 @@
++commit b1271a91efe529f774d6c2d4189b9e3e95d61aea
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Nov 20 10:13:28 2011 +0000
++
++    Remove version.lisp.in.
++    
++     * Canonical version number is now in stumpwm.asd.  Autoconf picks it
++       up from there.
++     * Maintainer updates version number and commits before creating a
++       release.
++     * version.lisp looks for a .git dir alongside the source, if found
++       then *version* is set using git describe, otherwise the release
++       version is used.
++
++commit 486f742129bb0edfdf1ed20e369fb1a45385daab
++Author: Manuel Giraud <manuel.giraud@univ-nantes.fr>
++Date:   Wed Dec 1 10:17:12 2010 +0100
++
++    warp pointer in right corner when resizing in float group
++
++commit 5c0153cd0ba3248e047677bb9e30f270280814e4
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Nov 20 11:25:53 2011 +0000
++
++    Fix ability to specify contrib dir as an argument to configure.
++
++commit 8f5295df11d2cc908f09206b2ea3c10f0ff8a6b4
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat Nov 19 18:05:23 2011 +0000
++
++    Remove build instructions from manual, refer to README.
++
++commit abe293511c93362b719fad96fabe0d88f14f5acb
++Author: Sascha Wilde <wilde@sha-bang.de>
++Date:   Sat Nov 19 17:39:02 2011 +0000
++
++    Initialize *data-dir* at startup time
++
++commit e781baeb473fa7fbe2c738ea30b7a7ed446e78e5
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat Nov 19 16:51:01 2011 +0000
++
++    Remove j/k keybindings in menus in favour of using the letters in search strings.
++
++commit f04779afed7d4f30bec2974f7c79cc42b02e9493
++Author: Krzysztof Drewniak <krzysdrewniak@gmail.com>
++Date:   Sun Nov 13 17:04:09 2011 -0600
++
++    The backspace key now functions correctly.
++    
++    A new function `menu-backspace' has been defined which removes a
++    single character from the menu search string. The function
++    `menu-backspace' is bound to DEL by default in *menu-map* .
++
++commit cdf449bcaa54b68f2f075df9c7f97fbe312ca532
++Author: Krzysztof Drewniak <krzysdrewniak@gmail.com>
++Date:   Sun Nov 13 15:49:01 2011 -0600
++
++    Fixed error when using PgUp/Down without a *menu-maximum-height*
++
++commit 9a1fb632904ff917af2b03c0f4270211ea016260
++Author: Krzysztof Drewniak <krzysdrewniak@gmail.com>
++Date:   Sun Nov 13 14:56:05 2011 -0600
++
++    Replace the current-input string in menu.lisp with a vector with a fill-pointer.
++
++commit cdc3d038415033edb8e5611b787d5dc34b3bd1ae
++Author: Matt Spear <address@hidden>
++Date:   Mon Mar 28 21:06:48 2011 -0700
++
++    make window-number work appropriately
++
++commit 931adde28a82d2f158b89e2566ea1f0698b06872
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sat Nov 19 13:45:41 2011 +0000
++
++    Return strings from window-map-number and group-map-number.
++
++commit 84fb71460583ff96a9851b05e693a92df785661e
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Sun Nov 13 13:20:02 2011 +0000
++
++    Make *root-click-hook* work.
++
++commit d8f75d5b17ec8b63361b26d196ed4fc8a5aeecd2
++Author: Wesley Dawson <whda@csua.berkeley.edu>
++Date:   Fri Sep 30 03:10:17 2011 -0700
++
++    Update FSF address
++
++commit 39c6837c762dad9f82d957a2d4a6259e17ad1dbf
++Author: Manuel Giraud <manuel.giraud@univ-nantes.fr>
++Date:   Sun Nov 13 11:31:41 2011 +0000
++
++    Update email address.
++
++commit 8b5954ad9bdb715f8ba2c66ecb3e7862f514aad7
++Author: Manuel Giraud <manuel.giraud@univ-nantes.fr>
++Date:   Sun Nov 13 11:31:02 2011 +0000
++
++    Use float-window-move-resize instead of a raw setf to move float windows.
++
++commit 6086ae404ff1cac53d337f32d38fc5a412b13ef2
++Author: Manuel Giraud <manuel.giraud@univ-nantes.fr>
++Date:   Sun Nov 13 11:27:36 2011 +0000
++
++    configurable float group focus/unfocus colors
++
++commit 2336dac6eef7f3d1c392b8723828c3091ed09940
++Author: Manuel Giraud <manuel.giraud@univ-nantes.fr>
++Date:   Fri Nov 26 17:34:09 2010 +0100
++
++    focus everywhere in the window
++
++commit 16d5974c0bae5083ee7727a9064285e8564bc380
++Author: Sascha Wilde <wilde@sha-bang.de>
++Date:   Sun Nov 13 10:55:56 2011 +0000
++
++    Fix sbcl warnings on deprecated function in manual.lisp
++
++commit 843b84a2b8afdd842c6082b01876ba305aded79e
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Wed Jul 13 17:38:36 2011 +0100
++
++    Make it clearer that QL needs to be added to the lisp init file.
++
++commit badcb9277ff38274138b497ce613281a89ecb9ff
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Jul 12 12:02:21 2011 +0100
++
++    README rework - use Quicklisp to install dependencies.
++
++commit 49377473397be3b8c5a3d5e1261b609c8fb56cd4
++Author: Ben Spencer <dangerous.ben@gmail.com>
++Date:   Tue Jul 12 12:02:21 2011 +0100
++
++    Simplify build system.
++    
++    * Remove bundled asdf, expect the user to have it installed
++    * Remove option to specify location of cl-ppcre, rely on asdf to load it
++    * Streamline decision about which lisp to use
++
 +commit ca08e0842f4d2d69d8523862d5b9c68d18abc366
 +Author: Ben Spencer <dangerous.ben@gmail.com>
 +Date:   Fri Aug 19 07:09:45 2011 +0100

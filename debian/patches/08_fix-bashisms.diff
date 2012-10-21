@@ -1,0 +1,56 @@
+Description: Fix the bashisms reported by /usr/bin/checkbashisms
+ stumpish uses /bin/sh as its interpreter.  On those systems where
+ /bin/sh doesn't link to /bin/bash, running stumpish using /bin/sh is
+ likely to lead to errors or unexpected behaviours.  Removing the
+ bashisms will grow the portability of stumpish.
+Author: Desmond O. Chang <dochang@gmail.com>
+Origin: vendor
+Bug-Debian: http://bugs.debian.org/690620
+Last-Update: 2012-10-21
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/contrib/stumpish
++++ b/contrib/stumpish
+@@ -33,9 +33,13 @@
+ fi
+ 
+ # parse C-style backslash sequences by default
+-if [ "$(echo -e foo)" = foo ]; then
+-    echo() { builtin echo -e "$@"; }
+-fi
++echo () {
++	while [ $# -gt 1 ]; do
++		printf "%b " "$1"
++		shift
++	done
++	printf "%b\n" "$1"
++}
+ 
+ wait_result ()
+ {
+@@ -112,7 +116,7 @@
+   {
+     tput md bold
+     tput AF setaf 1
+-    echo 'WARN:\c'
++    printf 'WARN:\c\n'
+     tput me sgr0
+     echo " $*"
+   } >&2
+@@ -174,13 +178,13 @@
+ 	tput AF setaf 5
+         echo Welcome to the STUMPwm Interactive SHell.
+         tput me sgr0
+-        echo 'Type \c'
++        printf 'Type \c\n'
+         tput AF setaf 2
+-        echo 'commands\c'
++        printf 'commands\c\n'
+         tput me sgr0
+         echo \ for a list of commands.
+ 
+-	while read -p '> ' REPLY
++	while printf '> ' && read REPLY
+ 	do
+ 	    tput md bold
+ 	    tput AF setaf 2

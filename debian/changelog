@@ -1,6 +1,8 @@
 stumpwm (1:20111204.gitb1271a9-1) UNRELEASED; urgency=low
 
   * New Git checkout (b1271a91efe529f774d6c2d4189b9e3e95d61aea)
+  * debian/patches/08_fix-bashisms.diff (Closes: #690620).
+    + Fix the bashisms reported by /usr/bin/checkbashisms .
 
  --
 

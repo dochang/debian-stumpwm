@@ -1,4 +1,4 @@
-stumpwm (1:20111204.gitb1271a9-1) UNRELEASED; urgency=low
+stumpwm (1:20111204.gitb1271a9-1) unstable; urgency=low
 
   * New Git checkout (b1271a91efe529f774d6c2d4189b9e3e95d61aea)
   * debian/patches/08_fix-bashisms.diff (Closes: #690620).
@@ -9,7 +9,7 @@ stumpwm (1:20111204.gitb1271a9-1) UNRELEASED; urgency=low
   * debian/control
     + Upgrade Standards-Version to 3.9.3
 
- --
+ -- Desmond O. Chang <dochang@gmail.com>  Tue, 23 Oct 2012 01:12:50 +0800
 
 stumpwm (1:20110819.gitca08e08-2) unstable; urgency=low
 

@@ -20,7 +20,8 @@ configure:
 		--with-ppcre=/usr/share/common-lisp/source/cl-ppcre
 
 build-indep: configure
-	sed -e 's/@PACKAGE_VERSION@/${DEBIAN_VERSION}/' version.lisp.in >version.lisp
+	cp version.lisp version.lisp.in
+	sed -e 's/(asdf:component-version sys)/"${DEBIAN_VERSION}"/' version.lisp.in >version.lisp
 	XDG_CACHE_HOME=$(shell pwd)/.cache $(MAKE) stumpwm.info
 
 build-arch:
@@ -31,7 +32,7 @@ clean:
 	dh_testdir
 	dh_testroot
 	[ ! -f Makefile ] || $(MAKE) clean
-	rm -rf autom4te.cache Makefile make-image.lisp version.lisp config.log config.status configure
+	rm -rf autom4te.cache Makefile make-image.lisp version.lisp.in config.log config.status configure
 	dh_clean
 
 install: build

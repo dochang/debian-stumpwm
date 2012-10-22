@@ -6,6 +6,8 @@ stumpwm (1:20111204.gitb1271a9-1) UNRELEASED; urgency=low
   * debian/rules
     + Rewrite version number replacing code.
     + No need to remove bundled asdf.lisp .
+  * debian/control
+    + Upgrade Standards-Version to 3.9.3
 
  --
 

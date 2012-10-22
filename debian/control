@@ -5,7 +5,7 @@ Maintainer: Debian Common Lisp Team <pkg-common-lisp-devel@lists.alioth.debian.o
 Uploaders: Peter Van Eynde <pvaneynd@debian.org>, Desmond O. Chang <dochang@gmail.com>
 Build-Depends-Indep: dh-lisp, texinfo, autoconf, clisp-module-clx, cl-asdf, cl-ppcre
 Build-Depends: debhelper (>= 7.0.0)
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 Homepage: http://www.nongnu.org/stumpwm/
 Vcs-Git: git://git.debian.org/pkg-common-lisp/stumpwm.git
 Vcs-Browser: http://git.debian.org/?p=pkg-common-lisp/stumpwm.git;a=summary
